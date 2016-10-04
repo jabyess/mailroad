@@ -1,0 +1,22 @@
+{
+  "name": "emailbuilder",
+  "description": "Uses litmus and react to build nice email templates easily.",
+  "main": "index.js",
+  "authors": [
+    "jbyess@morningconsult.com"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "tinymce": "^4.3.13",
+    "react": "^15.1.0"
+  }
+}
