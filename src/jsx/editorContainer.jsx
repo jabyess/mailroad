@@ -22,23 +22,12 @@ class EditorContainer extends React.Component {
 		window.addEventListener('saveHTMLButtonClicked', (e) => this.triggerFormSubmit(e) );
 	}
 
-		// <TinyMCE
-		// 	content="<p>Initial content</p>"
-    //     config={{
-    //       plugins: 'link image code save',
-    //       toolbar: 'save | undo redo | bold italic | alignleft aligncenter alignright | code',
-    //       height: 400
-    //     }}
-    //     onChange={this.handleEditorChange}>
-		// 	</TinyMCE>
-
-
 	render() {
 		return (
 			<div>
 			{this.props.activeEditors.map((cv, i) => {
 				return <div className="editorItem">
-				<h1>{cv.name}</h1> 
+					<h1>{cv.name}</h1>
 					<TinyMCE editorName={cv.name} content={cv.content} config={cv.config} onChange={this.handleEditorChange} key={i}></TinyMCE>
 				</div>
 			})}

@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import NavBar from './navbar.jsx';
 import EditorContainer from './editorContainer.jsx';
 import editorDefinitions from './editorDefinitions.js';
@@ -15,6 +14,9 @@ class MainContainer extends React.Component {
 			activeEditors: [editorDefinitions.MainMCE]
 		}
 	}
+	addEditorToContainer(event) {
+		this.setState(() => { return this.state.activeEditors.push(editorDefinitions[event.detail]) });
+	}
 
 	componentWillMount() {
 
@@ -22,6 +24,7 @@ class MainContainer extends React.Component {
 
 	componentDidMount(){
 		console.log(this);
+		window.addEventListener('addNewComponentToEditorContainer', (e) => this.addEditorToContainer(e) );
 	}
 
 	render () {
