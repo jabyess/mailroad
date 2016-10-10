@@ -1,28 +1,18 @@
-var express = require('express'),
-router = express.Router();
+import express from 'express'
 
-router.get('/', function(req, res, next) {
-  console.log('connected on /');
-  // middleware();
+let router = express.Router();
 
-  // Mongo.connect('mongodb://localhost:27017/emailbuilder', function(err, db) {
-  //   assert.equal(null, err);
-  //   console.log('connected to server');
-  //   insertDocument(db, function() {
-  //     db.close();
-  //   });
-  //
-  // });
+router.get('/', (req, res, next) => {
+  console.log('connected on /')
 
-  res.render('index', {});
+  res.render('index', {})
 
 });
 
 router.get('/email', (req, res, next) => {
-  console.log('fired /email');
+  console.log('fired /email')
 
-  res.render('email', {});
+  res.render('email', {})
 });
 
-
-module.exports = router;
+export { router as routes }

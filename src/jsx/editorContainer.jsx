@@ -12,8 +12,8 @@ class EditorContainer extends React.Component {
     console.log('Content was updated:', e.target.getContent());
   }
 
-	triggerFormSubmit() {
-		console.log(this);
+	triggerFormSubmit(e) {
+		React.Children.map( () => { console.log(this)} )
 		console.log('savehtml clicked');
 	}
 
@@ -24,11 +24,16 @@ class EditorContainer extends React.Component {
 
 	render() {
 		return (
-			<div>
+			<div className="editorItems">
 			{this.props.activeEditors.map((cv, i) => {
 				return <div className="editorItem">
 					<h1>{cv.name}</h1>
-					<TinyMCE editorName={cv.name} content={cv.content} config={cv.config} onChange={this.handleEditorChange} key={i}></TinyMCE>
+					<TinyMCE 
+						editorName={cv.name} 
+						content={cv.content} 
+						config={cv.config}
+						onChange={this.handleEditorChange}
+						key={i} />
 				</div>
 			})}
 			</div>

@@ -14,7 +14,7 @@ class SaveHTMLButton extends React.Component {
 
 	render() {
 		return (
-			<button onClick={() => this.handleClick()}>Save HTML</button>
+			<button onClick={this.handleClick}>Save HTML</button>
 		);
 	}
 }

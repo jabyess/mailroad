@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon",
+    "babel-node": "babel-node --presets=es2015",
+    "start": "nodemon --exec npm run babel-node index.js",
     "dev": "webpack --watch --progress"
   },
   "author": "jbyess@morningconsult.com",
@@ -18,18 +19,17 @@
   },
   "dependencies": {
     "body-parser": "^1.15.1",
-    "draft-js": "^0.9.1",
+    "dotenv": "^2.0.0",
     "express": "^4.13.4",
     "express-handlebars": "^3.0.0",
     "handlebars": "^4.0.5",
-    "material-ui": "^0.15.0",
-    "mongodb": "^2.1.19",
     "morgan": "^1.7.0",
-    "passport": "^0.3.2",
+    "pg": "^6.1.0",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
     "react-tap-event-plugin": "^1.0.0",
-    "react-tinymce": "^0.5.1"
+    "react-tinymce": "^0.5.1",
+    "sequelize": "^3.24.3"
   },
   "devDependencies": {
     "babel-core": "^6.9.1",
