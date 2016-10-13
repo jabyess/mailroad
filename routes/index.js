@@ -1,4 +1,5 @@
 import express from 'express'
+import models from '../models/index.js';
 
 let router = express.Router();
 

@@ -4,6 +4,7 @@ import express from 'express';
 import hbs from 'express-handlebars';
 import { routes } from './routes/index.js';
 import { API } from './routes/api.js';
+import db from './models/index.js';
 
 dotenv.config();
 
@@ -18,6 +19,10 @@ app.use('/scripts', express.static(path.join(__dirname, 'dist')));
 app.use('/', routes);
 app.use('/api', API);
 
-app.listen(3000, function() {
-  console.log('Listening on port 3000!');
-});
+db.sequelize.sync().then(()=>{
+	app.listen(3000, function() {
+		console.log('Listening on port 3000!');
+	});
+})
+
+
