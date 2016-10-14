@@ -3,13 +3,18 @@
 export default (sequelize, DataTypes) => {
 	let Email = sequelize.define('email', {
 		emailContent: {
-			type: DataTypes.STRING,
+			type: DataTypes.JSON,
 			field: "email_content"
+		},
+		title: {
+			type: DataTypes.STRING,
+			field: "title"
 		},
 		id: {
 			unique: true,
 			type: DataTypes.INTEGER,
-			primaryKey: true
+			primaryKey: true,
+			autoIncrement: true
 		}
 	},
 	{

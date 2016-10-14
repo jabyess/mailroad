@@ -1,37 +1,33 @@
-import express from 'express';
-import db from '../models/index.js';
-import fs from 'fs';
-import util from 'util';
-import bodyParser from 'body-parser';
+import express from 'express'
+import db from '../models/index.js'
+import fs from 'fs'
+import util from 'util'
+import bodyParser from 'body-parser'
 
 let router = express.Router()
-let jsonParser = bodyParser.json();
+let jsonParser = bodyParser.json()
 
-router.post('/createEmail', jsonParser, (req, res, next) => {
-	console.log(req.body);
-	// let data = '';
-	// req.setEncoding('utf8');
-	// req.on('data', (chunk)=>{
-	// 	data += chunk;
-	// });
-	// console.log(res.body);
-	// req.on('end', ()=> {
-	// 	req.body = data;
-	// 	res.send(req.body);
-	// });
-	// console.log(req.query);
-	// console.log(req.params);
-	// console.log(req.route);
-	// console.log(req.route.stack);
+router.get('/listEmails', jsonParser, (req, res) => {
+	db.email.findAll({
+		order: '"updatedAt"DESC',
+		limit: 20
+	}).then((results, wat)=> {
+		res.send(results);
+	})
+})
 
-	// db.email.upsert({
-	// 	email_content: req.body.email_content
-	// });
-
-	res.body = 'received yer post';
-	res.send(res.body);
-
-	next();
+router.post('/createEmail', jsonParser, (req, res) => {
+	console.log(req.body)
+	let emailContent = req.body[0].emailContent
+	let emailTitle = req.body[0].title
+	
+	db.email.create({
+		emailContent: emailContent,
+		title: emailTitle
+	}).then(() => {
+		console.log('inserted: ' + emailContent)
+		res.send(res.body);
+	})
 })
 
 export { router as API }
