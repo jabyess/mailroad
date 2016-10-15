@@ -11,7 +11,7 @@ router.get('/listEmails', jsonParser, (req, res) => {
 	db.email.findAll({
 		order: '"updatedAt"DESC',
 		limit: 20
-	}).then((results, wat)=> {
+	}).then((results, wat) => {
 		res.send(results);
 	})
 })

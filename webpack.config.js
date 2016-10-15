@@ -8,10 +8,13 @@ const PATHS = {
 }
 
 module.exports = {
-	entry : path.join(__dirname, 'src/react-main.jsx'),
+	entry : {
+		main: path.join(__dirname, 'src/react-main.jsx'),
+		emails: path.join(__dirname, 'src/react-emails.jsx') 
+	},
 	output: {
 		path: PATHS.build,
-		filename: 'react-main.js'
+		filename: 'react-[name].js'
 	},
 	module: {
 		loaders: [
