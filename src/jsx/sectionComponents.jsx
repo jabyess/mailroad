@@ -36,7 +36,7 @@ class SectionComponents extends React.Component {
 					<button onClick={this.handleClose}>Close</button>
 					<button onClick={() => this.addComponentToPage()}>Add</button>
 					<select multiple className="componentList" id="componentList">
-						{Object.keys(this.components).map((value, index) => {
+						{Object.keys(this.components).map((value) => {
 							return <SectionComponentList component={value}/>
 						})}
 					</select>

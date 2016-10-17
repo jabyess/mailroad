@@ -27,11 +27,12 @@ class EditorContainer extends React.Component {
 			<div className="editorItems">
 			{this.props.activeEditors.map((cv, i) => {
 				return <div className="editorItem">
-					<h1>{cv.name}</h1>
+					<h1>{cv.editor.name}</h1>
 					<TinyMCE 
-						editorName={cv.name} 
-						content={cv.content} 
-						config={cv.config}
+						id={'editorNumber' + i}
+						editorName={cv.editor.name} 
+						content={cv.editor.content} 
+						config={cv.editor.config}
 						onChange={this.handleEditorChange}
 						key={i} />
 				</div>

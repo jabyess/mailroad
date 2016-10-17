@@ -11,11 +11,18 @@ class MainContainer extends React.Component {
 		super();
 		//should init default editorDefinitions somehow.
 		this.state = {
-			activeEditors: [editorDefinitions.MainMCE]
+			activeEditors: [{
+				editor: editorDefinitions.MainMCE
+			}]
 		}
 	}
 	addEditorToContainer(event) {
-		this.setState(() => { return this.state.activeEditors.push(editorDefinitions[event.detail]) });
+		this.setState(() => {
+			return this.state.activeEditors.push({
+				editor: editorDefinitions[event.detail],
+				id: 'editorNumber'+(this.state.activeEditors.length + 1)
+			}) 
+		});
 	}
 
 	componentWillMount() {
@@ -32,7 +39,7 @@ class MainContainer extends React.Component {
 			<container className="main-container">
 				<AddButton/>
 				<EditorContainer activeEditors={this.state.activeEditors}/>
-				<SaveHTMLButton sectionComponents={this.props}/>
+				<SaveHTMLButton/>
 			</container>
 		)
 	}

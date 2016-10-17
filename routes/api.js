@@ -17,7 +17,6 @@ router.get('/listEmails', jsonParser, (req, res) => {
 })
 
 router.post('/createEmail', jsonParser, (req, res) => {
-	console.log(req.body)
 	let emailContent = req.body[0].emailContent
 	let emailTitle = req.body[0].title
 	
