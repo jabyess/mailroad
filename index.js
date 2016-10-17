@@ -17,7 +17,6 @@ app.use('/scripts', express.static(path.join(__dirname, 'dist')));
 app.use('/', routes);
 app.use('/api', API);
 
-
 // use this to force:true to make db drop all tables and reset schema
 // use when making schema changes
 // db.sequelize.sync({force: true}).then(() => {

@@ -10,7 +10,7 @@ const PATHS = {
 module.exports = {
 	entry : {
 		main: path.join(__dirname, 'src/react-main.jsx'),
-		emails: path.join(__dirname, 'src/react-emails.jsx') 
+		emails: ['whatwg-fetch', path.join(__dirname, 'src/react-emails.jsx')] 
 	},
 	output: {
 		path: PATHS.build,

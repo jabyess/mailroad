@@ -1,17 +1,35 @@
 import React from 'react';
+// import fetch from 'whatwg-fetch';
+import EmailTable from './emailTable.jsx';
 
 
 class EmailContainer extends React.Component {
 	constructor() {
 		super();
-		console.log('emailcontainer has been initialized');
+		this.emailItems = [];
 	}
+
+	componentDidMount() {
+		console.log('emailcontainer mounted');
+		fetch('/api/listEmails')
+			.then((response) => {
+				return response.json()
+			})
+			.then((json) => {
+				this.setState(this.emailItems = json);
+			})
+			.catch((ex)=>{
+				console.log('exception', ex)
+			})
+	} 
 
 	render() {
 		return (
 			<container className="emailContainer">
-				
+				<EmailTable emailItems={this.emailItems}/>				
 			</container>
 		)
 	}
 }
+
+export default EmailContainer

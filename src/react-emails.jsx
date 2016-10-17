@@ -6,4 +6,3 @@ ReactDOM.render(
 	<EmailContainer/>,
 	document.getElementById('emailbuilder-emails')
 );
-
