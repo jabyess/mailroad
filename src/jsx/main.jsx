@@ -14,7 +14,6 @@ class MainContainer extends React.Component {
 				editor: editorDefinitions.MainMCE
 			}]
 		}
-		// this.buttonEventListener = this.buttonEventListener.bind(this);
 
 	}
 	addEditorToContainer(event) {
@@ -26,18 +25,9 @@ class MainContainer extends React.Component {
 		});
 	}
 
-	// getCurrentValue(value) {
-	// 	console.log(this);
-	// 	console.log(value);
-	// }
-
 	componentDidMount() {
 		console.log(this);
 		window.addEventListener('addNewComponentToEditorContainer', (e) => this.addEditorToContainer(e) );
-		// window.addEventListener('saveHTMLButtonClicked', () => {
-		// 	console.log('save clicked');
-		// 	this.getCurrentValue();
-		// });
 	}
 
 	render () {

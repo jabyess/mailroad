@@ -5,9 +5,7 @@ class MainTextEditor extends React.Component {
 	constructor(props) {
 		super(props)
 		this.handleEditorChange = this.handleEditorChange.bind(this)
-		// this.getCurrentValue = this.getCurrentValue.bind(this)
-		this.triggerFormSubmit = this.triggerFormSubmit.bind(this);
-
+		this.triggerCurrentValue = this.triggerCurrentValue.bind(this);
 		this.state = {
 			value: RichTextEditor.createEmptyValue()
 		}
@@ -15,10 +13,12 @@ class MainTextEditor extends React.Component {
 
 	handleEditorChange(value) {
 		this.setState({value})
+		// enable this later as needed for live change updates.
 		// if(this.props.onChange) {
 		// 	this.props.onChange(this.state.value)
 		// }
 	}
+
 	getCurrentValue(value) {
 		if(this.props.currentValue) {
 			this.props.currentValue(this.state.value)

@@ -32,8 +32,4 @@ class EditorContainer extends React.Component {
 	}
 }
 
-// EditorContainer.propTypes = {
-// 	currentValue: React.PropTypes.func
-// }
-
 export default EditorContainer;
