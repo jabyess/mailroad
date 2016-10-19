@@ -1,7 +1,10 @@
 import React from 'react';
-// import ReactDOM from 'react-dom';
 
 class SaveHTMLButton extends React.Component {
+	constructor() {
+		super();
+		this.handleClick = this.handleClick.bind(this);
+	}
 
 	anotherClick() {
 		
@@ -9,7 +12,14 @@ class SaveHTMLButton extends React.Component {
 
 	handleClick() {
 		let htmlButtonClicked = new Event('saveHTMLButtonClicked');
-		window.dispatchEvent(htmlButtonClicked);
+		console.log('dispatch saveHTMLButtonClicked')
+		console.log(this);
+		console.log(this.props.activeEditors);
+		this.props.activeEditors.forEach((cv, i) => {
+			let wat = document.getElementById(cv.id);
+			wat.dispatchEvent(htmlButtonClicked, {detail: 'i'});
+		});
+		// window.dispatchEvent(htmlButtonClicked);
 	}
 
 	render() {

@@ -39,7 +39,7 @@ class MainContainer extends React.Component {
 			<container className="main-container">
 				<AddButton/>
 				<EditorContainer activeEditors={this.state.activeEditors}/>
-				<SaveHTMLButton/>
+				<SaveHTMLButton activeEditors={this.state.activeEditors}/>
 			</container>
 		)
 	}
