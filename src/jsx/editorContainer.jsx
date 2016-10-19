@@ -1,60 +1,39 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import TinyMCE from 'react-tinymce'; 
+import MainTextEditor from './richTextEditor.jsx';
 
 class EditorContainer extends React.Component {
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
 	}
 
-	handleEditorChange(e) {
-		console.log(e);
-    console.log('Content was updated:', e.target.getContent());
+	handleEditorChange(value) {
+		// console.log(value.toString('html'))	
   }
 
-	triggerFormSubmit(e) {
-		// React.Children.map( () => { console.log(this)} )
-		// console.log(wat)
-		console.log(e)
-		console.log('savehtml clicked');
+	getCurrentValue(value) {
+		console.log(value.toString('html'))
 	}
 
 	componentDidMount() {
 		console.log('---editorContainer---')
 		console.log(this);
-		window.addEventListener('saveHTMLButtonClicked', (e) => {
-			console.log('trigger form submit');
-			this.triggerFormSubmit(e);
-		})
-		// this.refs.forEach((cv)=>{
-		// 	console.log(cv)
-		// })
-		let hey = ReactDOM.findDOMNode(this.refs.editorNumber);
-		console.log(hey);
-		hey.addEventListener('saveHTMLButtonClicked', (e) => this.triggerFormSubmit(e) );
+	}
+
+	handleEditorSubmit(e) {
+		console.log(e);
 	}
 
 	render() {
 		return (
 			<div className="editorItems">
-			{this.props.activeEditors.map((cv, i) => {
-				return (
-					<div className="editorItem">
-						<h1>{cv.editor.name}</h1>
-						<TinyMCE 
-							id={'editorNumber' + i}
-							ref="editorNumber"
-							editorName={cv.editor.name} 
-							content={cv.editor.content} 
-							config={cv.editor.config}
-							onChange={this.handleEditorChange}
-							key={i} />
-					</div>
-				)
-			})}
+				<MainTextEditor onChange={this.handleEditorChange} currentValue={this.getCurrentValue} />
 			</div>
 		)
 	}
 }
+
+// EditorContainer.propTypes = {
+// 	currentValue: React.PropTypes.func
+// }
 
 export default EditorContainer;

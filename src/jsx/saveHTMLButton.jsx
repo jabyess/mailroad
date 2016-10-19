@@ -13,12 +13,11 @@ class SaveHTMLButton extends React.Component {
 	handleClick() {
 		let htmlButtonClicked = new Event('saveHTMLButtonClicked');
 		console.log('dispatch saveHTMLButtonClicked')
-		console.log(this);
-		console.log(this.props.activeEditors);
-		this.props.activeEditors.forEach((cv, i) => {
-			let wat = document.getElementById(cv.id);
-			wat.dispatchEvent(htmlButtonClicked, {detail: 'i'});
-		});
+		window.dispatchEvent(htmlButtonClicked);
+		// this.props.activeEditors.forEach((cv, i) => {
+		// 	let wat = document.getElementById(cv.id);
+		// 	wat.dispatchEvent(htmlButtonClicked, {detail: 'i'});
+		// });
 		// window.dispatchEvent(htmlButtonClicked);
 	}
 

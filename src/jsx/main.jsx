@@ -1,6 +1,5 @@
 import React from 'react';
-import NavBar from './navbar.jsx';
-import EditorContainer from './editorContainer.jsx';
+import EditorContainer from './EditorContainer.jsx';
 import editorDefinitions from './editorDefinitions.js';
 import AddButton from './addButton.jsx';
 import SaveHTMLButton from './saveHTMLButton.jsx';
@@ -15,6 +14,8 @@ class MainContainer extends React.Component {
 				editor: editorDefinitions.MainMCE
 			}]
 		}
+		// this.buttonEventListener = this.buttonEventListener.bind(this);
+
 	}
 	addEditorToContainer(event) {
 		this.setState(() => {
@@ -25,20 +26,25 @@ class MainContainer extends React.Component {
 		});
 	}
 
-	componentWillMount() {
+	// getCurrentValue(value) {
+	// 	console.log(this);
+	// 	console.log(value);
+	// }
 
-	}
-
-	componentDidMount(){
+	componentDidMount() {
 		console.log(this);
 		window.addEventListener('addNewComponentToEditorContainer', (e) => this.addEditorToContainer(e) );
+		// window.addEventListener('saveHTMLButtonClicked', () => {
+		// 	console.log('save clicked');
+		// 	this.getCurrentValue();
+		// });
 	}
 
 	render () {
 		return (
 			<container className="main-container">
 				<AddButton/>
-				<EditorContainer activeEditors={this.state.activeEditors}/>
+				<EditorContainer activeEditors={this.state.activeEditors} />
 				<SaveHTMLButton activeEditors={this.state.activeEditors}/>
 			</container>
 		)
