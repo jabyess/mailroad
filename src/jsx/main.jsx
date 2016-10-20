@@ -3,6 +3,7 @@ import EditorContainer from './EditorContainer.jsx';
 import editorDefinitions from './editorDefinitions.js';
 import AddButton from './addButton.jsx';
 import SaveHTMLButton from './saveHTMLButton.jsx';
+import textEditorDefinitions from './textEditorDefinitions.js';
 
 class MainContainer extends React.Component {
 
@@ -10,24 +11,21 @@ class MainContainer extends React.Component {
 		super();
 		//should init default editorDefinitions somehow.
 		this.state = {
-			activeEditors: [{
-				editor: editorDefinitions.MainMCE
-			}]
+			activeEditors: []
 		}
-
 	}
+
 	addEditorToContainer(event) {
-		this.setState(() => {
-			return this.state.activeEditors.push({
-				editor: editorDefinitions[event.detail],
-				id: 'editorNumber'+(this.state.activeEditors.length + 1)
-			}) 
+		console.log(event);
+		this.setState((event) => {
+			return this.state.activeEditors.push(textEditorDefinitions[event.detail]) 
 		});
 	}
 
 	componentDidMount() {
 		console.log(this);
-		window.addEventListener('addNewComponentToEditorContainer', (e) => this.addEditorToContainer(e) );
+		window.addEventListener('addNewEditorToEditorContainer', (e) => this.addEditorToContainer(e) );
+		this.setState(() => { return this.state.activeEditors.push(textEditorDefinitions.defaultEditor) } );
 	}
 
 	render () {

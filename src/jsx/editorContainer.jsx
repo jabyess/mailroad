@@ -1,5 +1,5 @@
 import React from 'react';
-import MainTextEditor from './richTextEditor.jsx';
+import MainTextEditor from './textEditor.jsx';
 
 class EditorContainer extends React.Component {
 	constructor(props) {
@@ -8,7 +8,7 @@ class EditorContainer extends React.Component {
 
 	handleEditorChange(value) {
 		// console.log(value.toString('html'))	
-  }
+	}
 
 	getCurrentValue(value) {
 		console.log(value.toString('html'))
@@ -26,10 +26,18 @@ class EditorContainer extends React.Component {
 	render() {
 		return (
 			<div className="editorItems">
-				<MainTextEditor onChange={this.handleEditorChange} currentValue={this.getCurrentValue} />
+				{this.props.activeEditors.map((cv, i) => {
+					return (
+						<MainTextEditor key={i} onChange={this.handleEditorChange} currentValue={this.getCurrentValue} toolbarConfig={cv}/>
+					)
+				})}
 			</div>
 		)
 	}
+}
+
+EditorContainer.propTypes = {
+	activeEditors: React.PropTypes.array
 }
 
 export default EditorContainer;

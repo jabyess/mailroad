@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import TinyMCE from 'react-tinymce';
-import SectionComponentList from './sectionComponentList.jsx';
-import editorDefinitions from './editorDefinitions.js';
+import SectionComponent from './sectionComponent.jsx';
+import textEditorDefinitions from './textEditorDefinitions.js';
 
 class SectionComponents extends React.Component {
 	constructor() {
 		super();
-		this.components = editorDefinitions;
+		this.components = textEditorDefinitions;
 		this.buttonStyle = {
 			padding: 10,
 			margin: 50,
@@ -24,7 +24,7 @@ class SectionComponents extends React.Component {
 	}
 	addComponentToPage() {
 		const selected = document.getElementById('componentList').value;
-		let componentToAdd = new Event('addNewComponentToEditorContainer');
+		let componentToAdd = new Event('addNewEditorToEditorContainer');
 		componentToAdd.detail = selected;
 		window.dispatchEvent(componentToAdd);
 	}
@@ -36,8 +36,8 @@ class SectionComponents extends React.Component {
 					<button onClick={this.handleClose}>Close</button>
 					<button onClick={() => this.addComponentToPage()}>Add</button>
 					<select multiple className="componentList" id="componentList">
-						{Object.keys(this.components).map((value) => {
-							return <SectionComponentList component={value}/>
+						{Object.keys(this.components).map((value, i) => {
+							return <SectionComponent key={i} component={value}/>
 						})}
 					</select>
 				</div>

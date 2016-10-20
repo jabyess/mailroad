@@ -9,6 +9,7 @@ class MainTextEditor extends React.Component {
 		this.state = {
 			value: RichTextEditor.createEmptyValue()
 		}
+		
 	}
 
 	handleEditorChange(value) {
@@ -41,6 +42,7 @@ class MainTextEditor extends React.Component {
 				value={this.state.value}
 				onChange={this.handleEditorChange}
 				currentValue={this.getCurrentValue}
+				toolbarConfig={this.props.toolbarConfig}
 			/>
 		)
 	}

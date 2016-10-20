@@ -1,6 +1,6 @@
 import React from 'react';
 
-class SectionComponentList extends React.Component {
+class SectionComponent extends React.Component {
 	constructor() {
 		super();
 	}
@@ -12,4 +12,4 @@ class SectionComponentList extends React.Component {
 	}
 }
 
-export default SectionComponentList;
+export default SectionComponent;
