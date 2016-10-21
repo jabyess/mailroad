@@ -13,13 +13,19 @@ class MainContainer extends React.Component {
 		this.state = {
 			activeEditors: []
 		}
+		this.getCurrentValue = this.getCurrentValue.bind(this)
 	}
 
 	addEditorToContainer(event) {
-		console.log(event);
+		console.log(textEditorDefinitions[event.detail])
+		console.log(this.state.activeEditors);
 		this.setState((event) => {
 			return this.state.activeEditors.push(textEditorDefinitions[event.detail]) 
 		});
+	}
+
+	getCurrentValue(compiledValues) {
+		console.log(compiledValues);
 	}
 
 	componentDidMount() {
@@ -32,8 +38,8 @@ class MainContainer extends React.Component {
 		return (
 			<container className="main-container">
 				<AddButton/>
-				<EditorContainer activeEditors={this.state.activeEditors} />
-				<SaveHTMLButton activeEditors={this.state.activeEditors}/>
+				<EditorContainer activeEditors={this.state.activeEditors} compiledValue={this.getCurrentValue}/>
+				<SaveHTMLButton activeEditors={this.state.activeEditors} />
 			</container>
 		)
 	}

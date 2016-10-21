@@ -33,12 +33,13 @@ class MainTextEditor extends React.Component {
 	componentDidMount() {
 		window.addEventListener('saveHTMLButtonClicked', () => {
 			this.triggerCurrentValue();
-		})	
+		})
 	}
 
 	render() {
 		return(
 			<RichTextEditor
+				className="rte-base"
 				value={this.state.value}
 				onChange={this.handleEditorChange}
 				currentValue={this.getCurrentValue}
@@ -50,7 +51,8 @@ class MainTextEditor extends React.Component {
 
 MainTextEditor.propTypes = {
 	onChange: React.PropTypes.func,
-	currentValue: React.PropTypes.func
+	currentValue: React.PropTypes.func,
+	toolbarConfig: React.PropTypes.object
 }
 
 

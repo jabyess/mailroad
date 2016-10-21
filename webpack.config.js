@@ -10,7 +10,7 @@ const PATHS = {
 module.exports = {
 	entry : {
 		main: path.join(__dirname, 'src/react-main.jsx'),
-		emails: ['whatwg-fetch', path.join(__dirname, 'src/react-emails.jsx')] 
+		emails: ['whatwg-fetch', path.join(__dirname, 'src/react-emails.jsx')], 
 	},
 	output: {
 		path: PATHS.build,
@@ -20,8 +20,7 @@ module.exports = {
 		loaders: [
 			{
 				test : /\.sass/,
-				loaders: ['style', 'css', 'sass'],
-				include: PATHS.sass
+				loaders: ['style','css','sass'],
 			},
 			{
 				test: /\.jsx?$/,
