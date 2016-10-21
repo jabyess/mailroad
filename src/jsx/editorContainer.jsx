@@ -19,7 +19,7 @@ class EditorContainer extends React.Component {
 	getCurrentValue(value) {
 		console.log(value.toString('html'))
 		let tmp = value.toString('html')
-		this.setState(()=> { return this.state.compiledHTML.push(tmp) })
+		this.setState( () => { return this.state.compiledHTML.push(tmp) })
 
 		if(this.props.compiledValue) {
 			this.props.compiledValue(this.state.compiledHTML);
@@ -27,12 +27,7 @@ class EditorContainer extends React.Component {
 	}
 
 	componentDidMount() {
-		console.log('---editorContainer---')
-		console.log(this);
-	}
-
-	handleEditorSubmit(e) {
-		console.log(e);
+		console.log('---editorContainer mounted---')
 	}
 
 	render() {

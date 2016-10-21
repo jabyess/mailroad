@@ -20,7 +20,7 @@ class MainTextEditor extends React.Component {
 		// }
 	}
 
-	getCurrentValue(value) {
+	getCurrentValue() {
 		if(this.props.currentValue) {
 			this.props.currentValue(this.state.value)
 		}
@@ -42,7 +42,6 @@ class MainTextEditor extends React.Component {
 				className="rte-base"
 				value={this.state.value}
 				onChange={this.handleEditorChange}
-				currentValue={this.getCurrentValue}
 				toolbarConfig={this.props.toolbarConfig}
 			/>
 		)

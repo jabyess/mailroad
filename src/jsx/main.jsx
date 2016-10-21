@@ -29,7 +29,6 @@ class MainContainer extends React.Component {
 	}
 
 	componentDidMount() {
-		console.log(this);
 		window.addEventListener('addNewEditorToEditorContainer', (e) => this.addEditorToContainer(e) );
 		this.setState(() => { return this.state.activeEditors.push(textEditorDefinitions.defaultEditor) } );
 	}
