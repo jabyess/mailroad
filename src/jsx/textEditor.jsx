@@ -5,11 +5,9 @@ class MainTextEditor extends React.Component {
 	constructor(props) {
 		super(props)
 		this.handleEditorChange = this.handleEditorChange.bind(this)
-		this.triggerCurrentValue = this.triggerCurrentValue.bind(this);
 		this.state = {
 			value: RichTextEditor.createEmptyValue()
 		}
-		
 	}
 
 	handleEditorChange(value) {
@@ -21,19 +19,22 @@ class MainTextEditor extends React.Component {
 	}
 
 	getCurrentValue() {
-		if(this.props.currentValue) {
-			this.props.currentValue(this.state.value)
+		// console.log('triggered');
+		// return this.state.value;
+		if(this.props.getCurrentValueFromChild) {
+			this.props.getCurrentValueFromChild(this.state.value)
 		}
 	}
 	
-	triggerCurrentValue() {
-		this.getCurrentValue();
-	}
+	// triggerCurrentValue() {
+	// 	this.getCurrentValue();
+	// }
 
 	componentDidMount() {
-		window.addEventListener('saveHTMLButtonClicked', () => {
-			this.triggerCurrentValue();
-		})
+		// window.addEventListener('saveHTMLButtonClicked', () => {
+		// 	this.triggerCurrentValue();
+		console.log(this.props);
+		// })
 	}
 
 	render() {
@@ -50,7 +51,7 @@ class MainTextEditor extends React.Component {
 
 MainTextEditor.propTypes = {
 	onChange: React.PropTypes.func,
-	currentValue: React.PropTypes.func,
+	getCurrentValueFromChild: React.PropTypes.func,
 	toolbarConfig: React.PropTypes.object
 }
 

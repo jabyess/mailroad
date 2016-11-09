@@ -6,6 +6,7 @@ class EditorContainer extends React.Component {
 		super(props);
 
 		this.getCurrentValue = this.getCurrentValue.bind(this);
+		this.triggerCurrentValue = this.triggerCurrentValue.bind(this);
 
 		this.state = {
 			compiledHTML: []
@@ -13,31 +14,46 @@ class EditorContainer extends React.Component {
 	}
 
 	handleEditorChange(value) {
-		// console.log(value.toString('html'))	
+		console.log(value.toString('html'))	
 	}
 
-	getCurrentValue(value) {
+	getCurrentValueFromChild(value) {
 		console.log(value.toString('html'))
-		let tmp = value.toString('html')
-		this.setState( () => { return this.state.compiledHTML.push(tmp) })
+		this.setState( () => { return this.state.compiledHTML.push(value.toString('html')) })
+		console.log(this.state);
+	}
 
-		if(this.props.compiledValue) {
-			this.props.compiledValue(this.state.compiledHTML);
-		}
+	triggerCurrentValue() {
+		// this.getCurrentValue();
+		this.props.activeEditors.map((cv, i) => {
+			const editorIndex = 'editor' + i;
+			this[editorIndex].getCurrentValue();
+		});
+
 	}
 
 	componentDidMount() {
 		console.log('---editorContainer mounted---')
+		window.addEventListener('saveHTMLButtonClicked', () => {
+			this.triggerCurrentValue();
+			
+		})
 	}
 
 	render() {
 		return (
-			<div className="editorItems">
-				{this.props.activeEditors.map((cv, i) => {
+			<div>
+				{this.props.activeEditors.map((prop, i) => {
+					var editorRef = 'editor' + i;
 					return (
-						<MainTextEditor key={i} onChange={this.handleEditorChange} currentValue={this.getCurrentValue} toolbarConfig={cv} />
+						<MainTextEditor 
+						key={i}
+						toolbarConfig={prop}
+						ref={(value) => this[editorRef] = value}
+						getCurrentValueFromChild={this.getCurrentValue}
+						/>
 					)
-				})}
+				})}	
 			</div>
 		)
 	}
@@ -45,7 +61,7 @@ class EditorContainer extends React.Component {
 
 EditorContainer.propTypes = {
 	activeEditors: React.PropTypes.array,
-	compiledValue: React.PropTypes.func
+	compiledValue: React.PropTypes.func,
 }
 
 export default EditorContainer;

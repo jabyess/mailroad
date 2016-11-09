@@ -4,6 +4,7 @@ import editorDefinitions from './editorDefinitions.js';
 import AddButton from './addButton.jsx';
 import SaveHTMLButton from './saveHTMLButton.jsx';
 import textEditorDefinitions from './textEditorDefinitions.js';
+import MainTextEditor from './textEditor.jsx';
 
 class MainContainer extends React.Component {
 
@@ -13,7 +14,7 @@ class MainContainer extends React.Component {
 		this.state = {
 			activeEditors: []
 		}
-		this.getCurrentValue = this.getCurrentValue.bind(this)
+		// this.getCurrentValue = this.getCurrentValue.bind(this)
 	}
 
 	addEditorToContainer(event) {
@@ -24,20 +25,20 @@ class MainContainer extends React.Component {
 		});
 	}
 
-	getCurrentValue(compiledValues) {
-		console.log(compiledValues);
-	}
+	// getCurrentValue(compiledValues) {
+	// 	console.log(compiledValues);
+	// }
 
 	componentDidMount() {
 		window.addEventListener('addNewEditorToEditorContainer', (e) => this.addEditorToContainer(e) );
-		this.setState(() => { return this.state.activeEditors.push(textEditorDefinitions.defaultEditor) } );
+		this.setState(() => { return this.state.activeEditors.push(textEditorDefinitions.minimalEditor) });
 	}
 
 	render () {
 		return (
 			<container className="main-container">
 				<AddButton/>
-				<EditorContainer activeEditors={this.state.activeEditors} compiledValue={this.getCurrentValue}/>
+				<EditorContainer activeEditors={this.state.activeEditors}/>
 				<SaveHTMLButton activeEditors={this.state.activeEditors} />
 			</container>
 		)
