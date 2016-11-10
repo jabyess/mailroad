@@ -5,7 +5,7 @@ class EditorContainer extends React.Component {
 	constructor(props) {
 		super(props);
 
-		this.getCurrentValue = this.getCurrentValue.bind(this);
+		this.getCurrentValueFromChild = this.getCurrentValueFromChild.bind(this);
 		this.triggerCurrentValue = this.triggerCurrentValue.bind(this);
 
 		this.state = {
