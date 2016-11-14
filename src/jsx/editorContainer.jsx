@@ -8,9 +8,10 @@ class EditorContainer extends React.Component {
 		this.getCurrentValueFromChild = this.getCurrentValueFromChild.bind(this);
 		this.triggerCurrentValue = this.triggerCurrentValue.bind(this);
 		this.pushTempState = this.pushTempState.bind(this);
-		this.clearTempState = this.clearTempState.bind(this);
+		this.createEmail = this.createEmail.bind(this);
 
 		this.tempState = [];
+		this.inProgress = false;
 		this.state = {
 			compiledHTML: []
 		}
@@ -20,29 +21,33 @@ class EditorContainer extends React.Component {
 		console.log(value.toString('html'))
 	}
 
-	pushTempState(value) {
-		if(this.tempState.length >= this.props.activeEditors.length) {
-			console.log('tempStateLength', this.tempState.length)
-			console.log('ae length', this.props.activeEditors.length)
-			this.clearTempState()
+	pushTempState(value, index) {
+		this.tempState.splice(index, 1, value.toString('html'));
+		if(index === this.props.activeEditors.length - 1 && this.inProgress === true) {
+			this.inProgress = false;
+			this.setState({compiledHTML: this.tempState}, this.createEmail);
 		}
-		this.tempState.push(value.toString('html'))
 	}
 
-	clearTempState() {
-		console.log('state before', this.tempState);
-		this.tempState.splice(0, this.props.activeEditors.length - 1);
-		console.log('state after', this.tempState);
-		this.setState({compiledHTML: this.tempState});
+	createEmail() {
+		console.log(this.state.compiledHTML);
+		fetch('api/createEmail', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				"content": this.state.compiledHTML,
+				"title": "test post",
+			})
+		})
 	}
 
-	getCurrentValueFromChild(value) {
-		this.pushTempState(value);
-		// this.setState( (prevState, props) => {
-		// 	console.log(prevState);
-		// 	return this.state.compiledHTML.push(value.toString('html'))
-		// }, () => { console.log('state updated', this.state.compiledHTML) }
-		// );
+	getCurrentValueFromChild(value, index) {
+		if(this.inProgress === false) {
+			this.inProgress = true;
+		}
+		this.pushTempState(value, index);
 	}
 
 	triggerCurrentValue() {

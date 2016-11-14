@@ -21,9 +21,8 @@ class MainTextEditor extends React.Component {
 	getCurrentValue() {
 		// console.log('triggered');
 		// return this.state.value;
-		console.log(this.props);
 		if(this.props.getCurrentValueFromChild) {
-			this.props.getCurrentValueFromChild(this.state.value)
+			this.props.getCurrentValueFromChild(this.state.value, this.props.index)
 		}
 	}
 	

@@ -1,7 +1,5 @@
 import express from 'express'
 import db from '../models/index.js'
-import fs from 'fs'
-import util from 'util'
 import bodyParser from 'body-parser'
 
 let router = express.Router()
@@ -17,14 +15,13 @@ router.get('/listEmails', jsonParser, (req, res) => {
 })
 
 router.post('/createEmail', jsonParser, (req, res) => {
-	let emailContent = req.body[0].emailContent
-	let emailTitle = req.body[0].title
+	let emailContent = req.body.content
+	let emailTitle = req.body.title
 	
 	db.email.create({
 		emailContent: emailContent,
 		title: emailTitle
 	}).then(() => {
-		console.log('inserted: ' + emailContent)
 		res.send(res.body);
 	})
 })
