@@ -12,10 +12,9 @@
 * navigate yourself to localhost:3000
 
 #### Todo
-* get multi-submit to properly store data in db
-* get sass working with webpack
 * add clickable links to /email route
 	* load data from db into corresponding number of editors
 * ability to delete emails from /email
+* get editor toolbars working & setup more editor definitions
 * handlebars email template files
 * user accounts and authentication (passport.js maybe?)
