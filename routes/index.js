@@ -9,10 +9,4 @@ router.get('/', (req, res, next) => {
 
 });
 
-router.get('/email', (req, res, next) => {
-  console.log('fired /email')
-
-  res.render('email', {})
-});
-
 export { router as routes }

@@ -20,7 +20,7 @@ class MainContainer extends React.Component {
 
 	addEditorToContainer(event) {
 		console.log(textEditorDefinitions[event.detail])
-		console.log(this.state.activeEditors);
+		console.log(this.state.activeEditors)
 		this.setState((event) => {
 			return this.state.activeEditors.push(textEditorDefinitions[event.detail]) 
 		});
