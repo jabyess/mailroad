@@ -7,7 +7,7 @@ import editorDefinitions from './editorDefinitions.js'
 import MainTextEditor from './MainTextEditor.jsx'
 import NavBar from './NavBar.jsx'
 
-class MainContainer extends React.Component {
+export default class MainContainer extends React.Component {
 
 	constructor() {
 		super();
@@ -30,6 +30,10 @@ class MainContainer extends React.Component {
 		window.addEventListener('addNewEditorToEditorContainer', (e) => this.addEditorToContainer(e) );
 		this.setState(() => { return this.state.activeEditors.push(textEditorDefinitions.minimalEditor) });
 	}
+	componentWillMount() {
+		console.log('will mount')
+		// loop through editor logic and render all editors with content inside.
+	}
 
 	render () {
 		return (
@@ -42,5 +46,3 @@ class MainContainer extends React.Component {
 		)
 	}
 }
-
-export default MainContainer;

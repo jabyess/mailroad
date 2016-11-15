@@ -7,8 +7,9 @@ import './sass/main.sass'
 
 ReactDOM.render(
 	<Router history={browserHistory}>
-		<Route path="/" component={MainContainer}/>
-		<Route path="/email" component={EmailContainer}/>
+		<Route path="/" component={EmailContainer}>
+			<Route path="/editor" component={MainContainer}/>
+		</Route>
 	</Router>,
 		document.getElementById('emailbuilder-root')
 );

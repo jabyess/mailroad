@@ -9,7 +9,6 @@ class EmailContainer extends React.Component {
 	}
 
 	componentDidMount() {
-		console.log('emailcontainer mounted');
 		fetch('/api/listEmails')
 			.then((response) => {
 				return response.json()

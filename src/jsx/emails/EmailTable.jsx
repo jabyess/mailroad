@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router'
 
 class EmailTable extends React.Component {
   constructor() {
@@ -8,14 +9,10 @@ class EmailTable extends React.Component {
 
 	formatDate(date) {
 		let splitDate = date.split('T');
-		console.log(splitDate);
 		let time = splitDate[1].substring(0, splitDate[1].length - 5);
 		return splitDate[0] + ' ' + time;
 	}
 	componentDidMount() {
-		console.log(this.props);
-	}
-	componentDidUpdate() {
 		console.log(this.props);
 	}
 
@@ -37,7 +34,7 @@ class EmailTable extends React.Component {
 								<td className="email-checkbox">
 									<input type="checkbox"/>
 								</td>
-								<td className="email-title">{cv.title}</td>
+								<td className="email-title"><Link to={"/editor/"+cv.id}>{cv.title}</Link></td>
 								<td className="email-created-date">{this.formatDate(cv.createdAt)}</td>
 								<td className="email-updated-date">{this.formatDate(cv.updatedAt)}</td>
 							</tr>

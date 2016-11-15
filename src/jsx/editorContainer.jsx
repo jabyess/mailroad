@@ -62,6 +62,9 @@ class EditorContainer extends React.Component {
 		window.addEventListener('saveHTMLButtonClicked', () => {
 			this.triggerCurrentValue();
 		})
+		if(this.props.emailID) {
+			
+		}
 	}
 
 	render() {
