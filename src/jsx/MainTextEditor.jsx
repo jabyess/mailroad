@@ -19,24 +19,11 @@ class MainTextEditor extends React.Component {
 	}
 
 	getCurrentValue() {
-		// console.log('triggered');
-		// return this.state.value;
 		if(this.props.getCurrentValueFromChild) {
 			this.props.getCurrentValueFromChild(this.state.value, this.props.index)
 		}
 	}
 	
-	// triggerCurrentValue() {
-	// 	this.getCurrentValue();
-	// }
-
-	componentDidMount() {
-		// window.addEventListener('saveHTMLButtonClicked', () => {
-		// 	this.triggerCurrentValue();
-		console.log(this.props);
-		// })
-	}
-
 	render() {
 		return(
 			<RichTextEditor

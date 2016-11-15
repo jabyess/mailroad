@@ -1,5 +1,5 @@
 import React from 'react';
-import MainTextEditor from './textEditor.jsx';
+import MainTextEditor from './MainTextEditor.jsx';
 
 class EditorContainer extends React.Component {
 	constructor(props) {
@@ -74,7 +74,6 @@ class EditorContainer extends React.Component {
 						key={i}
 						toolbarConfig={prop}
 						index={i}
-						ref={(value) => {this[editorRef] = value}}
 						getCurrentValueFromChild={this.getCurrentValueFromChild}
 						/>
 					)

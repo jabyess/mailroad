@@ -14,6 +14,7 @@ module.exports = {
 	},
 	output: {
 		path: PATHS.build,
+		publicPath: '/',
 		filename: 'react-[name].js'
 	},
 	module: {

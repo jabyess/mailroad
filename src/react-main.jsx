@@ -1,9 +1,14 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import MainContainer from './jsx/main.jsx';
-import './sass/main.sass';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import MainContainer from './jsx/MainContainer.jsx'
+import EmailContainer from './jsx/emails/EmailContainer.jsx'
+import { Router, Route, browserHistory, IndexRoute, Link } from 'react-router'
+import './sass/main.sass'
 
 ReactDOM.render(
-	<MainContainer/>,
-	document.getElementById('emailbuilder-root')
+	<Router history={browserHistory}>
+		<Route path="/" component={MainContainer}/>
+		<Route path="/email" component={EmailContainer}/>
+	</Router>,
+		document.getElementById('emailbuilder-root')
 );

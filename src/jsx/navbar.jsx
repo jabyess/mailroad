@@ -1,13 +1,13 @@
-import React from 'react';
+import React from 'react'
+import { Link } from 'react-router'
 
 export default class NavBar extends React.Component {
 	render() {
 		return (
-			<div className="navbar">
-				<ul className="navbar-list">
-					<li className="navbar-item"><a href="">Home</a></li>
-					<li className="navbar-item"><a href="">Emails</a></li>
-					<li className="navbar-item"><a href="">Etc</a></li>
+			<div>
+				<ul>
+					<li><Link to="/">Home</Link></li>
+					<li><Link to="/email">Email</Link></li>
 				</ul>
 			</div>
 		);

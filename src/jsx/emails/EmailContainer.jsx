@@ -1,7 +1,5 @@
 import React from 'react';
-// import fetch from 'whatwg-fetch';
-import EmailTable from './emailTable.jsx';
-
+import EmailTable from './EmailTable.jsx';
 
 class EmailContainer extends React.Component {
 	constructor() {

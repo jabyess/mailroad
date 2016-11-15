@@ -1,10 +1,11 @@
-import React from 'react';
-import EditorContainer from './EditorContainer.jsx';
-import editorDefinitions from './editorDefinitions.js';
-import AddButton from './addButton.jsx';
-import SaveHTMLButton from './saveHTMLButton.jsx';
-import textEditorDefinitions from './textEditorDefinitions.js';
-import MainTextEditor from './textEditor.jsx';
+import React from 'react'
+import EditorContainer from './EditorContainer.jsx'
+import AddButton from './AddButton.jsx'
+import SaveHTMLButton from './SaveHTMLButton.jsx'
+import textEditorDefinitions from './textEditorDefinitions.js'
+import editorDefinitions from './editorDefinitions.js'
+import MainTextEditor from './MainTextEditor.jsx'
+import NavBar from './NavBar.jsx'
 
 class MainContainer extends React.Component {
 
@@ -25,10 +26,6 @@ class MainContainer extends React.Component {
 		});
 	}
 
-	// getCurrentValue(compiledValues) {
-	// 	console.log(compiledValues);
-	// }
-
 	componentDidMount() {
 		window.addEventListener('addNewEditorToEditorContainer', (e) => this.addEditorToContainer(e) );
 		this.setState(() => { return this.state.activeEditors.push(textEditorDefinitions.minimalEditor) });
@@ -37,6 +34,7 @@ class MainContainer extends React.Component {
 	render () {
 		return (
 			<container className="main-container">
+				<NavBar/>
 				<AddButton/>
 				<EditorContainer activeEditors={this.state.activeEditors}/>
 				<SaveHTMLButton />

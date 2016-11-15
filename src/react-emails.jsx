@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import EmailContainer from './jsx/emails/email-main.jsx';
+import EmailContainer from './jsx/emails/EmailContainer.jsx';
 import './sass/main.sass';
 
 ReactDOM.render(
