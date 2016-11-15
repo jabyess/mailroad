@@ -1,5 +1,6 @@
-import React from 'react';
-import EmailTable from './EmailTable.jsx';
+import React from 'react'
+import EmailTable from './EmailTable.jsx'
+import NavBar from '../NavBar.jsx'
 
 class EmailContainer extends React.Component {
 	constructor() {
@@ -24,7 +25,8 @@ class EmailContainer extends React.Component {
 	render() {
 		return (
 			<container className="emailContainer">
-				<EmailTable emailItems={this.emailItems}/>				
+				<NavBar/>
+				<EmailTable emailItems={this.emailItems}/>
 			</container>
 		)
 	}

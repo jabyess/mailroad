@@ -68,12 +68,13 @@ class EditorContainer extends React.Component {
 		return (
 			<div>
 				{this.props.activeEditors.map((prop, i) => {
-					var editorRef = 'editor' + i;
+					var editorRef = 'editor' + i
 					return (
 						<MainTextEditor 
 						key={i}
 						toolbarConfig={prop}
 						index={i}
+						ref={(value) => {this[editorRef] = value}}
 						getCurrentValueFromChild={this.getCurrentValueFromChild}
 						/>
 					)

@@ -14,8 +14,12 @@ app.engine('handlebars', hbs({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
 app.use('/components', express.static(path.join(__dirname, '/src/components')));
 app.use('/scripts', express.static(path.join(__dirname, 'dist')));
-app.use('/', routes);
+// app.use('/', routes);
 app.use('/api', API);
+
+app.get('*', (req, res) => {
+	res.sendFile(path.join(__dirname, 'index.html'))
+})
 
 // use this to force:true to make db drop all tables and reset schema
 // use when making schema changes
