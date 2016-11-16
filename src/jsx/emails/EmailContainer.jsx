@@ -2,10 +2,12 @@ import React from 'react'
 import EmailTable from './EmailTable.jsx'
 import NavBar from '../NavBar.jsx'
 
-class EmailContainer extends React.Component {
+export default class EmailContainer extends React.Component {
 	constructor() {
 		super();
-		this.emailItems = [];
+		this.state = {
+			emailItems: []
+		}
 	}
 
 	componentDidMount() {
@@ -14,7 +16,7 @@ class EmailContainer extends React.Component {
 				return response.json()
 			})
 			.then((json) => {
-				this.setState(this.emailItems = json);
+				this.setState({emailItems: json})
 			})
 			.catch((ex)=>{
 				console.log('exception', ex)
@@ -25,10 +27,8 @@ class EmailContainer extends React.Component {
 		return (
 			<container className="emailContainer">
 				<NavBar/>
-				<EmailTable emailItems={this.emailItems}/>
+				<EmailTable emailItems={this.state.emailItems}/>
 			</container>
 		)
 	}
 }
-
-export default EmailContainer

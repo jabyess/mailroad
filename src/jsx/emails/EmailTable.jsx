@@ -2,20 +2,12 @@ import React from 'react'
 import { Link } from 'react-router'
 
 class EmailTable extends React.Component {
-  constructor() {
-    super()
-		// this.state = {};
-  }
-
 	formatDate(date) {
 		let splitDate = date.split('T');
 		let time = splitDate[1].substring(0, splitDate[1].length - 5);
 		return splitDate[0] + ' ' + time;
 	}
-	componentDidMount() {
-		console.log(this.props);
-	}
-
+	
 	render() {
 		return (
 			<table className="email-table-container">

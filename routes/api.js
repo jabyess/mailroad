@@ -9,8 +9,20 @@ router.get('/listEmails', jsonParser, (req, res) => {
 	db.email.findAll({
 		order: '"updatedAt"DESC',
 		limit: 20
-	}).then((results, wat) => {
+	}).then((results) => {
 		res.send(results);
+	})
+})
+
+router.get('/getEmail/:id', (req, res) => {
+	let id = req.params.id
+	db.email.findById(id).then((results) => {
+		//extract only the content we want from db
+		//sequelize returns a lot of extraneous data otherwise
+		//so we use .get and plain:true
+		res.send(results.get({
+			plain: true
+		}))
 	})
 })
 

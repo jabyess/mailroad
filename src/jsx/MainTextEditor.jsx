@@ -23,6 +23,12 @@ class MainTextEditor extends React.Component {
 			this.props.getCurrentValueFromChild(this.state.value, this.props.index)
 		}
 	}
+	componentDidMount () {
+		console.log(this.props);
+		if(this.props.initialValue){
+			this.setState({value: RichTextEditor.createValueFromString(this.props.initialValue, 'html')})
+		}
+	}
 	
 	render() {
 		return(
