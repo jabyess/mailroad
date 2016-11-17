@@ -1,20 +1,24 @@
 import React from 'react'
 import MainTextEditor from './MainTextEditor.jsx'
 import textEditorDefinitions from './textEditorDefinitions.js'
-import editorDefinitions from './editorDefinitions.js'
+import autoBind from 'react-autobind'
 
 class EditorContainer extends React.Component {
 	constructor() {
 		super();
 
-		this.getCurrentValueFromChild = this.getCurrentValueFromChild.bind(this);
-		this.triggerCurrentValue = this.triggerCurrentValue.bind(this);
-		this.pushTempState = this.pushTempState.bind(this);
-		this.createEmail = this.createEmail.bind(this);
-		this.getEmailContents = this.getEmailContents.bind(this)
-		this.updateActiveEditors = this.updateActiveEditors.bind(this)
-		this.tempState = [];
-		this.inProgress = false;
+		autoBind(this,
+			'getCurrentValueFromChild',
+			'triggerCurrentValue',
+			'pushTempState',
+			'createEmail',
+			'getEmailContents',
+			'updateActiveEditors',
+			'getEditorType'
+		)
+
+		this.tempState = []
+		this.inProgress = false
 		this.state = {
 			compiledHTML: [],
 			emailContents: {},
@@ -22,10 +26,20 @@ class EditorContainer extends React.Component {
 		}
 	}
 
-	addEditorToContainer(event) {
+	addEditorToContainer(eventDetail) {
 		this.setState((event) => {
-			return this.state.activeEditors.push({toolbarConfig: textEditorDefinitions[event.detail]}) 
+			return this.state.activeEditors.push({
+				toolbarConfig: textEditorDefinitions[eventDetail],
+				editorType: this.getEditorType(textEditorDefinitions, eventDetail)
+			}) 
 		});
+	}
+
+	getEditorType(editorList, eventDetail) {
+		let newVal = Object.keys(editorList).filter((val) => {
+			return val === eventDetail
+		})
+		return newVal[0]
 	}
 
 	handleEditorChange(value) {
@@ -53,7 +67,6 @@ class EditorContainer extends React.Component {
 					initialValue: content
 				})
 			})
-			
 		})
 	}
 
@@ -67,7 +80,7 @@ class EditorContainer extends React.Component {
 
 	createEmail() {
 		console.log(this.state.compiledHTML);
-		fetch('api/createEmail', {
+		fetch('/api/createEmail', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -95,7 +108,7 @@ class EditorContainer extends React.Component {
 
 	componentDidMount() {
 		console.log('---editorContainer mounted---')
-		window.addEventListener('addNewEditorToEditorContainer', (e) => this.addEditorToContainer(e) );
+		window.addEventListener('addNewEditorToEditorContainer', (e) => this.addEditorToContainer(e.detail) );
 		window.addEventListener('saveHTMLButtonClicked', () => this.triggerCurrentValue() )
 
 		if(this.props.params.id) {
@@ -103,9 +116,16 @@ class EditorContainer extends React.Component {
 			this.getEmailContents(this.props.params.id)
 		}
 		if(!this.props.params.id) {
-			this.setState(() => this.state.activeEditors.push({toolbarConfig: textEditorDefinitions.minimalEditor}) );
+			this.setState(() => this.state.activeEditors.push({
+				toolbarConfig: textEditorDefinitions.minimalEditor,
+				editorType: 'defaultEditor'
+			}) );
 		}
 	}
+	componentDidUpdate (prevProps, prevState) {
+		console.log(prevState);
+	}
+	
 
 	render() {
 		return (
@@ -117,6 +137,7 @@ class EditorContainer extends React.Component {
 							key={i}
 							toolbarConfig={prop.toolbarConfig}
 							index={i}
+							editorType={prop.editorType}
 							initialValue={prop.initialValue}
 							ref={(value) => {this[editorRef] = value}}
 							getCurrentValueFromChild={this.getCurrentValueFromChild}

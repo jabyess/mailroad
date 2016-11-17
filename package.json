@@ -26,6 +26,7 @@
     "handlebars": "^4.0.5",
     "pg": "^6.1.0",
     "react": "^15.1.0",
+    "react-autobind": "^1.0.6",
     "react-dom": "^15.1.0",
     "react-router": "^3.0.0",
     "react-rte": "^0.7.0",

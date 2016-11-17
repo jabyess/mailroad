@@ -1,12 +1,14 @@
-import React from 'react';
+import React from 'react'
+import autoBind from 'react-autobind'
 
 class SaveHTMLButton extends React.Component {
 	constructor() {
-		super();
-		this.handleClick = this.handleClick.bind(this);
+		super()
+		autoBind(this, 'handleClick')
 	}
 
 	handleClick() {
+		console.log('saveHTMLButtonClicked')
 		let htmlButtonClicked = new Event('saveHTMLButtonClicked');
 		window.dispatchEvent(htmlButtonClicked);
 	}

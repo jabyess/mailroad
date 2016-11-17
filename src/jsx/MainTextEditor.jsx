@@ -1,10 +1,13 @@
-import React from 'react';
-import RichTextEditor from 'react-rte';
+import React from 'react'
+import RichTextEditor from 'react-rte'
+import autoBind from 'react-autobind'
 
 class MainTextEditor extends React.Component {
 	constructor(props) {
 		super(props)
-		this.handleEditorChange = this.handleEditorChange.bind(this)
+
+		autoBind(this, 'handleEditorChange')
+
 		this.state = {
 			value: RichTextEditor.createEmptyValue()
 		}
@@ -24,7 +27,6 @@ class MainTextEditor extends React.Component {
 		}
 	}
 	componentDidMount () {
-		console.log(this.props);
 		if(this.props.initialValue){
 			this.setState({value: RichTextEditor.createValueFromString(this.props.initialValue, 'html')})
 		}
