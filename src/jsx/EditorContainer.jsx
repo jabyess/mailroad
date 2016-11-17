@@ -64,7 +64,7 @@ class EditorContainer extends React.Component {
 		this.state.emailContents.emailContent.forEach((content, i) => {
 			this.setState(()=>{
 				this.state.activeEditors.push({
-					initialValue: content
+					initialValue: content,
 				})
 			})
 		})
@@ -122,10 +122,6 @@ class EditorContainer extends React.Component {
 			}) );
 		}
 	}
-	componentDidUpdate (prevProps, prevState) {
-		console.log(prevState);
-	}
-	
 
 	render() {
 		return (
