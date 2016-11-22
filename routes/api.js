@@ -20,19 +20,32 @@ router.get('/getEmail/:id', (req, res) => {
 		//extract only the content we want from db
 		//sequelize returns a lot of extraneous data otherwise
 		//so we use .get and plain:true
-		res.send(results.get({
-			plain: true
-		}))
+		let dataValues = results.get({ plain: true })
+		res.send(dataValues)
 	})
 })
 
-router.post('/createEmail', jsonParser, (req, res) => {
-	let emailContent = req.body.content
-	let emailTitle = req.body.title
-	
+router.post('/createNewEmail', jsonParser, (req,res) => {
+	let emailContent = []
+	let emailTitle = 'test post new email'
+
 	db.email.create({
 		emailContent: emailContent,
 		title: emailTitle
+	}).then((results) => {
+		let dataValues = results.get({ plain: true })
+		res.send(dataValues)
+	})
+})
+
+router.post('/updateEmail', jsonParser, (req, res) => {
+	let emailContent = req.body.content
+	let emailTitle = req.body.title
+	
+	db.email.upsert({
+		emailContent: emailContent,
+		title: emailTitle,
+		id: req.body.id
 	}).then(() => {
 		res.send(res.body);
 	})

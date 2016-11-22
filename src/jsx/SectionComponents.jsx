@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import TinyMCE from 'react-tinymce';
-import SectionComponent from './sectionComponent.jsx';
+import SectionComponent from './SectionComponent.jsx';
 import textEditorDefinitions from './textEditorDefinitions.js';
 
 class SectionComponents extends React.Component {

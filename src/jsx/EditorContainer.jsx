@@ -2,19 +2,21 @@ import React from 'react'
 import MainTextEditor from './MainTextEditor.jsx'
 import textEditorDefinitions from './textEditorDefinitions.js'
 import autoBind from 'react-autobind'
+import EmailMetaContainer from './EmailMetaContainer.jsx'
 
 class EditorContainer extends React.Component {
 	constructor() {
 		super();
 
-		autoBind(this,
+		autoBind(this, 
 			'getCurrentValueFromChild',
-			'triggerCurrentValue',
+			'triggerSaveHTML',
 			'pushTempState',
 			'createEmail',
 			'getEmailContents',
 			'updateActiveEditors',
-			'getEditorType'
+			'getEditorType',
+			'handleParentTitleChange'
 		)
 
 		this.tempState = []
@@ -31,7 +33,7 @@ class EditorContainer extends React.Component {
 			return this.state.activeEditors.push({
 				toolbarConfig: textEditorDefinitions[eventDetail],
 				editorType: this.getEditorType(textEditorDefinitions, eventDetail)
-			}) 
+			})
 		});
 	}
 
@@ -52,8 +54,14 @@ class EditorContainer extends React.Component {
 				return response.json()
 			})
 			.then((json) => {
-				console.log(json)
-				this.setState({emailContents: json}, this.updateActiveEditors)
+				console.log('getEmailContents', json)
+				this.setState({
+					emailContents: json,
+					title: json.title,
+					id: json.id,
+					updatedAt: json.updatedAt,
+					createdAt: json.createdAt
+				}, this.updateActiveEditors)
 			})
 			.catch((ex) => {
 				console.log('exception', ex)
@@ -74,58 +82,93 @@ class EditorContainer extends React.Component {
 		this.tempState.splice(index, 1, value.toString('html'));
 		if(index === this.state.activeEditors.length - 1 && this.inProgress === true) {
 			this.inProgress = false;
-			this.setState({compiledHTML: this.tempState}, this.createEmail);
+			this.setState({compiledHTML: this.tempState}, this.updateEmail);
 		}
 	}
 
 	createEmail() {
-		console.log(this.state.compiledHTML);
-		fetch('/api/createEmail', {
+		fetch('/api/createNewEmail', {
+			method: 'POST',
+			headers: {
+				'Content-Type' : 'application/json'
+			},
+			body: {}
+		})
+		.then((results) => {
+			return results.json()
+		}).then((json) => {
+			this.setState({
+				id: json.id,
+				title: 'New Email',
+				createdAt: json.createdAt,
+				updatedAt: json.updatedAt
+			})
+		})
+	}
+
+	updateEmail() {
+		console.log(this.state.compiledHTML)
+		fetch('/api/updateEmail', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
 				"content": this.state.compiledHTML,
-				"title": "test post",
+				"title": this.state.title,
+				"id" : this.state.id
 			})
 		})
+	}
+
+	handleParentTitleChange(value) {
+		console.log('parentTitle ',value);
+		this.setState({title: value})
 	}
 
 	getCurrentValueFromChild(value, index) {
 		if(this.inProgress === false) {
 			this.inProgress = true;
 		}
-		this.pushTempState(value, index);
+		this.pushTempState(value, index)
 	}
 
-	triggerCurrentValue() {
+	triggerSaveHTML() {
 		this.state.activeEditors.map((cv, i) => {
-			const editorIndex = 'editor' + i;
-			this[editorIndex].getCurrentValue();
+			const editorIndex = 'editor' + i
+			this[editorIndex].getCurrentValue()
 		});
 	}
 
 	componentDidMount() {
 		console.log('---editorContainer mounted---')
 		window.addEventListener('addNewEditorToEditorContainer', (e) => this.addEditorToContainer(e.detail) );
-		window.addEventListener('saveHTMLButtonClicked', () => this.triggerCurrentValue() )
+		window.addEventListener('saveHTMLButtonClicked', () => this.triggerSaveHTML() )
 
 		if(this.props.params.id) {
-			console.log(this.props.params)
+			console.log('mounted with params', this.props.params)
 			this.getEmailContents(this.props.params.id)
 		}
 		if(!this.props.params.id) {
-			this.setState(() => this.state.activeEditors.push({
-				toolbarConfig: textEditorDefinitions.minimalEditor,
+			this.createEmail();
+			this.setState(() => { this.state.activeEditors.push({
+				toolbarConfig: textEditorDefinitions.defaultEditor,
 				editorType: 'defaultEditor'
-			}) );
+			})
+		});
 		}
 	}
 
 	render() {
 		return (
 			<div>
+				<EmailMetaContainer
+					emailID={this.state.id}
+					createdAt={this.state.createdAt}
+					updatedAt={this.state.updatedAt}
+					handleParentTitleChange={this.handleParentTitleChange}
+					title={this.state.title}
+				/>
 				{this.state.activeEditors.map((prop, i) => {
 					var editorRef = 'editor' + i
 					return (
