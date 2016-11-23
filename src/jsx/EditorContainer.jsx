@@ -72,14 +72,19 @@ class EditorContainer extends React.Component {
 		this.state.emailContents.emailContent.forEach((content, i) => {
 			this.setState(()=>{
 				this.state.activeEditors.push({
-					initialValue: content,
+					initialValue: content.content,
+					editorType: content.editorType
 				})
 			})
 		})
 	}
 
-	pushTempState(value, index) {
-		this.tempState.splice(index, 1, value.toString('html'));
+	pushTempState(valueObj, index) {
+		this.tempState.splice(index, 1, 
+		{
+			content: valueObj.value.toString('html'),
+			editorType: valueObj.editorType
+		});
 		if(index === this.state.activeEditors.length - 1 && this.inProgress === true) {
 			this.inProgress = false;
 			this.setState({compiledHTML: this.tempState}, this.updateEmail);
@@ -126,11 +131,11 @@ class EditorContainer extends React.Component {
 		this.setState({title: value})
 	}
 
-	getCurrentValueFromChild(value, index) {
+	getCurrentValueFromChild(valueObj, index) {
 		if(this.inProgress === false) {
 			this.inProgress = true;
 		}
-		this.pushTempState(value, index)
+		this.pushTempState(valueObj, index)
 	}
 
 	triggerSaveHTML() {
@@ -151,11 +156,12 @@ class EditorContainer extends React.Component {
 		}
 		if(!this.props.params.id) {
 			this.createEmail();
-			this.setState(() => { this.state.activeEditors.push({
-				toolbarConfig: textEditorDefinitions.defaultEditor,
-				editorType: 'defaultEditor'
-			})
-		});
+			this.setState(() => { 
+				this.state.activeEditors.push({
+					toolbarConfig: textEditorDefinitions.defaultEditor,
+					editorType: 'defaultEditor'
+				})
+			});
 		}
 	}
 

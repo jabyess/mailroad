@@ -23,7 +23,10 @@ class MainTextEditor extends React.Component {
 
 	getCurrentValue() {
 		if(this.props.getCurrentValueFromChild) {
-			this.props.getCurrentValueFromChild(this.state.value, this.props.index)
+			this.props.getCurrentValueFromChild({
+				value: this.state.value,
+				editorType: this.props.toolbarConfig
+			}, this.props.index)
 		}
 	}
 	componentDidMount () {
