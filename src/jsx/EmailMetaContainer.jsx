@@ -12,12 +12,6 @@ export default class EmailMetaContainer extends React.Component {
 		if(this.props.handleParentTitleChange) {
 			this.props.handleParentTitleChange(event.target.value)
 		}
-		// this.setState({value: event.target.value})
-	}
-
-	componentDidMount() {
-		console.log('metacontainer props', this.props)
-		// this.setState({value: this.props.title})
 	}
 
 	render() {

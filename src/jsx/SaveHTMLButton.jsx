@@ -8,7 +8,6 @@ class SaveHTMLButton extends React.Component {
 	}
 
 	handleClick() {
-		console.log('saveHTMLButtonClicked')
 		let htmlButtonClicked = new Event('saveHTMLButtonClicked');
 		window.dispatchEvent(htmlButtonClicked);
 	}

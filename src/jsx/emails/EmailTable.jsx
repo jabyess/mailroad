@@ -23,9 +23,7 @@ class EmailTable extends React.Component {
 					{this.props.emailItems.map((cv, i) => {
 						return (
 							<tr className="email-table-row" key={i}>
-								<td className="email-checkbox">
-									<input type="checkbox"/>
-								</td>
+								<td className="email-delete">-</td>
 								<td className="email-title"><Link to={"/editor/"+cv.id}>{cv.title}</Link></td>
 								<td className="email-created-date">{this.formatDate(cv.createdAt)}</td>
 								<td className="email-updated-date">{this.formatDate(cv.updatedAt)}</td>

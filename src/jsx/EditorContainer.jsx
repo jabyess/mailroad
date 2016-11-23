@@ -44,17 +44,12 @@ class EditorContainer extends React.Component {
 		return newVal[0]
 	}
 
-	handleEditorChange(value) {
-		console.log(value.toString('html'))
-	}
-
 	getEmailContents(id) {
 		fetch(`/api/getEmail/${id}`)
 			.then((response) => {
 				return response.json()
 			})
 			.then((json) => {
-				console.log('getEmailContents', json)
 				this.setState({
 					emailContents: json,
 					title: json.title,
@@ -112,7 +107,6 @@ class EditorContainer extends React.Component {
 	}
 
 	updateEmail() {
-		console.log(this.state.compiledHTML)
 		fetch('/api/updateEmail', {
 			method: 'POST',
 			headers: {
@@ -127,7 +121,6 @@ class EditorContainer extends React.Component {
 	}
 
 	handleParentTitleChange(value) {
-		console.log('parentTitle ',value);
 		this.setState({title: value})
 	}
 
@@ -146,12 +139,10 @@ class EditorContainer extends React.Component {
 	}
 
 	componentDidMount() {
-		console.log('---editorContainer mounted---')
 		window.addEventListener('addNewEditorToEditorContainer', (e) => this.addEditorToContainer(e.detail) );
 		window.addEventListener('saveHTMLButtonClicked', () => this.triggerSaveHTML() )
 
 		if(this.props.params.id) {
-			console.log('mounted with params', this.props.params)
 			this.getEmailContents(this.props.params.id)
 		}
 		if(!this.props.params.id) {

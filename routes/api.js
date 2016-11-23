@@ -51,4 +51,14 @@ router.post('/updateEmail', jsonParser, (req, res) => {
 	})
 })
 
+router.delete('/deleteEmail/:id', jsonParser, (req, res) => {
+	let id = req.params.id
+	console.log('deleting email ID: ', id)
+	// db.email.destroy({
+	// 	where: {id: id}
+	// }).then(()=>{
+	// 	res.send(res.body)
+	// })
+})
+
 export { router as API }
