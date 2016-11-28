@@ -39,26 +39,22 @@ router.post('/createNewEmail', jsonParser, (req,res) => {
 })
 
 router.post('/updateEmail', jsonParser, (req, res) => {
-	let emailContent = req.body.content
-	let emailTitle = req.body.title
-	
 	db.email.upsert({
-		emailContent: emailContent,
-		title: emailTitle,
+		emailContent: req.body.content,
+		title: req.body.title,
 		id: req.body.id
 	}).then(() => {
-		res.send(res.body);
+		res.send(res.body)
 	})
 })
 
-router.delete('/deleteEmail/:id', jsonParser, (req, res) => {
-	let id = req.params.id
-	console.log('deleting email ID: ', id)
-	// db.email.destroy({
-	// 	where: {id: id}
-	// }).then(()=>{
-	// 	res.send(res.body)
-	// })
+router.delete('/deleteEmail/:id', (req, res) => {
+	db.email.findById(req.params.id)
+	.then((instance) => {
+		return instance.destroy()
+	}).then((results) => {
+		res.send(res.body)
+	})
 })
 
 export { router as API }

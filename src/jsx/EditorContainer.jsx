@@ -28,7 +28,8 @@ class EditorContainer extends React.Component {
 		}
 	}
 
-	addEditorToContainer(eventDetail) {
+	addEditorToContainer(event) {
+		let eventDetail = event.detail
 		this.setState((event) => {
 			return this.state.activeEditors.push({
 				toolbarConfig: textEditorDefinitions[eventDetail],
@@ -139,8 +140,11 @@ class EditorContainer extends React.Component {
 	}
 
 	componentDidMount() {
-		window.addEventListener('addNewEditorToEditorContainer', (e) => this.addEditorToContainer(e.detail) );
-		window.addEventListener('saveHTMLButtonClicked', () => this.triggerSaveHTML() )
+		this.addEditorTempFunction = (e) => {
+			this.addEditorToContainer(e)
+		}
+		window.addEventListener('addNewEditorToEditorContainer', this.addEditorTempFunction );
+		window.addEventListener('saveHTMLButtonClicked', this.triggerSaveHTML )
 
 		if(this.props.params.id) {
 			this.getEmailContents(this.props.params.id)
@@ -155,6 +159,13 @@ class EditorContainer extends React.Component {
 			});
 		}
 	}
+
+	componentWillUnmount () {
+		window.removeEventListener('addNewEditorToEditorContainer', this.addEditorTempFunction)
+		this.setState({})
+		window.removeEventListener('saveHTMLButtonClicked', this.triggerSaveHTML)
+	}
+	
 
 	render() {
 		return (

@@ -1,16 +1,21 @@
 import React from 'react'
 import EmailTable from './EmailTable.jsx'
 import NavBar from '../NavBar.jsx'
+import autoBind from 'react-autobind'
 
 export default class EmailContainer extends React.Component {
 	constructor() {
 		super();
+
+		autoBind(this, 'listEmails')
+
+		
 		this.state = {
 			emailItems: []
 		}
 	}
 
-	componentDidMount() {
+	listEmails() {
 		fetch('/api/listEmails')
 			.then((response) => {
 				return response.json()
@@ -21,7 +26,15 @@ export default class EmailContainer extends React.Component {
 			.catch((ex)=>{
 				console.log('exception', ex)
 			})
+	}
+
+	componentDidMount() {
+		this.listEmails()
 	} 
+	// componentDidUpdate (prevProps, prevState) {
+	// 	this.listEmails()
+	// }
+	
 
 	render() {
 		return (
