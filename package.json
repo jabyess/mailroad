@@ -24,6 +24,7 @@
     "express": "^4.13.4",
     "express-handlebars": "^3.0.0",
     "handlebars": "^4.0.5",
+    "juice": "^4.0.2",
     "pg": "^6.1.0",
     "react": "^15.1.0",
     "react-autobind": "^1.0.6",

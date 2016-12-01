@@ -10,6 +10,10 @@ export default (sequelize, DataTypes) => {
 			type: DataTypes.STRING,
 			field: "title"
 		},
+		template: {
+			type: DataTypes.STRING,
+			field: "template"
+		},
 		id: {
 			unique: true,
 			type: DataTypes.INTEGER,

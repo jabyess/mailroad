@@ -1,3 +1,5 @@
+import fs from 'fs'
+import path from 'path'
 import express from 'express'
 import db from '../models/index.js'
 import bodyParser from 'body-parser'
@@ -10,7 +12,22 @@ router.get('/listEmails', jsonParser, (req, res) => {
 		order: '"updatedAt"DESC',
 		limit: 20
 	}).then((results) => {
-		res.send(results);
+		res.send(results)
+	})
+})
+
+router.get('/templates', (req, res) => {
+	const templateDir = path.resolve(__dirname, '../templates')
+	fs.readdir(templateDir, (err, files) => {
+		if(err) {
+			throw new Exception('error reading templates: ', err)
+		}
+		else {
+			let fileList = files.map( (f, i) => {
+				return path.basename(f, '.hbs')
+			})
+			res.send(fileList)
+		}
 	})
 })
 
@@ -42,7 +59,8 @@ router.post('/updateEmail', jsonParser, (req, res) => {
 	db.email.upsert({
 		emailContent: req.body.content,
 		title: req.body.title,
-		id: req.body.id
+		id: req.body.id,
+		template: req.body.template
 	}).then(() => {
 		res.send(res.body)
 	})

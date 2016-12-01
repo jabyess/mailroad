@@ -5,7 +5,7 @@ export default class EmailMetaContainer extends React.Component {
 
 	constructor(props) {
 		super(props);
-		autoBind(this, 'handleChildTitleChange')
+		autoBind(this, 'handleChildTitleChange', 'handleChildTemplateChange')
 	}
 
 	handleChildTitleChange(event) {
@@ -13,10 +13,25 @@ export default class EmailMetaContainer extends React.Component {
 			this.props.handleParentTitleChange(event.target.value)
 		}
 	}
+	handleChildTemplateChange(event) {
+		if(this.props.handleParentTemplateChange) {
+			this.props.handleParentTemplateChange(event.target.value)
+		}
+	}
 
 	render() {
 		return (
 			<div className="email-meta--container">
+				<select 
+					className="email-meta--template"
+					name="EmailTemplates" 
+					onChange={this.handleChildTemplateChange}
+					value={this.props.selectedTemplate} >
+					<option disabled>--Select a Template--</option>
+					{this.props.templates.map((cv, i) => {
+						return <option value={cv} key={i}>{cv}</option>
+					})}
+				</select>
 				<input className="email-meta--title"
 					type="text"
 					value={this.props.title}

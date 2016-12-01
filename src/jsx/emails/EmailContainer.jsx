@@ -8,7 +8,6 @@ export default class EmailContainer extends React.Component {
 		super();
 
 		autoBind(this, 'listEmails')
-
 		
 		this.state = {
 			emailItems: []
@@ -23,8 +22,8 @@ export default class EmailContainer extends React.Component {
 			.then((json) => {
 				this.setState({emailItems: json})
 			})
-			.catch((ex)=>{
-				console.log('exception', ex)
+			.catch((ex) => {
+				console.log('listEmails exception: ', ex)
 			})
 	}
 
