@@ -2,6 +2,7 @@ import React from 'react'
 import EditorContainer from './EditorContainer.jsx'
 import AddButton from './AddButton.jsx'
 import SaveHTMLButton from './SaveHTMLButton.jsx'
+import CompileHTMLButton from './CompileHTMLButton.jsx'
 import MainTextEditor from './MainTextEditor.jsx'
 import NavBar from './NavBar.jsx'
 
@@ -22,6 +23,7 @@ export default class MainContainer extends React.Component {
 				<AddButton/>
 				<EditorContainer params={this.props.params} />
 				<SaveHTMLButton />
+				<CompileHTMLButton />
 			</container>
 		)
 	}

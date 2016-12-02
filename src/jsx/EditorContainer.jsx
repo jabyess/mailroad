@@ -16,6 +16,7 @@ class EditorContainer extends React.Component {
 			'getEmailContents',
 			'updateActiveEditors',
 			'getEditorType',
+			'compileTemplate',
 			'handleParentTitleChange',
 			'handleParentTemplateChange'
 		)
@@ -162,12 +163,34 @@ class EditorContainer extends React.Component {
 		});
 	}
 
+	compileTemplate() {
+		console.log('fired compileTemplate')
+		fetch('/api/compileTemplate', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				emailContent : this.state.emailContents.emailContent,
+				title : this.state.title,
+				template : this.state.selectedTemplate
+			})
+		})
+		.then((response) => {
+			return response.text()
+		})
+		.then((text) => {
+			console.log(text)
+		})
+	}
+
 	componentDidMount() {
 		this.addEditorTempFunction = (e) => {
 			this.addEditorToContainer(e)
 		}
-		window.addEventListener('addNewEditorToEditorContainer', this.addEditorTempFunction );
+		window.addEventListener('addNewEditorToEditorContainer', this.addEditorTempFunction )
 		window.addEventListener('saveHTMLButtonClicked', this.triggerSaveHTML )
+		window.addEventListener('compileTemplateFromSource', this.compileTemplate )
 
 		this.getTemplates()
 
@@ -191,6 +214,7 @@ class EditorContainer extends React.Component {
 	componentWillUnmount () {
 		window.removeEventListener('addNewEditorToEditorContainer', this.addEditorTempFunction)
 		window.removeEventListener('saveHTMLButtonClicked', this.triggerSaveHTML)
+		window.removeEventListener('compileTemplateFromSource', this.compileTemplate)
 	}
 
 	render() {

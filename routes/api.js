@@ -3,6 +3,7 @@ import path from 'path'
 import express from 'express'
 import db from '../models/index.js'
 import bodyParser from 'body-parser'
+import Utils from '../utils.js'
 
 let router = express.Router()
 let jsonParser = bodyParser.json()
@@ -29,6 +30,14 @@ router.get('/templates', (req, res) => {
 			res.send(fileList)
 		}
 	})
+});
+
+router.post('/compileTemplate', jsonParser, (req,res) => {
+	Utils.getCompiledHandlebarsTemplate(req.body, (compiledTemplate) => {
+		const inlinedTemplate = Utils.inlineEmailCSS(compiledTemplate)
+		res.send(inlinedTemplate)
+	})
+
 })
 
 router.get('/getEmail/:id', (req, res) => {

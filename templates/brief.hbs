@@ -419,8 +419,9 @@
 									<tr>
 										<td>
 											{{title}}
-											{{byline}}
-											{{content}}
+											{{#each emailContent}}
+												{{{this.content}}}
+											{{/each}}
 										</td>
 									</tr>
 							</table>
