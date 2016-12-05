@@ -219,7 +219,7 @@ class EditorContainer extends React.Component {
 
 	render() {
 		return (
-			<div>
+			<div className="editor-container">
 				<EmailMetaContainer
 					emailID={this.state.id}
 					createdAt={this.state.createdAt}

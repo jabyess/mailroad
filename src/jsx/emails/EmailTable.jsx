@@ -8,6 +8,16 @@ class EmailTable extends React.Component {
 		return splitDate[0] + ' ' + time;
 	}
 
+	refreshEmails() {
+		fetch('/api/listEmails')
+		.then((response) => {
+			return response.json()
+		})
+		.then((json) => {
+
+		}) 
+	}
+
 	deleteEmail(id) {
 		console.log('deleting: ', id)
 		fetch(`/api/deleteEmail/${id}`, {
@@ -15,9 +25,6 @@ class EmailTable extends React.Component {
 		})
 		.then((response) => {
 			return response
-		})
-		.then((response) => {
-			console.log(response)
 		})
 	}
 	
@@ -27,6 +34,7 @@ class EmailTable extends React.Component {
 				<thead>
 				<tr>
 					<th>Select</th>
+					<th>Delete</th>
 					<th>Title</th>
 					<th>Created Date</th>
 					<th>Last Updated Date</th>
@@ -36,6 +44,9 @@ class EmailTable extends React.Component {
 					{this.props.emailItems.map((cv, i) => {
 						return (
 							<tr className="email-table-row" key={i}>
+								<td>
+									<input type="checkbox"/>
+								</td>
 								<td className="email-delete" onClick={()=> { this.deleteEmail(cv.id) }}><span>-</span></td>
 								<td className="email-title"><Link to={"/editor/"+cv.id}>{cv.title}</Link></td>
 								<td className="email-created-date">{this.formatDate(cv.createdAt)}</td>

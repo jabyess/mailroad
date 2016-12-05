@@ -20,6 +20,7 @@
   "dependencies": {
     "babel-cli": "^6.16.0",
     "body-parser": "^1.15.2",
+    "classnames": "^2.2.5",
     "dotenv": "^2.0.0",
     "express": "^4.13.4",
     "express-handlebars": "^3.0.0",
@@ -32,7 +33,6 @@
     "react-router": "^3.0.0",
     "react-rte": "^0.7.0",
     "react-tap-event-plugin": "^1.0.0",
-    "react-tinymce": "^0.5.1",
     "sequelize": "^3.24.3",
     "whatwg-fetch": "^1.0.0"
   },

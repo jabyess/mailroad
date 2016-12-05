@@ -1,0 +1,23 @@
+.navbar
+	background-color: #a9c873
+	display: flex
+	justify-content: space-between
+	padding: 10px
+	.navbar__section
+		display: flex
+		align-items: center
+		.navbar__item
+			justify-content: space-between
+			border: 1px solid #FFFFFF
+			padding: 5px 15px
+			font-size: 18px
+			border-radius: 5px
+			a
+				text-decoration: none
+				&:visited 
+					color: inherit
+			.active
+				text-decoration: underline
+
+		.navbar__item + .navbar__item
+			margin-left: 10px

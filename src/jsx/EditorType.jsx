@@ -1,6 +1,6 @@
 import React from 'react';
 
-class SectionComponent extends React.Component {
+class EditorType extends React.Component {
 	render() {
 		return (
 			<option>{this.props.component}</option>
@@ -8,4 +8,4 @@ class SectionComponent extends React.Component {
 	}
 }
 
-export default SectionComponent;
+export default EditorType;

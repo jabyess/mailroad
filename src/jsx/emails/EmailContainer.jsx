@@ -2,7 +2,7 @@ import React from 'react'
 import EmailTable from './EmailTable.jsx'
 import NavBar from '../NavBar.jsx'
 import autoBind from 'react-autobind'
-
+import EmailControls from './EmailControls.jsx'
 export default class EmailContainer extends React.Component {
 	constructor() {
 		super();
@@ -39,6 +39,7 @@ export default class EmailContainer extends React.Component {
 		return (
 			<container className="emailContainer">
 				<NavBar/>
+				<EmailControls/>
 				<EmailTable emailItems={this.state.emailItems}/>
 			</container>
 		)

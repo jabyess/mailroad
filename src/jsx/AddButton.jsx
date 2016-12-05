@@ -1,12 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import SectionComponents from './SectionComponents.jsx';
+import EditorTypes from './EditorTypes.jsx';
 
 class AddButton extends React.Component {
+	constructor() {
+		super()
+		this.handleClick = this.handleClick.bind(this)
+	}
+
 	handleClick() {
 		ReactDOM.render(
-			<SectionComponents/>,
-			document.getElementById('sectionComponentModal')
+			<EditorTypes/>,
+			document.getElementById('editor-types')
 		);
 	}
 

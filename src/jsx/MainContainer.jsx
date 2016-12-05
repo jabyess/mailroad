@@ -3,6 +3,7 @@ import EditorContainer from './EditorContainer.jsx'
 import AddButton from './AddButton.jsx'
 import SaveHTMLButton from './SaveHTMLButton.jsx'
 import CompileHTMLButton from './CompileHTMLButton.jsx'
+import EditorTypes from './EditorTypes.jsx'
 import MainTextEditor from './MainTextEditor.jsx'
 import NavBar from './NavBar.jsx'
 
@@ -12,15 +13,12 @@ export default class MainContainer extends React.Component {
 		super();
 		//should init default editorDefinitions somehow.
 	}
-	componentDidMount() {
-		console.log('maincontainer props', this.props);
-	}
-	
+
 	render () {
 		return (
 			<container className="main-container">
-				<NavBar/>
-				<AddButton/>
+				<NavBar />
+				<AddButton />
 				<EditorContainer params={this.props.params} />
 				<SaveHTMLButton />
 				<CompileHTMLButton />

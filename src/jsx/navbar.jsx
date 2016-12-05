@@ -5,11 +5,11 @@ export default class NavBar extends React.Component {
 	render() {
 		return (
 			<div className="navbar">
-				<ul>
-					<li><Link activeClassName="active" to="/">Home</Link></li>
-					<li><Link activeClassName="active" to="/editor">Create Email</Link></li>
-					<li><Link activeClassName="active" to="/admin">Admin</Link></li>
-				</ul>
+				<div className="navbar__section">
+					<div className="navbar__item"><Link activeClassName="active" to="/">Home</Link></div>
+					<div className="navbar__item"><Link activeClassName="active" to="/editor">Create Email</Link></div>
+					<div className="navbar__item"><Link activeClassName="active" to="/admin">Admin</Link></div>
+				</div>
 			</div>
 		);
 	}
