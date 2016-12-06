@@ -7,10 +7,11 @@ export default class EmailContainer extends React.Component {
 	constructor() {
 		super();
 
-		autoBind(this, 'listEmails')
+		autoBind(this, 'listEmails', 'updateSelected')
 		
 		this.state = {
-			emailItems: []
+			emailItems: [],
+			selectedEmails: []
 		}
 	}
 
@@ -27,9 +28,26 @@ export default class EmailContainer extends React.Component {
 			})
 	}
 
+	updateSelected(selected) {
+		this.setState(() => {
+			const index = this.state.selectedEmails.indexOf(selected)
+			if(index >= 0) {
+				return this.state.selectedEmails.splice(index, 1)
+			}
+			else {
+				return this.state.selectedEmails.push(selected)
+			}
+		})
+	}
+
+	refreshEmails() {
+		
+	}
+
 	componentDidMount() {
 		this.listEmails()
-	} 
+	}
+
 	// componentDidUpdate (prevProps, prevState) {
 	// 	this.listEmails()
 	// }
@@ -39,8 +57,8 @@ export default class EmailContainer extends React.Component {
 		return (
 			<container className="emailContainer">
 				<NavBar/>
-				<EmailControls/>
-				<EmailTable emailItems={this.state.emailItems}/>
+				<EmailControls selectedEmails={this.state.selectedEmails} refreshEmails={this.refreshEmails}/>
+				<EmailTable emailItems={this.state.emailItems} updateSelected={this.updateSelected}/>
 			</container>
 		)
 	}
