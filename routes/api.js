@@ -30,14 +30,13 @@ router.get('/templates', (req, res) => {
 			res.send(fileList)
 		}
 	})
-});
+})
 
 router.post('/compileTemplate', jsonParser, (req,res) => {
 	Utils.getCompiledHandlebarsTemplate(req.body, (compiledTemplate) => {
 		const inlinedTemplate = Utils.inlineEmailCSS(compiledTemplate)
 		res.send(inlinedTemplate)
 	})
-
 })
 
 router.get('/getEmail/:id', (req, res) => {
@@ -54,7 +53,6 @@ router.get('/getEmail/:id', (req, res) => {
 router.post('/createNewEmail', jsonParser, (req,res) => {
 	let emailContent = []
 	let emailTitle = 'test post new email'
-
 	db.email.create({
 		emailContent: emailContent,
 		title: emailTitle
@@ -83,9 +81,29 @@ router.post('/deleteEmail', jsonParser, (req, res) => {
 		where: { id: emailsToDelete }
 	})
 	.then((instance) => {
-		console.log(instance)
-		res.send(res.body)
+		//returns number of affected rows
+		res.send('deleted', instance, 'emails')
 	})
+})
+
+router.post('/copyEmail', jsonParser, (req, res) => {
+	const id = req.body.id[0]
+	db.email.findById(id)
+		.then((instance) => {
+			console.log(instance.get({plain:true}))
+			return instance.get({plain: true})
+		})
+		.then((newEmail)=> {
+			db.email.create({
+				emailContent: newEmail.emailContent,
+				template: newEmail.template,
+				title: newEmail.title,
+			})
+			.then(()=> {
+				res.sendStatus(200)
+			})
+		})
+	
 })
 
 export { router as API }

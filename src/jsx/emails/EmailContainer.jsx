@@ -3,15 +3,21 @@ import EmailTable from './EmailTable.jsx'
 import NavBar from '../NavBar.jsx'
 import autoBind from 'react-autobind'
 import EmailControls from './EmailControls.jsx'
+import EmailTableRow from './EmailTableRow.jsx'
+
 export default class EmailContainer extends React.Component {
 	constructor() {
 		super();
 
-		autoBind(this, 'listEmails', 'updateSelected')
+		autoBind(this, 
+			'listEmails', 
+			'updateSelected',
+			'refreshEmailList'
+		)
 		
 		this.state = {
 			emailItems: [],
-			selectedEmails: []
+			selectedCheckboxes: {}
 		}
 	}
 
@@ -28,37 +34,56 @@ export default class EmailContainer extends React.Component {
 			})
 	}
 
-	updateSelected(selected) {
-		this.setState(() => {
-			const index = this.state.selectedEmails.indexOf(selected)
-			if(index >= 0) {
-				return this.state.selectedEmails.splice(index, 1)
-			}
-			else {
-				return this.state.selectedEmails.push(selected)
-			}
-		})
+	refreshEmailList() {
+		this.listEmails()
+		this.setState({selectedCheckboxes: {}}) 
 	}
 
-	refreshEmails() {
-		
+	updateSelected(value) {
+		if(this.state.selectedCheckboxes.hasOwnProperty(value.toString())) {
+			this.setState(() => {
+				return delete this.state.selectedCheckboxes[value]
+			})
+		}
+		else {
+			this.setState(() => {
+				this.state.selectedCheckboxes[value] = true
+			})
+		}
 	}
 
 	componentDidMount() {
 		this.listEmails()
 	}
 
-	// componentDidUpdate (prevProps, prevState) {
-	// 	this.listEmails()
-	// }
-	
-
 	render() {
 		return (
 			<container className="emailContainer">
 				<NavBar/>
-				<EmailControls selectedEmails={this.state.selectedEmails} refreshEmails={this.refreshEmails}/>
-				<EmailTable emailItems={this.state.emailItems} updateSelected={this.updateSelected}/>
+				<EmailControls selectedCheckboxes={this.state.selectedCheckboxes} refreshEmailList={this.refreshEmailList} />
+				<table className="email-table">
+					<thead>
+						<tr>
+							<th>Select</th>
+							<th>Title</th>
+							<th>Created Date</th>
+							<th>Last Updated Date</th>
+						</tr>
+					</thead>
+					<tbody>
+						{this.state.emailItems.map((cv, i) => {
+							return (
+								<EmailTableRow
+									randoProp={this.state.selectedCheckboxes[cv.id]}
+									checked={this.state.selectedCheckboxes[cv.id]}
+									rowValue={cv}
+									key={i}
+									updateSelected={this.updateSelected}
+								/>
+							)
+						})}
+					</tbody>
+				</table>
 			</container>
 		)
 	}
