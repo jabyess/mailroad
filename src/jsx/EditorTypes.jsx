@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import TinyMCE from 'react-tinymce';
 import EditorType from './EditorType.jsx';
 import textEditorDefinitions from './textEditorDefinitions.js';
 import classNames from 'classnames'
@@ -15,7 +14,7 @@ class EditorTypes extends React.Component {
 			opacity: 1
 		}
 	}
-	
+
 	componentDidMount() {
 		console.log('EditorTypes Mounted');
 	}
