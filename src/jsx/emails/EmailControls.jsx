@@ -14,7 +14,6 @@ export default class EmailControls extends React.Component {
 	}
 
 	handleDelete() {
-		console.log('emailcontrols selectedEmails', this.state.selectedEmails)
 		fetch('/api/deleteEmail', {
 			method: 'POST',
 			headers: {

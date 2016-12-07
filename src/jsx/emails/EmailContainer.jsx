@@ -36,7 +36,7 @@ export default class EmailContainer extends React.Component {
 
 	refreshEmailList() {
 		this.listEmails()
-		this.setState({selectedCheckboxes: {}}) 
+		this.setState({ selectedCheckboxes: {} }) 
 	}
 
 	updateSelected(value) {

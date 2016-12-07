@@ -15,9 +15,15 @@ app.use('/components', express.static(path.join(__dirname, '/src/components')));
 app.use('/scripts', express.static(path.join(__dirname, 'dist')));
 app.use('/api', API);
 
+
+app.get('/editor/*', (req, res) => {
+	res.redirect('/')
+})
+
 app.get('*', (req, res) => {
 	res.sendFile(path.join(__dirname, 'index.html'))
 })
+
 
 // use this to force:true to make db drop all tables and reset schema
 // use when making schema changes
