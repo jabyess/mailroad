@@ -43,4 +43,26 @@ export default class Utils {
 		return inlinedTemplate
 	}
 
+
+	/**
+	 * Compares each value, in order, of two arrays. Used mostly to compare old/new state.
+	 * @static
+	 * @returns boolean
+	 * @param {array} arrayOne - an array of primitive values.
+	 * @param {array} arrayTwo - an array of primitive values.
+	 */
+	static arrayEquals(arrayOne, arrayTwo) {
+
+		if(arrayOne.length !== arrayTwo.length) {
+			return false;
+		}
+
+		arrayOne.forEach((value, index) => {
+			if(value !== arrayTwo[index]) {
+				return false
+			}
+			else return true
+		})
+	} 
+
 }

@@ -75,8 +75,6 @@ router.post('/updateEmail', jsonParser, (req, res) => {
 
 router.post('/deleteEmail', jsonParser, (req, res) => {
 	let emailsToDelete = req.body.selectedEmails
-	console.log(emailsToDelete)
-	// res.send('cool')
 	db.email.destroy({
 		where: { id: emailsToDelete }
 	})

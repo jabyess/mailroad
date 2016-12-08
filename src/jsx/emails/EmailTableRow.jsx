@@ -7,15 +7,26 @@ export default class EmailTableRow extends React.Component {
 	constructor(props) {
 		super(props)
 
+		this.state = {
+			checked: this.props.checked || false
+		}
+
 		autoBind(this, 'formatDate', 'handleCheckboxChange')
 	}
 
 	handleCheckboxChange(event) {
-		if(this.props.updateSelected) {
-			this.props.updateSelected(event.target.value)
+		if(this.props.updateSelectedCheckboxes) {
+			this.props.updateSelectedCheckboxes(event.target.value)
 		}
 	}
 
+	componentWillReceiveProps (nextProps) {
+		if(this.state.checked !== nextProps.checked) {
+			console.log('new state')
+			this.setState({checked: nextProps.checked})
+		}
+	}
+	
 	formatDate(date) {
 		let splitDate = date.split('T');
 		let time = splitDate[1].substring(0, splitDate[1].length - 5);
@@ -31,10 +42,10 @@ export default class EmailTableRow extends React.Component {
 						id={"checkbox-" + this.props.rowValue.id}
 						value={this.props.rowValue.id}
 						onChange={this.handleCheckboxChange}
-						checked={this.props.checked}
+						checked={this.state.checked}
 					/>
 				</td>
-				<td className="email-table__row__title"><Link to={"/editor/"+this.props.rowValue.id}>{this.props.rowValue.title}</Link></td>
+				<td className="email-table__row__title"><Link to={`/editor/${this.props.rowValue.id}`}>{this.props.rowValue.title}</Link></td>
 				<td className="email-table__row__created-date">{this.formatDate(this.props.rowValue.createdAt)}</td>
 				<td className="email-table__row__updated-date">{this.formatDate(this.props.rowValue.updatedAt)}</td>
 			</tr>

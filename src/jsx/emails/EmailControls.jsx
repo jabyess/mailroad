@@ -8,9 +8,6 @@ export default class EmailControls extends React.Component {
 
 		autoBind(this, 'handleDelete', 'handleCopy')
 
-		this.state = {
-			selectedEmails: this.props.selectedCheckboxes
-		}
 	}
 
 	handleDelete() {
@@ -20,7 +17,7 @@ export default class EmailControls extends React.Component {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				"selectedEmails":	Object.keys(this.state.selectedEmails)
+				"selectedEmails":	Object.keys(this.props.selectedCheckboxes)
 			})
 		})
 		.then((response) => {
@@ -37,19 +34,27 @@ export default class EmailControls extends React.Component {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				"id":	Object.keys(this.state.selectedEmails)
+				"id":	Object.keys(this.props.selectedCheckboxes)
 			})
 		})
 		.then((response) => {
 			this.props.refreshEmailList()
 			return response.text()
 		})
-	}
+	}	
+
+	// componentWillReceiveProps (nextProps) {
+	// 	const newProps = Object.keys(this.props.selectedCheckboxes)
+	// 	const oldState = Object.keys(this.state.selectedCheckboxes)
+
+	// 	console.log("nextProps ", nextProps.selectedCheckboxes)
+	// 	console.log('currProps', this.props.selectedCheckboxes)
+	// }
 
 	render() {
 		this.copyClassNames = classNames({
 			'email-controls__item': true,
-			'disabled': Object.keys(this.state.selectedEmails).length > 1 ? true : false
+			'disabled': Object.keys(this.props.selectedCheckboxes).length > 1 ? true : false
 		})
 
 		return (

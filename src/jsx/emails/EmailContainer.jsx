@@ -11,7 +11,7 @@ export default class EmailContainer extends React.Component {
 
 		autoBind(this, 
 			'listEmails', 
-			'updateSelected',
+			'updateSelectedCheckboxes',
 			'refreshEmailList'
 		)
 		
@@ -39,10 +39,10 @@ export default class EmailContainer extends React.Component {
 		this.setState({ selectedCheckboxes: {} }) 
 	}
 
-	updateSelected(value) {
+	updateSelectedCheckboxes(value) {
 		if(this.state.selectedCheckboxes.hasOwnProperty(value.toString())) {
 			this.setState(() => {
-				return delete this.state.selectedCheckboxes[value]
+				delete this.state.selectedCheckboxes[value]
 			})
 		}
 		else {
@@ -74,11 +74,10 @@ export default class EmailContainer extends React.Component {
 						{this.state.emailItems.map((cv, i) => {
 							return (
 								<EmailTableRow
-									randoProp={this.state.selectedCheckboxes[cv.id]}
 									checked={this.state.selectedCheckboxes[cv.id]}
 									rowValue={cv}
 									key={i}
-									updateSelected={this.updateSelected}
+									updateSelectedCheckboxes={this.updateSelectedCheckboxes}
 								/>
 							)
 						})}
