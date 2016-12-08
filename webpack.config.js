@@ -16,6 +16,13 @@ module.exports = {
 		publicPath: '/',
 		filename: 'react-[name].js'
 	},
+	devServer: {
+		port: 8888,
+		publicPath: PATHS.build,
+		proxy: {
+			"/": "http://localhost:3000"
+		}
+	},
 	module: {
 		loaders: [
 			{

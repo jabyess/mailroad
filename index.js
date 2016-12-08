@@ -1,9 +1,11 @@
-import dotenv from 'dotenv';
-import path from 'path';
-import express from 'express';
-import hbs from 'express-handlebars';
-import { API } from './routes/api.js';
-import db from './models/index.js';
+import dotenv from 'dotenv'
+import path from 'path'
+import express from 'express'
+import hbs from 'express-handlebars'
+import { API } from './routes/api.js'
+import db from './models/index.js'
+import webpackDevMiddleware from 'webpack-dev-middleware'
+
 
 dotenv.config();
 
@@ -21,7 +23,11 @@ app.get('/editor/*', (req, res) => {
 })
 
 app.get('*', (req, res) => {
-	res.sendFile(path.join(__dirname, 'index.html'))
+	res.sendFile(path.join(__dirname, 'index.html'), {}, (err) => {
+		if(err) {
+			console.log("err ", err);
+		}
+	})
 })
 
 
