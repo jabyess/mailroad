@@ -43,14 +43,6 @@ export default class EmailControls extends React.Component {
 		})
 	}	
 
-	// componentWillReceiveProps (nextProps) {
-	// 	const newProps = Object.keys(this.props.selectedCheckboxes)
-	// 	const oldState = Object.keys(this.state.selectedCheckboxes)
-
-	// 	console.log("nextProps ", nextProps.selectedCheckboxes)
-	// 	console.log('currProps', this.props.selectedCheckboxes)
-	// }
-
 	render() {
 		this.copyClassNames = classNames({
 			'email-controls__item': true,

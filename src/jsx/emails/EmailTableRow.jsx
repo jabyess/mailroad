@@ -22,7 +22,6 @@ export default class EmailTableRow extends React.Component {
 
 	componentWillReceiveProps (nextProps) {
 		if(this.state.checked !== nextProps.checked) {
-			console.log('new state')
 			this.setState({checked: nextProps.checked})
 		}
 	}
