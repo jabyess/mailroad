@@ -2,7 +2,8 @@ import React from 'react'
 import MainTextEditor from './MainTextEditor.jsx'
 import textEditorDefinitions from './textEditorDefinitions.js'
 import autoBind from 'react-autobind'
-import EmailMetaContainer from './EmailMetaContainer.jsx'
+import AddButton from './AddButton.jsx'
+import EditorMetaContainer from './EditorMetaContainer.jsx'
 
 class EditorContainer extends React.Component {
 	constructor() {
@@ -220,7 +221,7 @@ class EditorContainer extends React.Component {
 	render() {
 		return (
 			<div className="editor-container">
-				<EmailMetaContainer
+				<EditorMetaContainer
 					emailID={this.state.id}
 					createdAt={this.state.createdAt}
 					updatedAt={this.state.updatedAt}
@@ -230,6 +231,7 @@ class EditorContainer extends React.Component {
 					templates={this.state.templates}
 					selectedTemplate={this.state.selectedTemplate}
 				/>
+				<AddButton />
 				{this.state.activeEditors.map((prop, i) => {
 					var editorRef = 'editor' + i
 					return (

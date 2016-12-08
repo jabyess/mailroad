@@ -31,16 +31,14 @@ class EditorTypes extends React.Component {
 
 	render() {
 		return (
-			<div className="editor-types-wrapper">
-				<div className="editor-types">
-					<button onClick={this.handleClose}>Close</button>
-					<button onClick={() => this.addComponentToPage()}>Add</button>
-					<select multiple className="editor-types__select" id="componentList">
-						{Object.keys(this.components).map((value, i) => {
-							return <EditorType key={i} component={value}/>
-						})}
-					</select>
-				</div>
+			<div className="editor-types">
+				<button onClick={this.handleClose}>Close</button>
+				<button onClick={() => this.addComponentToPage()}>Add</button>
+				<select multiple className="editor-types__select" id="componentList">
+					{Object.keys(this.components).map((value, i) => {
+						return <EditorType key={i} component={value}/>
+					})}
+				</select>
 			</div>
 		);
 	}

@@ -1,7 +1,7 @@
 import React from 'react'
 import autoBind from 'react-autobind'
 
-export default class EmailMetaContainer extends React.Component {
+export default class EditorMetaContainer extends React.Component {
 
 	constructor(props) {
 		super(props);
