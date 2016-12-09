@@ -13,7 +13,6 @@ let app = express();
 
 app.engine('handlebars', hbs({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
-app.use('/components', express.static(path.join(__dirname, '/src/components')));
 app.use('/scripts', express.static(path.join(__dirname, 'dist')));
 app.use('/api', API);
 

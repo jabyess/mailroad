@@ -13,12 +13,11 @@ module.exports = {
 	},
 	output: {
 		path: PATHS.build,
-		publicPath: '/',
+		publicPath: 'http://localhost:3000/scripts/',
 		filename: 'react-[name].js'
 	},
 	devServer: {
 		port: 8888,
-		publicPath: PATHS.build,
 		proxy: {
 			"/": "http://localhost:3000"
 		}
@@ -28,6 +27,9 @@ module.exports = {
 			{
 				test : /\.sass/,
 				loaders: ['style','css','sass'],
+			},
+			{
+				test: /\.json/, loader: "json-loader"
 			},
 			{
 				test: /\.jsx?$/,
@@ -44,6 +46,8 @@ module.exports = {
 				loader: 'handlebars-loader'
 			}
 		]
-
+	},
+	watchOptions: {
+		ignored: /node_modules/	
 	}
 }

@@ -4,6 +4,7 @@ import textEditorDefinitions from './textEditorDefinitions.js'
 import autoBind from 'react-autobind'
 import AddButton from './AddButton.jsx'
 import EditorMetaContainer from './EditorMetaContainer.jsx'
+import SlateEditor from './SlateEditor.jsx'
 
 class EditorContainer extends React.Component {
 	constructor() {
@@ -232,20 +233,7 @@ class EditorContainer extends React.Component {
 					selectedTemplate={this.state.selectedTemplate}
 				/>
 				<AddButton />
-				{this.state.activeEditors.map((prop, i) => {
-					var editorRef = 'editor' + i
-					return (
-						<MainTextEditor 
-							key={i}
-							toolbarConfig={prop.toolbarConfig}
-							index={i}
-							editorType={prop.editorType}
-							initialValue={prop.initialValue}
-							ref={(value) => {this[editorRef] = value}}
-							getCurrentValueFromChild={this.getCurrentValueFromChild}
-						/>
-					)
-				})}	
+				<SlateEditor />
 			</div>
 		)
 	}
