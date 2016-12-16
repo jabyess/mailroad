@@ -73,7 +73,7 @@ class EditorContainer extends React.Component {
 
 	updateActiveEditors() {
 		this.state.emailContents.emailContent.forEach((content, i) => {
-			this.setState(()=>{
+			this.setState(() => {
 				this.state.activeEditors.push({
 					initialValue: content.content,
 					editorType: content.editorType
@@ -219,6 +219,12 @@ class EditorContainer extends React.Component {
 		window.removeEventListener('compileTemplateFromSource', this.compileTemplate)
 	}
 
+				// 	{this.state.activeEditors.map( (currVal, index)=> {
+				// 	return (
+				// 		<SlateEditor key={index} emailContent={this.state.emailContents.emailContent[index].content} />
+					
+				// })}
+
 	render() {
 		return (
 			<div className="editor-container">
@@ -233,7 +239,9 @@ class EditorContainer extends React.Component {
 					selectedTemplate={this.state.selectedTemplate}
 				/>
 				<AddButton />
-				<SlateEditor />
+				<SlateEditor emailContent="<p>Testing html</p>" />
+
+				
 			</div>
 		)
 	}

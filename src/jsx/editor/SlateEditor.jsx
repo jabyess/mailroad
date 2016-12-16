@@ -1,11 +1,15 @@
 import React from 'react'
-import { Editor, Raw } from 'slate'
+import { Editor, Html, Raw } from 'slate'
+import autoBind from 'react-autobind'
 
 export default class SlateEditor extends React.Component {
-	constructor() {
-		super()
+	constructor(props) {
+		super(props)
 
-		this.initialState = Raw.deserialize({
+		autoBind(this, 'onChange', 'determineInitialState')
+
+		// console.log(this.props)
+		this.realState = Raw.deserialize({
 			nodes: [
 				{
 					kind: 'block',
@@ -21,7 +25,7 @@ export default class SlateEditor extends React.Component {
 		}, { terse: true })
 
 		this.state = {
-			state: this.initialState
+			state: this.realState
 		}
 	}
 
@@ -29,11 +33,27 @@ export default class SlateEditor extends React.Component {
 		this.setState({state})
 	}
 
+	determineInitialState(content) {
+		console.log(content.content)
+	}
+
+	componentWillReceiveProps (nextProps) {
+		this.setState({emailContent: nextProps.emailContent})
+	}
+
+	componentDidUpdate () {
+		console.log("emailContent ", this.state.emailContent);
+	}
+	
+
 	render() {
 		return (
-			<Editor
-				state={this.state.state} 
-			/>
+			<div className=''>
+				<Editor
+					state={this.state.state} 
+					onChange={this.onChange}
+				/>
+			</div>
 		)
 	}
 

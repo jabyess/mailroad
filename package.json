@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "babel-node": "babel-node --presets=es2015",
     "start": "nodemon --exec npm run babel-node index.js",
-    "dev": "webpack-dev-server --open"
+    "dev": "webpack-dev-server --open --inline"
   },
   "author": "jbyess@morningconsult.com",
   "license": "ISC",
