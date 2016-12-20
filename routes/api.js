@@ -51,8 +51,7 @@ router.get('/getEmail/:id', (req, res) => {
 })
 
 router.post('/createNewEmail', jsonParser, (req,res) => {
-	let emailContent = []
-	let emailTitle = 'test post new email'
+	let { emailContent, emailTitle } = req.body;
 	db.email.create({
 		emailContent: emailContent,
 		title: emailTitle
@@ -66,7 +65,7 @@ router.post('/updateEmail', jsonParser, (req, res) => {
 	db.email.upsert({
 		emailContent: req.body.content,
 		title: req.body.title,
-		id: req.body.id,
+		id: req.body.emailID,
 		template: req.body.template
 	}).then(() => {
 		res.send(res.body)

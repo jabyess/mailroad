@@ -10,7 +10,7 @@ ReactDOM.render(
 	<Router history={browserHistory}>
 		<Route path="/" component={EmailContainer} />
 		<Route path="/editor" component={MainContainer}>
-			<Route path="/editor/:id" component={MainContainer}/>
+			<Route path="/editor/:emailID" component={MainContainer}/>
 		</Route>
 		<Route path="/admin" component={AdminContainer}></Route>
 	</Router>,

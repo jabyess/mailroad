@@ -1,31 +1,94 @@
 import React from 'react'
-import { Editor, Html, Raw } from 'slate'
+import { Editor, Html } from 'slate'
 import autoBind from 'react-autobind'
+import { debounce } from '../../lib/utils.js'
+
+const BLOCK_TAGS = {
+	p: 'paragraph',
+	blockquote: 'quote',
+	pre: 'code',
+	div: 'div',
+}
+
+const MARK_TAGS = {
+  em: 'italic',
+  strong: 'bold',
+  u: 'underline',
+}
+
+const rules = [
+	{
+		deserialize(el, next) {
+			const type = BLOCK_TAGS[el.tagName]
+			if(!type) return
+			return {
+				kind: 'block',
+				type: type,
+				nodes: next(el.children)
+			}
+		},
+		serialize(object, children) {
+      if (object.kind != 'block') return
+      switch (object.type) {
+        case 'paragraph': return <p>{children}</p>
+        case 'quote': return <blockquote>{children}</blockquote>
+        case 'code': return <pre><code>{children}</code></pre>
+      }
+		}
+	},
+	{
+		deserialize(el, next) {
+      const type = MARK_TAGS[el.tagName]
+      if (!type) return
+      return {
+        kind: 'mark',
+        type: type,
+        nodes: next(el.children)
+      }
+    },
+    serialize(object, children) {
+      if (object.kind != 'mark') return
+      switch (object.type) {
+        case 'bold': return <strong>{children}</strong>
+        case 'italic': return <em>{children}</em>
+        case 'underline': return <u>{children}</u>
+      }
+    }
+	}
+]
+
+let html = new Html({ rules })
+
 
 export default class SlateEditor extends React.Component {
+
 	constructor(props) {
 		super(props)
 
-		autoBind(this, 'onChange', 'determineInitialState')
+		autoBind(this,
+			'onChange',
+			'onDocumentChange',
+			'setLocalStorageItem',
+			'getLocalStorageItem',
+		)
 
-		// console.log(this.props)
-		this.realState = Raw.deserialize({
-			nodes: [
-				{
-					kind: 'block',
-					type: 'paragraph',
-					nodes: [
-						{
-							kind: 'text',
-							text: 'A line of text in a paragraph.'
-						}
-					]
-				}
-			]
-		}, { terse: true })
+		this.debounceDocChange = debounce(this.onDocumentChange, 1000)
 
 		this.state = {
-			state: this.realState
+			state: html.deserialize(this.props.emailContent),
+			schema: {
+				nodes: {
+					code: props => <pre {...props.attributes}>{props.children}</pre>,
+					paragraph: props => <p {...props.attributes}>{props.children}</p>,
+					quote: props => <blockquote {...props.attributes}>{props.children}</blockquote>,
+					div: props => <div {...props.attributes}>{props.children}</div>
+				},
+				marks: {
+					bold: props => <strong>{props.children}</strong>,
+					italic: props => <em>{props.children}</em>,
+					underline: props => <u>{props.children}</u>,
+				}
+			}
 		}
 	}
 
@@ -33,28 +96,44 @@ export default class SlateEditor extends React.Component {
 		this.setState({state})
 	}
 
-	determineInitialState(content) {
-		console.log(content.content)
+	setLocalStorageItem(key, val) {
+		window.localStorage.setItem(key, JSON.stringify(val))
 	}
 
-	componentWillReceiveProps (nextProps) {
-		this.setState({emailContent: nextProps.emailContent})
+	getLocalStorageItem(key) {
+		let value = window.localStorage.getItem(key)
+		return value && JSON.parse(value)
 	}
 
-	componentDidUpdate () {
-		console.log("emailContent ", this.state.emailContent);
+	componentWillReceiveProps(nextProps) {
+		console.log(nextProps);
+		this.setState({state: html.deserialize(nextProps.emailContent)})
 	}
 	
+	onDocumentChange(document, state) {
+	  let content =	html.serialize(state)
+		this.setLocalStorageItem('testkey', content)
+	}
 
+	debounceDocChange(document, state) {
+		console.log('debounceDocChange')
+		this.onDocumentChange(document, state)
+	}
+
+	componentDidMount () {
+		console.log("cdm props:", this.props);
+	}
+	
 	render() {
 		return (
-			<div className=''>
+			<div className="slate-editor">
 				<Editor
-					state={this.state.state} 
+					state={this.state.state}
+					schema={this.state.schema}
 					onChange={this.onChange}
+					onDocumentChange={this.debounceDocChange}
 				/>
 			</div>
 		)
 	}
-
-}	
+}
