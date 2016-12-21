@@ -1,7 +1,7 @@
 import React from 'react'
 import { Editor, Html } from 'slate'
 import autoBind from 'react-autobind'
-import { debounce } from '../../lib/utils.js'
+import { debounce } from '../../../lib/utils.js'
 
 const BLOCK_TAGS = {
 	p: 'paragraph',
@@ -75,7 +75,7 @@ export default class SlateEditor extends React.Component {
 		this.debounceDocChange = debounce(this.onDocumentChange, 1000)
 
 		this.state = {
-			state: html.deserialize(this.props.emailContent),
+			state: html.deserialize(this.props.content),
 			schema: {
 				nodes: {
 					code: props => <pre {...props.attributes}>{props.children}</pre>,
@@ -106,8 +106,7 @@ export default class SlateEditor extends React.Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		console.log(nextProps);
-		this.setState({state: html.deserialize(nextProps.emailContent)})
+		this.setState({state: html.deserialize(nextProps.content)})
 	}
 	
 	onDocumentChange(document, state) {
@@ -116,14 +115,9 @@ export default class SlateEditor extends React.Component {
 	}
 
 	debounceDocChange(document, state) {
-		console.log('debounceDocChange')
 		this.onDocumentChange(document, state)
 	}
 
-	componentDidMount () {
-		console.log("cdm props:", this.props);
-	}
-	
 	render() {
 		return (
 			<div className="slate-editor">

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import EditorTypes from './EditorTypes.jsx';
+// import EditorTypes from './EditorTypes.jsx';
 
 class AddButton extends React.Component {
 	constructor() {
@@ -9,10 +9,10 @@ class AddButton extends React.Component {
 	}
 
 	handleClick() {
-		ReactDOM.render(
-			<EditorTypes/>,
-			document.getElementById('editor-types')
-		);
+		console.log('clicked addbutton')
+		if(this.props.toggleEditorTypeSelect) {
+			this.props.toggleEditorTypeSelect(true)
+		}
 	}
 
 	render() {

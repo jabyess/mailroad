@@ -1,10 +1,15 @@
 import React from 'react'
-import MainTextEditor from './MainTextEditor.jsx'
-import textEditorDefinitions from './textEditorDefinitions.js'
 import autoBind from 'react-autobind'
 import AddButton from './AddButton.jsx'
 import EditorMetaContainer from './EditorMetaContainer.jsx'
-import SlateEditor from './SlateEditor.jsx'
+import { SlateEditor, DefaultEditor, DatePicker } from './editor-types/EditorTypes.js'
+import EditorTypeSelect from './editor-types/EditorTypeSelect.jsx'
+
+const dynamicEditorTypeList = {
+	DefaultEditor,
+	SlateEditor,
+	DatePicker
+}
 
 class EditorContainer extends React.Component {
 	constructor() {
@@ -14,28 +19,32 @@ class EditorContainer extends React.Component {
 			'createEmail',
 			'updateEmail',
 			'getEmailContents',
+			'addEditorToContainer',
 			'getEditorType',
+			'toggleEditorTypeSelect',
 			'compileTemplate',
 			'handleParentTitleChange',
 			'handleParentTemplateChange'
 		)
 
-		this.tempState = []
-		this.inProgress = false
 		this.state = {
 			selectedTemplate: '',
 			templates: [],
-			emailContent: []
+			emailContent: [],
+			isEditorTypeSelectVisible: false
 		}
 	}
 
-	addEditorToContainer(event) {
-		let eventDetail = event.detail
-		this.setState((event) => {
-			return this.state.activeEditors.push({
-				editorType: this.getEditorType(textEditorDefinitions, eventDetail)
+	addEditorToContainer(editorName) {
+		editorName.forEach((currentEditor) => {
+			this.setState({
+				emailContent: this.state.emailContent.concat({
+					content: '<p>New Editor</p>',
+					editorType: currentEditor
+				})
 			})
-		});
+		})
+		
 	}
 
 	getEditorType(editorList, eventDetail) {
@@ -51,7 +60,6 @@ class EditorContainer extends React.Component {
 				return response.json()
 			})
 			.then((json) => {
-				console.log(json)
 				this.setState({
 					emailContent: json.emailContent,
 					title: json.title,
@@ -80,7 +88,7 @@ class EditorContainer extends React.Component {
 	}
 
 	createEmail() {
-		let emailContent = [{content: '<p>Just start typing</p>', editorType: 'defaultEditor'}]
+		let emailContent = [{content: '<p>Just start typing</p>', editorType: 'DefaultEditor'}]
 		let emailTitle = 'New Email'
 		fetch('/api/createNewEmail', {
 			method: 'POST',
@@ -102,9 +110,9 @@ class EditorContainer extends React.Component {
 				updatedAt: json.updatedAt,
 				emailContent: json.emailContent
 			})
-			.catch((err) => {
-				console.log("error in createEmail: ", err)
-			})
+		})
+		.catch((err) => {
+			console.log("error in createEmail: ", err)
 		})
 	}
 
@@ -132,7 +140,6 @@ class EditorContainer extends React.Component {
 	}
 
 	compileTemplate() {
-		console.log('fired compileTemplate')
 		fetch('/api/compileTemplate', {
 			method: 'POST',
 			headers: {
@@ -170,15 +177,13 @@ class EditorContainer extends React.Component {
 		//if we have no ID from react-router, create new email instance
 		if(!this.props.params.emailID) {
 			this.createEmail();
-			// this.setState({
-			// 	emailContent: [{
-			// 		content: "<p>Here's a new email. Just start writing!",
-			// 		editorType: 'defaultEditor'
-			// 	}]
-			// })
 		}
 	}
 
+	toggleEditorTypeSelect(value) {
+		this.setState({isEditorTypeSelectVisible: value})
+	}
+	
 	componentWillUnmount () {
 		window.removeEventListener('addNewEditorToEditorContainer', this.addEditorTempFunction)
 		window.removeEventListener('saveHTMLButtonClicked', this.triggerSaveHTML)
@@ -198,26 +203,28 @@ class EditorContainer extends React.Component {
 					templates={this.state.templates}
 					selectedTemplate={this.state.selectedTemplate}
 				/>
-				<AddButton />
+				<AddButton toggleEditorTypeSelect={this.toggleEditorTypeSelect} />
 				<div className="editor-editor-container">
 					{this.state.emailContent.map((content, i) => {
+						let DynamicEditorType = dynamicEditorTypeList[content.editorType];
 						return (
-							<SlateEditor
-								emailContent={content.content}
+							<DynamicEditorType
+								content={content.content}
 								key={i}
-								
 							/>
 						)
 					})}
 				</div>
+				<div className="editor-type-list">
+					<EditorTypeSelect
+						addEditorToContainer={this.addEditorToContainer}
+						toggleEditorTypeSelect={this.toggleEditorTypeSelect} 
+						isEditorTypeSelectVisible={this.state.isEditorTypeSelectVisible}
+					/>
+				</div>
 			</div>
 		)	
 	}
-}
-
-EditorContainer.propTypes = {
-	activeEditors: React.PropTypes.array,
-	compiledValue: React.PropTypes.func,
 }
 
 export default EditorContainer;
