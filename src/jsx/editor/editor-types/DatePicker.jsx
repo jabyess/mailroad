@@ -1,8 +1,6 @@
 import React from 'react'
 import { SingleDatePicker } from 'react-dates'
 
-import 'react-dates/lib/css/_datepicker.css'
-
 export default class DatePicker extends React.Component {
 	constructor() {
 		super()
@@ -16,7 +14,6 @@ export default class DatePicker extends React.Component {
 	render() {
 		return (
 			<SingleDatePicker 
-				id="SingleDatePicker"
 				date={this.state.date}
 				focused={this.state.focused}
 				onDateChange={(date) => {this.setState({date})}}

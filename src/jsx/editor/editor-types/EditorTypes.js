@@ -1,6 +1,11 @@
-
 import DatePicker from './DatePicker.jsx'
+import DatesPicker from './DatesPicker.jsx'
 import DefaultEditor from './DefaultEditor.jsx'
 import SlateEditor from './SlateEditor.jsx'
 
-export { DatePicker, DefaultEditor, SlateEditor } 
+export { 
+	DatePicker,
+	DatesPicker,
+	DefaultEditor,
+	SlateEditor
+} 

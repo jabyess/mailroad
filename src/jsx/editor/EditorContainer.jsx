@@ -2,13 +2,14 @@ import React from 'react'
 import autoBind from 'react-autobind'
 import AddButton from './AddButton.jsx'
 import EditorMetaContainer from './EditorMetaContainer.jsx'
-import { SlateEditor, DefaultEditor, DatePicker } from './editor-types/EditorTypes.js'
+import { SlateEditor, DefaultEditor, DatePicker, DatesPicker } from './editor-types/EditorTypes.js'
 import EditorTypeSelect from './editor-types/EditorTypeSelect.jsx'
 
 const dynamicEditorTypeList = {
 	DefaultEditor,
 	SlateEditor,
-	DatePicker
+	DatePicker,
+	DatesPicker
 }
 
 class EditorContainer extends React.Component {
