@@ -16,11 +16,9 @@ export default class EditorTypeSelect extends React.Component {
 	}
 	
 	addComponentToPage() {
-		console.log('clicked addComponentToPage')
 		if(this.props.addEditorToContainer) {
 			this.props.addEditorToContainer(this.state.value)
 		}
-
 	}
 
 	handleClose() {
@@ -37,11 +35,6 @@ export default class EditorTypeSelect extends React.Component {
 		}
 		this.setState({value: valArray})
 	}
-	componentDidUpdate (prevProps, prevState) {
-		console.log(prevState)
-		console.log(this.state)
-	}
-	
 
 	render() {
 		if(this.props.isEditorTypeSelectVisible) {

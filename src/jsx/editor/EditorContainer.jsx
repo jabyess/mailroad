@@ -212,6 +212,7 @@ class EditorContainer extends React.Component {
 							<DynamicEditorType
 								content={content.content}
 								key={i}
+								index={i}
 							/>
 						)
 					})}
