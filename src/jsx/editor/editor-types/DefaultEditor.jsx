@@ -2,6 +2,8 @@ import React from 'react'
 import { Editor, Html } from 'slate'
 import autoBind from 'react-autobind'
 import { debounce } from '../../../lib/utils.js'
+import { DragSource } from 'react-dnd'
+import ItemTypes from './ItemTypes.js'
 
 const BLOCK_TAGS = {
 	p: 'paragraph',
@@ -57,10 +59,32 @@ const rules = [
 	}
 ]
 
+const defaultEditorSource = {
+	beginDrag(props) {
+		return {
+			text: props.text,
+			index: props.index
+		}
+	},
+	endDrag(props) {
+		return {
+			text: props.text,
+			index: props.index
+		}
+	}
+}
+
+function collect(connect, monitor) {
+	return {
+		connectDragSource : connect.dragSource(),
+		isDragging: monitor.isDragging()
+		
+	}
+}
+
 let html = new Html({ rules })
 
-
-export default class DefaultEditor extends React.Component {
+class DefaultEditor extends React.Component {
 
 	constructor(props) {
 		super(props)
@@ -119,7 +143,8 @@ export default class DefaultEditor extends React.Component {
 	}
 
 	render() {
-		return (
+		const { isDragging, connectDragSource, text } = this.props
+		return connectDragSource(
 			<div className="slate-editor">
 				<Editor
 					state={this.state.state}
@@ -131,3 +156,5 @@ export default class DefaultEditor extends React.Component {
 		)
 	}
 }
+
+export default DragSource(ItemTypes.DEFAULTEDITOR, defaultEditorSource, collect)(DefaultEditor)

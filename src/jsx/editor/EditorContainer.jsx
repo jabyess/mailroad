@@ -4,6 +4,9 @@ import AddButton from './AddButton.jsx'
 import EditorMetaContainer from './EditorMetaContainer.jsx'
 import { SlateEditor, DefaultEditor, DatePicker, DatesPicker } from './editor-types/EditorTypes.js'
 import EditorTypeSelect from './editor-types/EditorTypeSelect.jsx'
+import EditorTypeRow from './EditorTypeRow.jsx'
+import { DragDropContext } from 'react-dnd'
+import HTML5Backend from 'react-dnd-html5-backend'
 
 const dynamicEditorTypeList = {
 	DefaultEditor,
@@ -22,6 +25,7 @@ class EditorContainer extends React.Component {
 			'getEmailContents',
 			'addEditorToContainer',
 			'getEditorType',
+			'reorderFired',
 			'toggleEditorTypeSelect',
 			'compileTemplate',
 			'handleParentTitleChange',
@@ -184,6 +188,17 @@ class EditorContainer extends React.Component {
 	toggleEditorTypeSelect(value) {
 		this.setState({isEditorTypeSelectVisible: value})
 	}
+
+	reorderFired(oldIndex, newIndex) {
+		console.log(oldIndex, newIndex)
+
+		this.setState(() => {
+			let removed = this.state.emailContent.splice(oldIndex, 1)
+			console.log(removed)
+			this.state.emailContent.splice(newIndex, 0, removed)
+			return this.state.emailContent
+		})
+	}
 	
 	componentWillUnmount () {
 		window.removeEventListener('addNewEditorToEditorContainer', this.addEditorTempFunction)
@@ -209,11 +224,13 @@ class EditorContainer extends React.Component {
 					{this.state.emailContent.map((content, i) => {
 						let DynamicEditorType = dynamicEditorTypeList[content.editorType];
 						return (
-							<DynamicEditorType
-								content={content.content}
-								key={i}
-								index={i}
-							/>
+							<EditorTypeRow key={i} index={i} reorderFired={this.reorderFired}>
+								<DynamicEditorType
+									content={content.content}
+									key={i}
+									index={i}
+								/>
+							</EditorTypeRow>
 						)
 					})}
 				</div>
@@ -229,4 +246,4 @@ class EditorContainer extends React.Component {
 	}
 }
 
-export default EditorContainer;
+export default DragDropContext(HTML5Backend)(EditorContainer);
