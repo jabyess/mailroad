@@ -25,7 +25,7 @@ class EditorContainer extends React.Component {
 			'getEmailContents',
 			'addEditorToContainer',
 			'getEditorType',
-			'reorderFired',
+			'reorderEditorIndexes',
 			'toggleEditorTypeSelect',
 			'compileTemplate',
 			'handleParentTitleChange',
@@ -189,13 +189,10 @@ class EditorContainer extends React.Component {
 		this.setState({isEditorTypeSelectVisible: value})
 	}
 
-	reorderFired(oldIndex, newIndex) {
-		console.log(oldIndex, newIndex)
-
+	reorderEditorIndexes(oldIndex, newIndex) {
 		this.setState(() => {
 			let removed = this.state.emailContent.splice(oldIndex, 1)
-			console.log(removed)
-			this.state.emailContent.splice(newIndex, 0, removed)
+			this.state.emailContent.splice(newIndex, 0, removed[0])
 			return this.state.emailContent
 		})
 	}
@@ -224,7 +221,7 @@ class EditorContainer extends React.Component {
 					{this.state.emailContent.map((content, i) => {
 						let DynamicEditorType = dynamicEditorTypeList[content.editorType];
 						return (
-							<EditorTypeRow key={i} index={i} reorderFired={this.reorderFired}>
+							<EditorTypeRow key={i} index={i} reorderEditorIndexes={this.reorderEditorIndexes}>
 								<DynamicEditorType
 									content={content.content}
 									key={i}
