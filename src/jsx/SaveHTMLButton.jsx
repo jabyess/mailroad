@@ -1,10 +1,9 @@
 import React from 'react'
-import autoBind from 'react-autobind'
 
 class SaveHTMLButton extends React.Component {
 	constructor() {
 		super()
-		autoBind(this, 'handleClick')
+		this.handleClick = this.handleClick.bind(this)
 	}
 
 	handleClick() {

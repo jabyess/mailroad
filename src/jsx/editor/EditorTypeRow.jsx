@@ -18,7 +18,7 @@ const editorTypeDropTarget = {
 			return
 		}
 		let item = monitor.getItem()
-		props.reorderFired(item.index, props.index)
+		props.reorderEditorIndexes(item.index, props.index)
 	}
 }
 

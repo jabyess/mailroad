@@ -4,6 +4,7 @@ import autoBind from 'react-autobind'
 import { debounce } from '../../../lib/utils.js'
 import { DragSource } from 'react-dnd'
 import ItemTypes from './ItemTypes.js'
+import PDB from '../../../pouchdb/pouchdb.js'
 
 const BLOCK_TAGS = {
 	p: 'paragraph',
@@ -98,6 +99,8 @@ class DefaultEditor extends React.Component {
 
 		this.debounceDocChange = debounce(this.onDocumentChange, 1000)
 
+		this.pouchDB = new PDB('pdb_emailcontent')
+
 		this.state = {
 			state: html.deserialize(this.props.content),
 			schema: {
@@ -135,7 +138,13 @@ class DefaultEditor extends React.Component {
 	
 	onDocumentChange(document, state) {
 	  let content =	html.serialize(state)
-		this.setLocalStorageItem('testkey', content)
+		let docObject = {
+			_id: 'pdb_' + this.props.emailID,
+			emailContent: content,
+			editorType: this.props.editorType,
+			index: this.props.index
+		}
+		this.pouchDB.partialDocUpdate(docObject)
 	}
 
 	debounceDocChange(document, state) {

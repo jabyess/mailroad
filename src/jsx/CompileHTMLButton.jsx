@@ -8,13 +8,13 @@ export default class CompileHTMLButton extends React.Component {
 	}
 
 	handleClick() {
-		let compileButtonClicked = new Event('compileTemplateFromSource');
+		let compileButtonClicked = new Event('deleteLocalCopy');
 		window.dispatchEvent(compileButtonClicked);
 	}
 
 	render() {
 		return (
-			<button onClick={this.handleClick}>Compile HTML</button>
+			<button onClick={this.handleClick}>Delete Local</button>
 		);
 	}
 }

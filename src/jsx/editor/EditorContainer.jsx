@@ -7,6 +7,7 @@ import EditorTypeSelect from './editor-types/EditorTypeSelect.jsx'
 import EditorTypeRow from './EditorTypeRow.jsx'
 import { DragDropContext } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
+import PDB from '../../pouchdb/pouchdb.js'
 
 const dynamicEditorTypeList = {
 	DefaultEditor,
@@ -27,10 +28,14 @@ class EditorContainer extends React.Component {
 			'getEditorType',
 			'reorderEditorIndexes',
 			'toggleEditorTypeSelect',
+			'triggerSaveHTML',
+			'deleteLocalCopy',
 			'compileTemplate',
 			'handleParentTitleChange',
 			'handleParentTemplateChange'
 		)
+
+		this.pouchDB = new PDB('pdb_emailcontent')
 
 		this.state = {
 			selectedTemplate: '',
@@ -144,6 +149,11 @@ class EditorContainer extends React.Component {
 		this.setState({selectedTemplate : value})
 	}
 
+	deleteLocalCopy() {
+		console.log('deleteLocalCopy fired')
+		this.pouchDB.deleteDoc('pdb_'+this.state.emailID)
+	}
+
 	compileTemplate() {
 		fetch('/api/compileTemplate', {
 			method: 'POST',
@@ -164,13 +174,21 @@ class EditorContainer extends React.Component {
 		})
 	}
 
-	componentDidMount() {
-		this.addEditorTempFunction = (e) => {
-			this.addEditorToContainer(e)
+	triggerSaveHTML() {
+		console.log('triggerSaveHTML clicked')
+		let getEmailFromPDB = (cb) => {
+			cb(this.pouchDB.getDoc('pdb_' + this.state.emailID))
 		}
-		window.addEventListener('addNewEditorToEditorContainer', this.addEditorTempFunction )
+
+		getEmailFromPDB((data) => {
+			console.log(data)
+		})
+		
+	}
+
+	componentDidMount() {
 		window.addEventListener('saveHTMLButtonClicked', this.triggerSaveHTML )
-		window.addEventListener('compileTemplateFromSource', this.compileTemplate )
+		window.addEventListener('deleteLocalCopy', this.deleteLocalCopy )
 
 		this.getTemplates()
 
@@ -198,9 +216,8 @@ class EditorContainer extends React.Component {
 	}
 	
 	componentWillUnmount () {
-		window.removeEventListener('addNewEditorToEditorContainer', this.addEditorTempFunction)
 		window.removeEventListener('saveHTMLButtonClicked', this.triggerSaveHTML)
-		window.removeEventListener('compileTemplateFromSource', this.compileTemplate)
+		window.removeEventListener('deleteLocalCopy', this.deleteLocalCopy)
 	}
 
 	render() {
@@ -226,6 +243,8 @@ class EditorContainer extends React.Component {
 									content={content.content}
 									key={i}
 									index={i}
+									emailID={this.state.emailID}
+									editorType={content.editorType}
 								/>
 							</EditorTypeRow>
 						)
