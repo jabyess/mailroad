@@ -2,9 +2,9 @@
 
 export default (sequelize, DataTypes) => {
 	let Email = sequelize.define('email', {
-		emailContent: {
+		content: {
 			type: DataTypes.JSON,
-			field: "email_content"
+			field: "content"
 		},
 		title: {
 			type: DataTypes.STRING,

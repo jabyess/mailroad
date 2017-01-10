@@ -38,9 +38,9 @@ class EditorContainer extends React.Component {
 		this.pouchDB = new PDB('pdb_emailcontent')
 
 		this.state = {
-			selectedTemplate: '',
+			template: '',
 			templates: [],
-			emailContent: [],
+			content: [],
 			isEditorTypeSelectVisible: false
 		}
 	}
@@ -48,7 +48,7 @@ class EditorContainer extends React.Component {
 	addEditorToContainer(editorName) {
 		editorName.forEach((currentEditor) => {
 			this.setState({
-				emailContent: this.state.emailContent.concat({
+				content: this.state.content.concat({
 					content: '<p>New Editor</p>',
 					editorType: currentEditor
 				})
@@ -65,23 +65,36 @@ class EditorContainer extends React.Component {
 	}
 
 	getEmailContents(id) {
-		fetch(`/api/getEmail/${id}`)
-			.then((response) => {
-				return response.json()
-			})
-			.then((json) => {
-				this.setState({
-					emailContent: json.emailContent,
-					title: json.title,
-					updatedAt: json.updatedAt,
-					createdAt: json.createdAt,
-					emailID: json.id,
-					selectedTemplate: json.template
+		this.pouchDB.getDoc(id, (doc) => {
+			if(doc && doc.name === "not_found") {
+				console.log('---doc not found---')
+				fetch(`/api/getEmail/${id}`)
+					.then((response) => {
+						return response.json()
+					})
+					.then((json) => {
+						let jsonResponse = {}
+						Object.assign(jsonResponse, json)
+						this.setState(() => {
+							return jsonResponse
+						})
+						this.pouchDB.createOrUpdateDoc(jsonResponse)
+					})
+					.catch((err) => {
+						console.log('exception in getEmailContents: ', err)
+					})
+			}
+			else {
+				console.log('---doc found----')
+				console.log(doc)
+				this.setState(doc, () => {
+					this.pouchDB.createOrUpdateDoc(doc)
 				})
-			})
-			.catch((err) => {
-				console.log('exception in getEmailContents: ', err)
-			})
+			}
+
+
+		})
+
 	}
 
 	getTemplates() {
@@ -98,16 +111,16 @@ class EditorContainer extends React.Component {
 	}
 
 	createEmail() {
-		let emailContent = [{content: '<p>Just start typing</p>', editorType: 'DefaultEditor'}]
-		let emailTitle = 'New Email'
+		let content = [{content: '<p>Just start typing</p>', editorType: 'DefaultEditor'}]
+		let title = 'New Email'
 		fetch('/api/createNewEmail', {
 			method: 'POST',
 			headers: {
 				'Content-Type' : 'application/json'
 			},
 			body: JSON.stringify({
-				emailContent: emailContent,
-				emailTitle: emailTitle
+				content: content,
+				title: title
 			})
 		})
 		.then((results) => {
@@ -115,10 +128,10 @@ class EditorContainer extends React.Component {
 		}).then((json) => {
 			this.setState({
 				emailID: json.id,
-				title: json.emailTitle,
+				title: json.title,
 				createdAt: json.createdAt,
 				updatedAt: json.updatedAt,
-				emailContent: json.emailContent
+				content: json.content
 			})
 		})
 		.catch((err) => {
@@ -135,8 +148,8 @@ class EditorContainer extends React.Component {
 			body: JSON.stringify({
 				"content": this.state.compiledHTML,
 				"title": this.state.title,
-				"emailID" : this.state.id,
-				"template": this.state.selectedTemplate
+				"id" : this.state.id,
+				"template": this.state.template
 			})
 		})
 	}
@@ -146,12 +159,12 @@ class EditorContainer extends React.Component {
 	}
 
 	handleParentTemplateChange(value) {
-		this.setState({selectedTemplate : value})
+		this.setState({template : value})
 	}
 
 	deleteLocalCopy() {
 		console.log('deleteLocalCopy fired')
-		this.pouchDB.deleteDoc('pdb_'+this.state.emailID)
+		this.pouchDB.deleteDoc('pdb_'+this.state.id)
 	}
 
 	compileTemplate() {
@@ -160,11 +173,12 @@ class EditorContainer extends React.Component {
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({
-				emailContent : this.state.emailContent,
-				title : this.state.title,
-				template : this.state.selectedTemplate
-			})
+			body: JSON.stringify(
+				{ content, title, template } = this.state
+				// content : this.state.content,
+				// title : this.state.title,
+				// template : this.state.template
+			)
 		})
 		.then((response) => {
 			return response.text()
@@ -176,14 +190,21 @@ class EditorContainer extends React.Component {
 
 	triggerSaveHTML() {
 		console.log('triggerSaveHTML clicked')
-		let getEmailFromPDB = (cb) => {
-			cb(this.pouchDB.getDoc('pdb_' + this.state.emailID))
-		}
-
-		getEmailFromPDB((data) => {
-			console.log(data)
+		this.pouchDB.getDoc(this.state.id, (doc) => {
+			console.log(doc)
+			this.setState(doc, () => {
+				fetch('/api/updateEmail', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(doc)
+				}).then((json) => {
+					console.log(json)
+				})
+			})
+			
 		})
-		
 	}
 
 	componentDidMount() {
@@ -193,12 +214,12 @@ class EditorContainer extends React.Component {
 		this.getTemplates()
 
 		//if we have an ID from react-router, make db call to get data
-		if(this.props.params.emailID) {
-			this.getEmailContents(this.props.params.emailID)
+		if(this.props.params.id) {
+			this.getEmailContents(this.props.params.id)
 		}
 
 		//if we have no ID from react-router, create new email instance
-		if(!this.props.params.emailID) {
+		if(!this.props.params.id) {
 			this.createEmail();
 		}
 	}
@@ -209,9 +230,9 @@ class EditorContainer extends React.Component {
 
 	reorderEditorIndexes(oldIndex, newIndex) {
 		this.setState(() => {
-			let removed = this.state.emailContent.splice(oldIndex, 1)
-			this.state.emailContent.splice(newIndex, 0, removed[0])
-			return this.state.emailContent
+			let removed = this.state.content.splice(oldIndex, 1)
+			this.state.content.splice(newIndex, 0, removed[0])
+			return this.state.content
 		})
 	}
 	
@@ -224,18 +245,18 @@ class EditorContainer extends React.Component {
 		return (
 			<div className="editor-container">
 				<EditorMetaContainer
-					emailID={this.state.emailID}
+					id={this.state.id}
 					createdAt={this.state.createdAt}
 					updatedAt={this.state.updatedAt}
 					handleParentTitleChange={this.handleParentTitleChange}
 					handleParentTemplateChange={this.handleParentTemplateChange}
 					title={this.state.title}
 					templates={this.state.templates}
-					selectedTemplate={this.state.selectedTemplate}
+					template={this.state.template}
 				/>
 				<AddButton toggleEditorTypeSelect={this.toggleEditorTypeSelect} />
 				<div className="editor-editor-container">
-					{this.state.emailContent.map((content, i) => {
+					{this.state.content.map((content, i) => {
 						let DynamicEditorType = dynamicEditorTypeList[content.editorType];
 						return (
 							<EditorTypeRow key={i} index={i} reorderEditorIndexes={this.reorderEditorIndexes}>
@@ -243,7 +264,7 @@ class EditorContainer extends React.Component {
 									content={content.content}
 									key={i}
 									index={i}
-									emailID={this.state.emailID}
+									id={this.state.id}
 									editorType={content.editorType}
 								/>
 							</EditorTypeRow>

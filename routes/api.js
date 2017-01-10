@@ -51,10 +51,10 @@ router.get('/getEmail/:id', (req, res) => {
 })
 
 router.post('/createNewEmail', jsonParser, (req,res) => {
-	let { emailContent, emailTitle } = req.body;
+	let { content, title } = req.body;
 	db.email.create({
-		emailContent: emailContent,
-		title: emailTitle
+		content: content,
+		title: title
 	}).then((results) => {
 		let dataValues = results.get({ plain: true })
 		res.send(dataValues)
@@ -62,13 +62,16 @@ router.post('/createNewEmail', jsonParser, (req,res) => {
 })
 
 router.post('/updateEmail', jsonParser, (req, res) => {
-	db.email.upsert({
-		emailContent: req.body.content,
-		title: req.body.title,
-		id: req.body.emailID,
-		template: req.body.template
-	}).then(() => {
-		res.send(res.body)
+	let wat = Object.assign({}, req.body)
+	console.log(wat)
+	db.email.upsert(
+		Object.assign({}, req.body)
+		// content: req.body.content,
+		// title: req.body.title,
+		// id: req.body.emailID,
+		// template: req.body.template
+	).then(() => {
+		res.sendStatus(200)
 	})
 })
 
@@ -92,7 +95,7 @@ router.post('/copyEmail', jsonParser, (req, res) => {
 		})
 		.then((newEmail)=> {
 			db.email.create({
-				emailContent: newEmail.emailContent,
+				content: newEmail.content,
 				template: newEmail.template,
 				title: newEmail.title,
 			})

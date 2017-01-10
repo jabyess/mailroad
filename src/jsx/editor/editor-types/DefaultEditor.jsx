@@ -139,10 +139,10 @@ class DefaultEditor extends React.Component {
 	onDocumentChange(document, state) {
 	  let content =	html.serialize(state)
 		let docObject = {
-			_id: 'pdb_' + this.props.emailID,
-			emailContent: content,
+			content: content,
+			id: this.props.id,
 			editorType: this.props.editorType,
-			index: this.props.index
+			index: this.props.index,
 		}
 		this.pouchDB.partialDocUpdate(docObject)
 	}

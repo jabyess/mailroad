@@ -1,4 +1,6 @@
 let PouchDB = require('pouchdb-browser')
+const ID_PREFIX = 'pdb_'
+const DATE_STRING = "YYYY-MM-DDThh:mm:ssTZD"
 
 export default class PDB {
 	constructor(dbname) {
@@ -11,13 +13,39 @@ export default class PDB {
 		})
 	}
 
+	createOrUpdateDoc(doc) {
+		let docID = ID_PREFIX + doc.id
+		this.pouchDB.get(docID).catch((err) => {
+			if(err && err.name === 'not_found') {
+				return {
+					_id: docID,
+					id: doc.id,
+					content: [],
+					title: '',
+					createdAt: new Date(DATE_STRING).getTime(),
+					updatedAt: new Date().getTime()
+				}
+			}
+			else {
+				console.log(err)
+				throw err
+			}
+		}).then((newDoc)=>{
+			// newDoc.content = doc.content
+			newDoc = Object.assign(newDoc, doc)
+			console.log(newDoc)
+			this.pouchDB.put(newDoc)
+		})
+	}
+
 	partialDocUpdate(doc) {
-		this.pouchDB.get(doc._id).catch((err) => {
+		let docID = ID_PREFIX + doc.id
+		this.pouchDB.get(docID).catch((err) => {
 			console.log(err)
 			if(err.name === 'not_found') {
 				return {
 					_id: doc._id,
-					content: []
+					content: [],
 				}
 			}
 			else {
@@ -25,11 +53,8 @@ export default class PDB {
 			}
 		}).then((newDoc) => {
 			console.log(doc)
-			newDoc.content[doc.index] = {
-				content: doc.emailContent,
-				editorType: doc.editorType
-			}
-			console.log(newDoc)
+			newDoc.content[doc.index] = Object.assign({}, doc)
+			newDoc.modified = doc.modified
 			return this.pouchDB.put(newDoc)
 		})
 	}
@@ -41,14 +66,15 @@ export default class PDB {
 		console.log('deleted ', id)
 	}
 
-	getDoc(id) {
-		this.pouchDB.get(id).then((doc) => {
-			return doc
-		}).catch((err) => {
-			if(err) {
-				console.log(err)
-				throw err
+	getDoc(id, callback) {
+		let docID = ID_PREFIX + id
+		this.pouchDB.get(docID).catch((err) => {
+			if(err && err.name === 'not_found') {
+				return err
 			}
+			else return null
+		}).then((doc) => {
+			return callback(doc)
 		})
 	}
 
