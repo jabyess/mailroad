@@ -31,8 +31,6 @@ class EditorContainer extends React.Component {
 			'triggerSaveHTML',
 			'deleteLocalCopy',
 			'compileTemplate',
-			'handleParentTitleChange',
-			'handleParentTemplateChange'
 		)
 
 		this.pouchDB = new PDB('pdb_emailcontent')
@@ -67,17 +65,19 @@ class EditorContainer extends React.Component {
 	getEmailContents(id) {
 		this.pouchDB.getDoc(id, (doc) => {
 			if(doc && doc.name === "not_found") {
-				console.log('---doc not found---')
 				fetch(`/api/getEmail/${id}`)
 					.then((response) => {
 						return response.json()
 					})
 					.then((json) => {
 						let jsonResponse = {}
+
 						Object.assign(jsonResponse, json)
-						this.setState(() => {
-							return jsonResponse
-						})
+
+						console.log(jsonResponse)
+
+						this.setState(jsonResponse)
+
 						this.pouchDB.createOrUpdateDoc(jsonResponse)
 					})
 					.catch((err) => {
@@ -85,14 +85,10 @@ class EditorContainer extends React.Component {
 					})
 			}
 			else {
-				console.log('---doc found----')
-				console.log(doc)
 				this.setState(doc, () => {
 					this.pouchDB.createOrUpdateDoc(doc)
 				})
 			}
-
-
 		})
 
 	}
@@ -113,26 +109,22 @@ class EditorContainer extends React.Component {
 	createEmail() {
 		let content = [{content: '<p>Just start typing</p>', editorType: 'DefaultEditor'}]
 		let title = 'New Email'
+		let doc = {content, title}
 		fetch('/api/createNewEmail', {
 			method: 'POST',
 			headers: {
 				'Content-Type' : 'application/json'
 			},
-			body: JSON.stringify({
-				content: content,
-				title: title
-			})
+			body: JSON.stringify(doc)
 		})
 		.then((results) => {
 			return results.json()
 		}).then((json) => {
-			this.setState({
-				emailID: json.id,
-				title: json.title,
-				createdAt: json.createdAt,
-				updatedAt: json.updatedAt,
-				content: json.content
+			let jsonResponse = Object.assign({}, json)
+			this.setState(() => {
+				return jsonResponse
 			})
+			this.pouchDB.createOrUpdateDoc(jsonResponse)
 		})
 		.catch((err) => {
 			console.log("error in createEmail: ", err)
@@ -152,14 +144,6 @@ class EditorContainer extends React.Component {
 				"template": this.state.template
 			})
 		})
-	}
-
-	handleParentTitleChange(value) { 
-		this.setState({title: value})
-	}
-
-	handleParentTemplateChange(value) {
-		this.setState({template : value})
 	}
 
 	deleteLocalCopy() {
@@ -244,16 +228,7 @@ class EditorContainer extends React.Component {
 	render() {
 		return (
 			<div className="editor-container">
-				<EditorMetaContainer
-					id={this.state.id}
-					createdAt={this.state.createdAt}
-					updatedAt={this.state.updatedAt}
-					handleParentTitleChange={this.handleParentTitleChange}
-					handleParentTemplateChange={this.handleParentTemplateChange}
-					title={this.state.title}
-					templates={this.state.templates}
-					template={this.state.template}
-				/>
+				<EditorMetaContainer {...this.state} />
 				<AddButton toggleEditorTypeSelect={this.toggleEditorTypeSelect} />
 				<div className="editor-editor-container">
 					{this.state.content.map((content, i) => {

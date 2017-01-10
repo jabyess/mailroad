@@ -31,9 +31,7 @@ export default class PDB {
 				throw err
 			}
 		}).then((newDoc)=>{
-			// newDoc.content = doc.content
 			newDoc = Object.assign(newDoc, doc)
-			console.log(newDoc)
 			this.pouchDB.put(newDoc)
 		})
 	}
@@ -52,7 +50,6 @@ export default class PDB {
 				throw err
 			}
 		}).then((newDoc) => {
-			console.log(doc)
 			newDoc.content[doc.index] = Object.assign({}, doc)
 			newDoc.modified = doc.modified
 			return this.pouchDB.put(newDoc)

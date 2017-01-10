@@ -52,10 +52,7 @@ router.get('/getEmail/:id', (req, res) => {
 
 router.post('/createNewEmail', jsonParser, (req,res) => {
 	let { content, title } = req.body;
-	db.email.create({
-		content: content,
-		title: title
-	}).then((results) => {
+	db.email.create({ content, title }).then((results) => {
 		let dataValues = results.get({ plain: true })
 		res.send(dataValues)
 	})

@@ -97,7 +97,7 @@ class DefaultEditor extends React.Component {
 			'getLocalStorageItem',
 		)
 
-		this.debounceDocChange = debounce(this.onDocumentChange, 1000)
+		this.debounceDocChange = debounce(this.onDocumentChange, 500)
 
 		this.pouchDB = new PDB('pdb_emailcontent')
 
