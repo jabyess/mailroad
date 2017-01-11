@@ -1,6 +1,12 @@
 let PouchDB = require('pouchdb-browser')
+let moment = require('moment')
+
 const ID_PREFIX = 'pdb_'
-const DATE_STRING = "YYYY-MM-DDThh:mm:ssTZD"
+// const TIMEZONE_OFFSET = new Date().getTimezoneOffset()
+// const DATE_STRING = "YYYY-MM-DDThh:mm:ss" + TIMEZONE_OFFSET
+const DATE_STRING = "YYYY-MM-DD HH:mm:ss.SSSZ"
+// 2017-01-11 14:19:51.045-05 in db
+// 2017-01-11T19:32:11.926Z returned in js
 
 export default class PDB {
 	constructor(dbname) {
@@ -21,17 +27,17 @@ export default class PDB {
 					_id: docID,
 					id: doc.id,
 					content: [],
-					title: '',
-					createdAt: new Date(DATE_STRING).getTime(),
-					updatedAt: new Date().getTime()
+					title: ''
 				}
 			}
 			else {
 				console.log(err)
 				throw err
 			}
-		}).then((newDoc)=>{
+		}).then((newDoc) => {
+			console.log('--newdoc--')
 			newDoc = Object.assign(newDoc, doc)
+			newDoc.updatedAt = moment().format(DATE_STRING)
 			this.pouchDB.put(newDoc)
 		})
 	}
@@ -51,7 +57,7 @@ export default class PDB {
 			}
 		}).then((newDoc) => {
 			newDoc.content[doc.index] = Object.assign({}, doc)
-			newDoc.modified = doc.modified
+			newDoc.updatedAt = moment().format(DATE_STRING)
 			return this.pouchDB.put(newDoc)
 		})
 	}

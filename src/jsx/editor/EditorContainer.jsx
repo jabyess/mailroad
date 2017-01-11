@@ -86,6 +86,8 @@ class EditorContainer extends React.Component {
 			}
 			else {
 				this.setState(doc, () => {
+					console.log('---doc found---')
+					console.log("doc ", doc);
 					this.pouchDB.createOrUpdateDoc(doc)
 				})
 			}
@@ -121,6 +123,7 @@ class EditorContainer extends React.Component {
 			return results.json()
 		}).then((json) => {
 			let jsonResponse = Object.assign({}, json)
+			console.log(jsonResponse)
 			this.setState(() => {
 				return jsonResponse
 			})
