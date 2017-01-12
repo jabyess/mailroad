@@ -33,16 +33,30 @@ class EditorTypeRow extends React.Component {
 
 	constructor() {
 		super()
+
+		this.removeEditor = this.removeEditor.bind(this)
+	}
+
+	removeEditor() {
+		if(this.props.removeEditorFromContainer) {
+			this.props.removeEditorFromContainer(this.props.index)
+		}
 	}
 
 	render() {
 		let { connectDropTarget, isOver } = this.props
 		let isOverCSS = isOver ? {border: "2px solid #a9c873" } : {};
+		let isEditModeActive = this.props.isEditModeActive
 
 		return connectDropTarget(
 		<div className="editor-type-row" style={isOverCSS}>
-				{this.props.children}
-			</div>
+		{isEditModeActive ? 
+			<button onClick={this.removeEditor}>X</button>
+			: ''
+		}
+			
+			{this.props.children}
+		</div>
 		)
 
 	}

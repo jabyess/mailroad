@@ -72,6 +72,9 @@ const defaultEditorSource = {
 			text: props.text,
 			index: props.index
 		}
+	},
+	canDrag(props) {
+		return props.isEditModeActive
 	}
 }
 
@@ -79,7 +82,6 @@ function collect(connect, monitor) {
 	return {
 		connectDragSource : connect.dragSource(),
 		isDragging: monitor.isDragging()
-		
 	}
 }
 

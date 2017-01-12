@@ -7,6 +7,7 @@ import EditorTypeSelect from './editor-types/EditorTypeSelect.jsx'
 import EditorTypeRow from './EditorTypeRow.jsx'
 import { DragDropContext } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
+import EditorControlsContainer from './EditorControlsContainer.jsx'
 import PDB from '../../pouchdb/pouchdb.js'
 
 const dynamicEditorTypeList = {
@@ -30,6 +31,11 @@ class EditorContainer extends React.Component {
 			'toggleEditorTypeSelect',
 			'triggerSaveHTML',
 			'deleteLocalCopy',
+			'toggleEditMode',
+			'handleTitleChange',
+			'handleTemplateChange',
+			'removeEditorFromContainer',
+			'updatePDBFromState',
 			'compileTemplate',
 		)
 
@@ -39,7 +45,8 @@ class EditorContainer extends React.Component {
 			template: '',
 			templates: [],
 			content: [],
-			isEditorTypeSelectVisible: false
+			isEditorTypeSelectVisible: false,
+			isEditModeActive: false
 		}
 	}
 
@@ -52,7 +59,19 @@ class EditorContainer extends React.Component {
 				})
 			})
 		})
-		
+	}
+
+	removeEditorFromContainer(index) {
+		this.setState(() => {
+			this.state.content.splice(index, 1)
+		})
+	}
+
+	handleTitleChange(value) {
+		this.setState({title: value})
+	}
+	handleTemplateChange(value) {
+		this.setState({template: value})
 	}
 
 	getEditorType(editorList, eventDetail) {
@@ -71,14 +90,10 @@ class EditorContainer extends React.Component {
 					})
 					.then((json) => {
 						let jsonResponse = {}
-
 						Object.assign(jsonResponse, json)
-
 						console.log(jsonResponse)
-
 						this.setState(jsonResponse)
-
-						this.pouchDB.createOrUpdateDoc(jsonResponse)
+						// this.pouchDB.createOrUpdateDoc(jsonResponse)
 					})
 					.catch((err) => {
 						console.log('exception in getEmailContents: ', err)
@@ -86,13 +101,10 @@ class EditorContainer extends React.Component {
 			}
 			else {
 				this.setState(doc, () => {
-					console.log('---doc found---')
-					console.log("doc ", doc);
-					this.pouchDB.createOrUpdateDoc(doc)
+					// this.pouchDB.createOrUpdateDoc(doc)
 				})
 			}
 		})
-
 	}
 
 	getTemplates() {
@@ -123,7 +135,6 @@ class EditorContainer extends React.Component {
 			return results.json()
 		}).then((json) => {
 			let jsonResponse = Object.assign({}, json)
-			console.log(jsonResponse)
 			this.setState(() => {
 				return jsonResponse
 			})
@@ -176,21 +187,15 @@ class EditorContainer extends React.Component {
 	}
 
 	triggerSaveHTML() {
-		console.log('triggerSaveHTML clicked')
-		this.pouchDB.getDoc(this.state.id, (doc) => {
-			console.log(doc)
-			this.setState(doc, () => {
-				fetch('/api/updateEmail', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify(doc)
-				}).then((json) => {
-					console.log(json)
-				})
-			})
-			
+		fetch('/api/updateEmail', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(this.state)
+		}).then((json) => {
+			console.log(json)
+			// success toast popup
 		})
 	}
 
@@ -219,7 +224,21 @@ class EditorContainer extends React.Component {
 		this.setState(() => {
 			let removed = this.state.content.splice(oldIndex, 1)
 			this.state.content.splice(newIndex, 0, removed[0])
-			return this.state.content
+			return this.state.conten
+		})
+	}
+
+	updatePDBFromState() {
+		let currentState = this.state
+		console.log(currentState)
+		this.pouchDB.createOrUpdateDoc(currentState)
+	}
+
+	toggleEditMode() {
+		this.pouchDB.getDoc(this.state.id, (doc) => {
+			doc.isEditModeActive = !this.state.isEditModeActive
+			console.log("editModedoc ", doc);
+			this.setState(doc)
 		})
 	}
 	
@@ -228,20 +247,44 @@ class EditorContainer extends React.Component {
 		window.removeEventListener('deleteLocalCopy', this.deleteLocalCopy)
 	}
 
+
+	componentWillUpdate (nextProps, nextState) {
+		console.log('thisState', this.state)
+		console.log("nextState ", nextState);
+		
+		if(this.state._rev !== nextState._rev) {
+			this.pouchDB.createOrUpdateDoc(nextState)
+		}
+	}
+	
+
 	render() {
 		return (
 			<div className="editor-container">
-				<EditorMetaContainer {...this.state} />
+				<EditorMetaContainer {...this.state} 
+					handleTitleChange={this.handleTitleChange}
+					handleTemplateChange={this.handleTemplateChange}
+				/>
+				<EditorControlsContainer 
+					toggleEditMode={this.toggleEditMode} 
+					isEditModeActive={this.state.isEditModeActive}
+				/>
 				<AddButton toggleEditorTypeSelect={this.toggleEditorTypeSelect} />
 				<div className="editor-editor-container">
 					{this.state.content.map((content, i) => {
 						let DynamicEditorType = dynamicEditorTypeList[content.editorType];
 						return (
-							<EditorTypeRow key={i} index={i} reorderEditorIndexes={this.reorderEditorIndexes}>
+							<EditorTypeRow 
+								key={i}
+								index={i}
+								reorderEditorIndexes={this.reorderEditorIndexes}
+								isEditModeActive={this.state.isEditModeActive}
+								removeEditorFromContainer={this.removeEditorFromContainer} >
 								<DynamicEditorType
 									content={content.content}
 									key={i}
 									index={i}
+									isEditModeActive={this.state.isEditModeActive}
 									id={this.state.id}
 									editorType={content.editorType}
 								/>

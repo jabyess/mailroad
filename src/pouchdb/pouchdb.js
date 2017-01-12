@@ -13,16 +13,11 @@ export default class PDB {
 		this.pouchDB = new PouchDB(dbname)
 	}
 
-	getInfo() {
-		this.pouchDB.info().then((info)=> {
-			console.log(info)
-		})
-	}
-
 	createOrUpdateDoc(doc) {
 		let docID = ID_PREFIX + doc.id
 		this.pouchDB.get(docID).catch((err) => {
 			if(err && err.name === 'not_found') {
+				console.log('---doc not found---')
 				return {
 					_id: docID,
 					id: doc.id,
@@ -35,7 +30,8 @@ export default class PDB {
 				throw err
 			}
 		}).then((newDoc) => {
-			console.log('--newdoc--')
+			console.log("newDoc ", newDoc);
+			console.log("doc ", doc);
 			newDoc = Object.assign(newDoc, doc)
 			newDoc.updatedAt = moment().format(DATE_STRING)
 			this.pouchDB.put(newDoc)

@@ -12,33 +12,21 @@ export default class EditorMetaContainer extends React.Component {
 		this.pouchDB = new PDB('pdb_emailcontent')
 
 		this.state = {
-			template: '',
-			title: ''
+			template: this.props.template, 
+			title: this.props.title
+		}
+	}
+
+	handleTemplateChange(event) {
+		if(this.props.handleTemplateChange) {
+			this.props.handleTemplateChange(event.target.value)
 		}
 	}
 
 	handleTitleChange(event) {
-	this.setState({title: event.target.value}, () => {
-		let doc = {
-			id: this.props.id,
-			title: this.state.title
+		if(this.props.handleTitleChange) {
+			this.props.handleTitleChange(event.target.value)
 		}
-		this.pouchDB.createOrUpdateDoc(doc)
-	})
-		
-		
-	}
-
-	handleTemplateChange(event) {
-		this.setState({template: event.target.value}, () => {
-			let doc = {
-				id: this.props.id,
-				template: this.state.template
-			}
-			this.pouchDB.createOrUpdateDoc(doc)
-		})
-
-
 	}
 
 	componentWillReceiveProps (nextProps) {
@@ -50,7 +38,7 @@ export default class EditorMetaContainer extends React.Component {
 			<div className="email-meta--container">
 				<select 
 				className="email-meta--template"
-				name="EmailTemplate" 
+				name="EmailTemplate"
 				onChange={this.handleTemplateChange}
 				value={this.state.template}>
 					<option disabled>--Select a Template--</option>
