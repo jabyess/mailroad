@@ -29,13 +29,14 @@ class EditorContainer extends React.Component {
 			'getEditorType',
 			'reorderEditorIndexes',
 			'toggleEditorTypeSelect',
-			'triggerSaveHTML',
+			'updateEmail',
 			'deleteLocalCopy',
 			'toggleEditMode',
 			'handleTitleChange',
 			'handleTemplateChange',
+			'updateParentStateContent',
+			'updateComponentTitle',
 			'removeEditorFromContainer',
-			'updatePDBFromState',
 			'compileTemplate',
 		)
 
@@ -74,6 +75,17 @@ class EditorContainer extends React.Component {
 		this.setState({template: value})
 	}
 
+	updateParentStateContent(content, index) {
+		console.log(content, index)
+		this.setState(() => {
+			this.state.content[index].content = content
+		})
+	}
+
+	updateComponentTitle(title, index) {
+		this.setState(() => {this.state.content[index].componentTitle = title})
+	}
+
 	getEditorType(editorList, eventDetail) {
 		let newVal = Object.keys(editorList).filter((val) => {
 			return val === eventDetail
@@ -91,9 +103,8 @@ class EditorContainer extends React.Component {
 					.then((json) => {
 						let jsonResponse = {}
 						Object.assign(jsonResponse, json)
-						console.log(jsonResponse)
-						this.setState(jsonResponse)
-						// this.pouchDB.createOrUpdateDoc(jsonResponse)
+						console.log('jsonResponse', jsonResponse)
+						this.setState(jsonResponse, () => {this.pouchDB.createOrUpdateDoc(jsonResponse)})
 					})
 					.catch((err) => {
 						console.log('exception in getEmailContents: ', err)
@@ -102,6 +113,7 @@ class EditorContainer extends React.Component {
 			else {
 				this.setState(doc, () => {
 					// this.pouchDB.createOrUpdateDoc(doc)
+					console.log('set state from pdb doc')
 				})
 			}
 		})
@@ -121,7 +133,11 @@ class EditorContainer extends React.Component {
 	}
 
 	createEmail() {
-		let content = [{content: '<p>Just start typing</p>', editorType: 'DefaultEditor'}]
+		let content = [{
+			content: '<p>Just start typing</p>',
+			editorType: 'DefaultEditor',
+			componentTitle: "New Component"
+		}]
 		let title = 'New Email'
 		let doc = {content, title}
 		fetch('/api/createNewEmail', {
@@ -138,25 +154,10 @@ class EditorContainer extends React.Component {
 			this.setState(() => {
 				return jsonResponse
 			})
-			this.pouchDB.createOrUpdateDoc(jsonResponse)
+			// this.pouchDB.createOrUpdateDoc(jsonResponse)
 		})
 		.catch((err) => {
 			console.log("error in createEmail: ", err)
-		})
-	}
-
-	updateEmail() {
-		fetch('/api/updateEmail', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				"content": this.state.compiledHTML,
-				"title": this.state.title,
-				"id" : this.state.id,
-				"template": this.state.template
-			})
 		})
 	}
 
@@ -173,9 +174,6 @@ class EditorContainer extends React.Component {
 			},
 			body: JSON.stringify(
 				{ content, title, template } = this.state
-				// content : this.state.content,
-				// title : this.state.title,
-				// template : this.state.template
 			)
 		})
 		.then((response) => {
@@ -186,21 +184,27 @@ class EditorContainer extends React.Component {
 		})
 	}
 
-	triggerSaveHTML() {
+	updateEmail() {
+		let currentState = this.state
+		this.pouchDB.getDoc(this.state.id, (doc) => {
+			console.log(doc._rev)
+		})
 		fetch('/api/updateEmail', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify(this.state)
+			body: JSON.stringify(currentState)
 		}).then((json) => {
 			console.log(json)
+			console.log(currentState._rev)
+
 			// success toast popup
 		})
 	}
 
 	componentDidMount() {
-		window.addEventListener('saveHTMLButtonClicked', this.triggerSaveHTML )
+		window.addEventListener('saveHTMLButtonClicked', this.updateEmail )
 		window.addEventListener('deleteLocalCopy', this.deleteLocalCopy )
 
 		this.getTemplates()
@@ -224,14 +228,8 @@ class EditorContainer extends React.Component {
 		this.setState(() => {
 			let removed = this.state.content.splice(oldIndex, 1)
 			this.state.content.splice(newIndex, 0, removed[0])
-			return this.state.conten
+			return this.state.content
 		})
-	}
-
-	updatePDBFromState() {
-		let currentState = this.state
-		console.log(currentState)
-		this.pouchDB.createOrUpdateDoc(currentState)
 	}
 
 	toggleEditMode() {
@@ -243,20 +241,20 @@ class EditorContainer extends React.Component {
 	}
 	
 	componentWillUnmount () {
-		window.removeEventListener('saveHTMLButtonClicked', this.triggerSaveHTML)
+		window.removeEventListener('saveHTMLButtonClicked', this.updateEmail)
 		window.removeEventListener('deleteLocalCopy', this.deleteLocalCopy)
 	}
 
-
 	componentWillUpdate (nextProps, nextState) {
-		console.log('thisState', this.state)
-		console.log("nextState ", nextState);
-		
+		console.log('updated but no rev')
 		if(this.state._rev !== nextState._rev) {
+			console.log('state updated')
 			this.pouchDB.createOrUpdateDoc(nextState)
 		}
+		if(this.state._rev === nextState._rev) {
+			console.log('rev is same')
+		}
 	}
-	
 
 	render() {
 		return (
@@ -284,6 +282,9 @@ class EditorContainer extends React.Component {
 									content={content.content}
 									key={i}
 									index={i}
+									componentTitle={content.componentTitle}
+									updateComponentTitle={this.updateComponentTitle}
+									updateParentStateContent={this.updateParentStateContent}
 									isEditModeActive={this.state.isEditModeActive}
 									id={this.state.id}
 									editorType={content.editorType}

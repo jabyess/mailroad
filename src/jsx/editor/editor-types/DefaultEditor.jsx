@@ -4,7 +4,6 @@ import autoBind from 'react-autobind'
 import { debounce } from '../../../lib/utils.js'
 import { DragSource } from 'react-dnd'
 import ItemTypes from './ItemTypes.js'
-import PDB from '../../../pouchdb/pouchdb.js'
 
 const BLOCK_TAGS = {
 	p: 'paragraph',
@@ -95,13 +94,11 @@ class DefaultEditor extends React.Component {
 		autoBind(this,
 			'onChange',
 			'onDocumentChange',
-			'setLocalStorageItem',
-			'getLocalStorageItem',
+			'onTitleChange',
 		)
 
-		this.debounceDocChange = debounce(this.onDocumentChange, 500)
-
-		this.pouchDB = new PDB('pdb_emailcontent')
+		this.debounceDocChange = debounce(this.onDocumentChange, 1000)
+		this.debounceTitleChange = debounce(this.onTitleChange, 500)
 
 		this.state = {
 			state: html.deserialize(this.props.content),
@@ -125,38 +122,32 @@ class DefaultEditor extends React.Component {
 		this.setState({state})
 	}
 
-	setLocalStorageItem(key, val) {
-		window.localStorage.setItem(key, JSON.stringify(val))
-	}
-
-	getLocalStorageItem(key) {
-		let value = window.localStorage.getItem(key)
-		return value && JSON.parse(value)
-	}
-
 	componentWillReceiveProps(nextProps) {
 		this.setState({state: html.deserialize(nextProps.content)})
 	}
 	
 	onDocumentChange(document, state) {
-	  let content =	html.serialize(state)
-		let docObject = {
-			content: content,
-			id: this.props.id,
-			editorType: this.props.editorType,
-			index: this.props.index,
-		}
-		this.pouchDB.partialDocUpdate(docObject)
+		let updatedContent = html.serialize(state)
+		this.props.updateParentStateContent(updatedContent, this.props.index)
 	}
 
-	debounceDocChange(document, state) {
-		this.onDocumentChange(document, state)
+	onTitleChange(event) {
+		event.persist()
+		let title = event.target.value
+		if(this.props.updateComponentTitle) {
+			this.props.updateComponentTitle(title, this.props.index)
+		}
 	}
 
 	render() {
 		const { isDragging, connectDragSource, text } = this.props
 		return connectDragSource(
+			
 			<div className="slate-editor">
+				<div className="component-title">
+					<label>Section Title</label>
+					<input type="text" value={this.props.componentTitle} onChange={this.onTitleChange} />
+				</div>
 				<Editor
 					state={this.state.state}
 					schema={this.state.schema}
