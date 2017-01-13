@@ -419,7 +419,8 @@
 									<tr>
 										<td>
 											{{title}}
-											{{#each emailContent}}
+											{{#each content}}
+												{{{this.componentTitle}}}
 												{{{this.content}}}
 											{{/each}}
 										</td>

@@ -94,10 +94,10 @@ class DefaultEditor extends React.Component {
 		autoBind(this,
 			'onChange',
 			'onDocumentChange',
-			'onTitleChange',
+			'onTitleChange'
 		)
 
-		this.debounceDocChange = debounce(this.onDocumentChange, 250)
+		this.debounceDocChange = debounce(this.onDocumentChange, 500)
 
 		this.state = {
 			state: html.deserialize(this.props.content),
@@ -117,12 +117,15 @@ class DefaultEditor extends React.Component {
 		}
 	}
 
-	// onChange(state) {
-	// 	this.setState({state})
-	// }
+	onChange(state) {
+		this.setState({state})
+	}
 
 	componentWillReceiveProps(nextProps) {
-		this.setState({state: html.deserialize(nextProps.content)})
+		let content = html.deserialize(nextProps.content)
+		this.setState(() => {
+			this.state.state = content 
+		}) 
 	}
 	
 	onDocumentChange(document, state) {
@@ -151,6 +154,7 @@ class DefaultEditor extends React.Component {
 					state={this.state.state}
 					schema={this.state.schema}
 					onDocumentChange={this.debounceDocChange}
+					onChange={this.onChange}
 				/>
 			</div>
 		)

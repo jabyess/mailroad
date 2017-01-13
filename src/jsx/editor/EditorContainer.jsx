@@ -40,7 +40,7 @@ class EditorContainer extends React.Component {
 
 		this.pouchDB = new PDB('pdb_emailcontent')
 
-		this.pouchDB.createOrUpdateDoc = debounce(this.pouchDB.createOrUpdateDoc, 1000)
+		// this.pouchDB.createOrUpdateDoc = debounce(this.pouchDB.createOrUpdateDoc, 1000)
 
 		this.state = {
 			template: '',
@@ -114,7 +114,6 @@ class EditorContainer extends React.Component {
 				console.log("getEmailContents doc.rev",doc._rev)
 				console.log("getEmailContents state.rev",this.state._rev)
 				this.setState(doc, () => {
-					// this.pouchDB.createOrUpdateDoc(doc)
 					console.log('set state from pdb doc')
 				})
 			}
@@ -156,7 +155,6 @@ class EditorContainer extends React.Component {
 			this.setState(() => {
 				return jsonResponse
 			})
-			// this.pouchDB.createOrUpdateDoc(jsonResponse)
 		})
 		.catch((err) => {
 			console.log("error in createEmail: ", err)
@@ -164,21 +162,22 @@ class EditorContainer extends React.Component {
 	}
 
 	compileHTMLTemplate() {
-		let context = {content, title, template} = this.state
-		console.log(context)
-		// fetch('/api/compileTemplate', {
-		// 	method: 'POST',
-		// 	headers: {
-		// 		'Content-Type': 'application/json'
-		// 	},
-		// 	body: JSON.stringify(context)
-		// })
-		// .then((response) => {
-		// 	return response.text()
-		// })
-		// .then((text) => {
-		// 	console.log(text)
-		// })
+	 	let {content, title, template} = this.state
+		let context = { content, title, template }
+		// console.log(this.state.content)
+		fetch('/api/compileTemplate', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(context)
+		})
+		.then((response) => {
+			return response.text()
+		})
+		.then((text) => {
+			console.log(text)
+		})
 	}
 
 	updateEmail() {
