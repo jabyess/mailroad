@@ -42,7 +42,7 @@ class EditorContainer extends React.Component {
 
 		this.pouchDB = new PDB('pdb_emailcontent')
 
-		this.componentDidUpdate = debounce(this.componentDidUpdate, 1000)
+		this.pouchDB.createOrUpdateDoc = debounce(this.pouchDB.createOrUpdateDoc, 1000)
 
 		this.state = {
 			template: '',
