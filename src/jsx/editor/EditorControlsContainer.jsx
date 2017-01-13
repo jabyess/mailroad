@@ -1,4 +1,5 @@
 import React from 'react'
+import AddButton from './AddButton.jsx'
 
 export default class EditorControlsContainer extends React.Component {
 	constructor() {
@@ -19,6 +20,10 @@ export default class EditorControlsContainer extends React.Component {
 		return (
 			<div className="editor-controls">
 				<button className="editor-controls--button" onClick={this.handleEditClick}>Edit Mode</button>
+				{this.props.isEditModeActive ? 
+					<AddButton />
+				: ''}
+				
 			</div>
 		)
 	}

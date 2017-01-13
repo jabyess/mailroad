@@ -1,11 +1,12 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-// import EditorTypes from './EditorTypes.jsx';
 
 class AddButton extends React.Component {
 	constructor() {
 		super()
 		this.handleClick = this.handleClick.bind(this)
+		this.state = {
+			isEditModeActive: false
+		}
 	}
 
 	handleClick() {

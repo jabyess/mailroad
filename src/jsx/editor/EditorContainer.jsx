@@ -29,15 +29,13 @@ class EditorContainer extends React.Component {
 			'addEditorToContainer',
 			'getEditorType',
 			'reorderEditorIndexes',
-			'toggleEditorTypeSelect',
-			'deleteLocalCopy',
+			'compileHTMLTemplate',
 			'toggleEditMode',
 			'handleTitleChange',
 			'handleTemplateChange',
 			'updateParentStateContent',
 			'updateComponentTitle',
 			'removeEditorFromContainer',
-			'compileTemplate',
 		)
 
 		this.pouchDB = new PDB('pdb_emailcontent')
@@ -165,27 +163,22 @@ class EditorContainer extends React.Component {
 		})
 	}
 
-	deleteLocalCopy() {
-		console.log('deleteLocalCopy fired')
-		this.pouchDB.deleteDoc('pdb_'+this.state.id)
-	}
-
-	compileTemplate() {
-		fetch('/api/compileTemplate', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(
-				{ content, title, template } = this.state
-			)
-		})
-		.then((response) => {
-			return response.text()
-		})
-		.then((text) => {
-			console.log(text)
-		})
+	compileHTMLTemplate() {
+		let context = {content, title, template} = this.state
+		console.log(context)
+		// fetch('/api/compileTemplate', {
+		// 	method: 'POST',
+		// 	headers: {
+		// 		'Content-Type': 'application/json'
+		// 	},
+		// 	body: JSON.stringify(context)
+		// })
+		// .then((response) => {
+		// 	return response.text()
+		// })
+		// .then((text) => {
+		// 	console.log(text)
+		// })
 	}
 
 	updateEmail() {
@@ -209,7 +202,7 @@ class EditorContainer extends React.Component {
 
 	componentDidMount() {
 		window.addEventListener('saveHTMLButtonClicked', this.updateEmail )
-		window.addEventListener('deleteLocalCopy', this.deleteLocalCopy )
+		window.addEventListener('compileHTMLTemplate', this.compileHTMLTemplate)
 
 		this.getTemplates()
 
@@ -224,10 +217,6 @@ class EditorContainer extends React.Component {
 		}
 	}
 
-	toggleEditorTypeSelect(value) {
-		this.setState({isEditorTypeSelectVisible: value})
-	}
-
 	reorderEditorIndexes(oldIndex, newIndex) {
 		this.setState(() => {
 			let removed = this.state.content.splice(oldIndex, 1)
@@ -237,16 +226,12 @@ class EditorContainer extends React.Component {
 	}
 
 	toggleEditMode() {
-		this.pouchDB.getDoc(this.state.id, (doc) => {
-			doc.isEditModeActive = !this.state.isEditModeActive
-			console.log("editModedoc ", doc);
-			this.setState(doc)
-		})
+		this.setState({isEditModeActive: !this.state.isEditModeActive})
 	}
 	
 	componentWillUnmount () {
 		window.removeEventListener('saveHTMLButtonClicked', this.updateEmail)
-		window.removeEventListener('deleteLocalCopy', this.deleteLocalCopy)
+		window.removeEventListener('compileHTMLTemplate', this.compileHTMLTemplate)
 	}
 
 	componentDidUpdate(prevProps, prevState) {
@@ -264,7 +249,6 @@ class EditorContainer extends React.Component {
 					toggleEditMode={this.toggleEditMode} 
 					isEditModeActive={this.state.isEditModeActive}
 				/>
-				<AddButton toggleEditorTypeSelect={this.toggleEditorTypeSelect} />
 				<div className="editor-editor-container">
 					{this.state.content.map((content, i) => {
 						let DynamicEditorType = dynamicEditorTypeList[content.editorType];

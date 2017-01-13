@@ -117,9 +117,9 @@ class DefaultEditor extends React.Component {
 		}
 	}
 
-	onChange(state) {
-		this.setState({state})
-	}
+	// onChange(state) {
+	// 	this.setState({state})
+	// }
 
 	componentWillReceiveProps(nextProps) {
 		this.setState({state: html.deserialize(nextProps.content)})
@@ -142,7 +142,6 @@ class DefaultEditor extends React.Component {
 	render() {
 		const { isDragging, connectDragSource, text } = this.props
 		return connectDragSource(
-			
 			<div className="slate-editor">
 				<div className="component-title">
 					<label>Section Title</label>
@@ -151,7 +150,6 @@ class DefaultEditor extends React.Component {
 				<Editor
 					state={this.state.state}
 					schema={this.state.schema}
-					onChange={this.onChange}
 					onDocumentChange={this.debounceDocChange}
 				/>
 			</div>
