@@ -97,8 +97,7 @@ class DefaultEditor extends React.Component {
 			'onTitleChange',
 		)
 
-		this.debounceDocChange = debounce(this.onDocumentChange, 1000)
-		this.debounceTitleChange = debounce(this.onTitleChange, 500)
+		this.debounceDocChange = debounce(this.onDocumentChange, 250)
 
 		this.state = {
 			state: html.deserialize(this.props.content),
@@ -106,7 +105,7 @@ class DefaultEditor extends React.Component {
 				nodes: {
 					code: props => <pre {...props.attributes}>{props.children}</pre>,
 					paragraph: props => <p {...props.attributes}>{props.children}</p>,
-					quote: props => <blockquote {...props.attributes}>{props.children}</blockquote>,
+					quote: props => <blockquote {...props.attribtes}>{props.children}</blockquote>,
 					div: props => <div {...props.attributes}>{props.children}</div>
 				},
 				marks: {
@@ -133,6 +132,7 @@ class DefaultEditor extends React.Component {
 
 	onTitleChange(event) {
 		event.persist()
+		this.setState({title: event.target.value})
 		let title = event.target.value
 		if(this.props.updateComponentTitle) {
 			this.props.updateComponentTitle(title, this.props.index)

@@ -9,6 +9,7 @@ import { DragDropContext } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
 import EditorControlsContainer from './EditorControlsContainer.jsx'
 import PDB from '../../pouchdb/pouchdb.js'
+import { debounce } from '../../lib/utils.js'
 
 const dynamicEditorTypeList = {
 	DefaultEditor,
@@ -29,7 +30,6 @@ class EditorContainer extends React.Component {
 			'getEditorType',
 			'reorderEditorIndexes',
 			'toggleEditorTypeSelect',
-			'updateEmail',
 			'deleteLocalCopy',
 			'toggleEditMode',
 			'handleTitleChange',
@@ -41,6 +41,8 @@ class EditorContainer extends React.Component {
 		)
 
 		this.pouchDB = new PDB('pdb_emailcontent')
+
+		this.componentDidUpdate = debounce(this.componentDidUpdate, 1000)
 
 		this.state = {
 			template: '',
@@ -104,13 +106,15 @@ class EditorContainer extends React.Component {
 						let jsonResponse = {}
 						Object.assign(jsonResponse, json)
 						console.log('jsonResponse', jsonResponse)
-						this.setState(jsonResponse, () => {this.pouchDB.createOrUpdateDoc(jsonResponse)})
+						this.setState(jsonResponse)
 					})
 					.catch((err) => {
 						console.log('exception in getEmailContents: ', err)
 					})
 			}
 			else {
+				console.log("getEmailContents doc.rev",doc._rev)
+				console.log("getEmailContents state.rev",this.state._rev)
 				this.setState(doc, () => {
 					// this.pouchDB.createOrUpdateDoc(doc)
 					console.log('set state from pdb doc')
@@ -187,7 +191,7 @@ class EditorContainer extends React.Component {
 	updateEmail() {
 		let currentState = this.state
 		this.pouchDB.getDoc(this.state.id, (doc) => {
-			console.log(doc._rev)
+			console.log('updateEmail doc.rev', doc._rev)
 		})
 		fetch('/api/updateEmail', {
 			method: 'POST',
@@ -197,7 +201,7 @@ class EditorContainer extends React.Component {
 			body: JSON.stringify(currentState)
 		}).then((json) => {
 			console.log(json)
-			console.log(currentState._rev)
+			console.log('updateEmail state.rev', currentState._rev)
 
 			// success toast popup
 		})
@@ -245,15 +249,8 @@ class EditorContainer extends React.Component {
 		window.removeEventListener('deleteLocalCopy', this.deleteLocalCopy)
 	}
 
-	componentWillUpdate (nextProps, nextState) {
-		console.log('updated but no rev')
-		if(this.state._rev !== nextState._rev) {
-			console.log('state updated')
-			this.pouchDB.createOrUpdateDoc(nextState)
-		}
-		if(this.state._rev === nextState._rev) {
-			console.log('rev is same')
-		}
+	componentDidUpdate(prevProps, prevState) {
+		this.pouchDB.createOrUpdateDoc(this.state)
 	}
 
 	render() {
