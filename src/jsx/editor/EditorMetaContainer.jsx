@@ -1,6 +1,6 @@
 import React from 'react'
 import autoBind from 'react-autobind'
-import PDB from '../../pouchdb/pouchdb.js'
+import PDB from '../../lib/pouchdb.js'
 
 export default class EditorMetaContainer extends React.Component {
 

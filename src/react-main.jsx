@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import MainContainer from './jsx/MainContainer.jsx'
 import EmailContainer from './jsx/emails/EmailContainer.jsx'
 import AdminContainer from './jsx/AdminContainer.jsx'
+import MediaContainer from './jsx/media/MediaContainer.jsx'
 import { Router, Route, browserHistory, IndexRoute, Link } from 'react-router'
 import './sass/main.sass'
 
@@ -13,6 +14,7 @@ ReactDOM.render(
 			<Route path="/editor/:id" component={MainContainer}/>
 		</Route>
 		<Route path="/admin" component={AdminContainer}></Route>
+		<Route path="/media" component={MediaContainer}></Route>
 	</Router>,
 		document.getElementById('emailbuilder-root')
 );

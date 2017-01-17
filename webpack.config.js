@@ -25,12 +25,19 @@ module.exports = {
 	module: {
 		loaders: [
 			{
-				test : /\.sass/,
+				test : /(\.scss|\.sass)/,
 				loaders: ['style','css','sass'],
 			},
+			// {
+			// 	test: /\.css$/,
+			// 	loader: 'css-loader'
+			// },
 			{
-				test: /\.css$/,
-				loader: 'css-loader'
+				test: /\.woff$/,
+				loader: 'url-loader',
+				options: {
+					limit: 50000
+				}
 			},
 			{
 				test: /\.json/, loader: "json-loader"

@@ -8,7 +8,7 @@ import EditorTypeRow from './EditorTypeRow.jsx'
 import { DragDropContext } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
 import EditorControlsContainer from './EditorControlsContainer.jsx'
-import PDB from '../../pouchdb/pouchdb.js'
+import PDB from '../../lib/pouchdb.js'
 import { debounce } from '../../lib/utils.js'
 
 const dynamicEditorTypeList = {
@@ -78,7 +78,7 @@ class EditorContainer extends React.Component {
 	updateParentStateContent(content, index) {
 		this.setState(() => {
 			this.state.content[index].content = content
-		})
+		}, () => { console.log(this.state.content[index].content )})
 	}
 
 	updateComponentTitle(title, index) {
