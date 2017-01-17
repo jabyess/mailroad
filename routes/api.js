@@ -59,14 +59,8 @@ router.post('/createNewEmail', jsonParser, (req,res) => {
 })
 
 router.post('/updateEmail', jsonParser, (req, res) => {
-	let wat = Object.assign({}, req.body)
-	console.log(wat)
 	db.email.upsert(
 		Object.assign({}, req.body)
-		// content: req.body.content,
-		// title: req.body.title,
-		// id: req.body.emailID,
-		// template: req.body.template
 	).then(() => {
 		res.sendStatus(200)
 	}).catch((err)=>{

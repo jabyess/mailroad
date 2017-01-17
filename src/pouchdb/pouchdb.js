@@ -30,16 +30,12 @@ export default class PDB {
 				throw err
 			}
 		}).then((newDoc) => {
-			console.log("newDoc ", newDoc);
-			console.log("doc ", doc);
 			let newDocRev = newDoc._rev
 			newDoc = Object.assign(newDoc, doc)
 			if(newDocRev) {
-				console.log("newDocRev ", newDocRev);
 				newDoc._rev = newDocRev
 			}
 			newDoc.updatedAt = moment().format(DATE_STRING)
-			console.log(newDoc.updatedAt)
 			this.pouchDB.put(newDoc)
 		})
 	}
