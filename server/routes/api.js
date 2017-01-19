@@ -3,7 +3,7 @@ import path from 'path'
 import express from 'express'
 import db from '../models/index.js'
 import bodyParser from 'body-parser'
-import Utils from '../utils.js'
+import Utils from '../lib/utils.js'
 
 let router = express.Router()
 let jsonParser = bodyParser.json()

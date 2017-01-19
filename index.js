@@ -2,8 +2,8 @@ import dotenv from 'dotenv'
 import path from 'path'
 import express from 'express'
 import hbs from 'express-handlebars'
-import { API } from './routes/api.js'
-import db from './models/index.js'
+import { API } from './server/routes/api.js'
+import db from './server/models/index.js'
 import webpackDevMiddleware from 'webpack-dev-middleware'
 
 

@@ -1,6 +1,5 @@
 import AWS from 'aws-sdk/clients/s3'
 
-
 class S3 {
 
 	constructor() {

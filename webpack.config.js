@@ -2,14 +2,14 @@ var path = require('path');
 
 
 const PATHS = {
-	app: path.join(__dirname, 'src'),
+	app: path.join(__dirname, 'client'),
 	build: path.join(__dirname, 'dist'),
-	sass: path.join(__dirname, 'src/sass')
+	sass: path.join(__dirname, 'client/sass')
 }
 
 module.exports = {
 	entry : {
-		main: ['whatwg-fetch', path.join(__dirname, 'src/react-main.jsx')],
+		main: ['whatwg-fetch', path.join(__dirname, 'client/react-main.jsx')],
 	},
 	output: {
 		path: PATHS.build,

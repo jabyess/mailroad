@@ -15,47 +15,58 @@ const DEFAULT_NODE = 'paragraph'
 
 const schema = {
   nodes: {
-    'block-quote': props => <blockquote {...props.attributes}>{props.children}</blockquote>,
-    'bulleted-list': props => <ul {...props.attributes}>{props.children}</ul>,
+    'blockquote': props => <blockquote {...props.attributes}>{props.children}</blockquote>,
     'heading-one': props => <h1 {...props.attributes}>{props.children}</h1>,
     'heading-two': props => <h2 {...props.attributes}>{props.children}</h2>,
-    'list-item': props => <li {...props.attributes}>{props.children}</li>,
+		'heading-three': props => <h3 {...props.attributes}>{props.children}</h3>,
+		'heading-four': props => <h4 {...props.attributes}>{props.children}</h4>,
+		'heading-five': props => <h5 {...props.attributes}>{props.children}</h5>,
+		'heading-six': props => <h6 {...props.attributes}>{props.children}</h6>,
+    'bulleted-list': props => <ul {...props.attributes}>{props.children}</ul>,
     'numbered-list': props => <ol {...props.attributes}>{props.children}</ol>,
+    'list-item': props => <li {...props.attributes}>{props.children}</li>,
+		'link': (props) => {
+			const { data } = props.node
+      const href = data.get('href')
+			return <a href={href} {...props.attributes}>{props.children}</a>
+		}
   },
   marks: {
     bold: {
       fontWeight: 'bold'
     },
-    code: {
-      fontFamily: 'monospace',
-      backgroundColor: '#eee',
-      padding: '3px',
-      borderRadius: '4px'
-    },
+		link: {
+			textDecoration: 'underline',
+			color: 'blue'
+		},
     italic: {
       fontStyle: 'italic'
     },
-    underlined: {
-      textDecoration: 'underline'
-    }
   }
 }
 
 const BLOCK_TAGS = {
 	p: 'paragraph',
-	blockquote: 'quote',
-	headingOne: 'heading-one',
-	headingTwo: 'heading-two',
+	blockquote: 'blockquote',
+	h1: 'heading-one',
+	h2: 'heading-two',
+	h3: 'heading-three',
+	h4: 'heading-four',
+	h5: 'heading-five',
+	h6: 'heading-six',
 	div: 'div',
-	listItem: 'list-item',
-	numberedList: 'numbered-list'
+	li: 'list-item',
+	ul: 'bulleted-list',
+	ol: 'numbered-list',
+	table: 'table',
+	tr: 'table-row',
+	td: 'table-cell',
+	th: 'table-header'
 }
 
 const MARK_TAGS = {
   em: 'italic',
   strong: 'bold',
-  underlined: 'underlined',
-	code: 'code'
 }
 
 const rules = [
@@ -66,20 +77,25 @@ const rules = [
 			return {
 				kind: 'block',
 				type: type,
+				data: el.data ? el.data : [],
 				nodes: next(el.children)
 			}
 		},
 		serialize(object, children) {
       if (object.kind != 'block') return
-			console.log(object.type)
       switch (object.type) {
 				case 'heading-one': return <h1>{children}</h1>
 				case 'heading-two': return <h2>{children}</h2>
+				case 'heading-three': return <h3>{children}</h3>
+				case 'heading-four': return <h4>{children}</h4>
+				case 'heading-five': return <h5>{children}</h5>
+				case 'heading-six': return <h6>{children}</h6>
         case 'paragraph': return <p>{children}</p>
-        case 'quote': return <blockquote>{children}</blockquote>
+        case 'blockquote': return <blockquote>{children}</blockquote>
 				case 'numbered-list' : return <ol>{children}</ol>
 				case 'bulleted-list': return <ul>{children}</ul>
 				case 'list-item': return <li>{children}</li>
+				case 'link' : return <a>{children}</a>
       }
 		}
 	},
@@ -98,8 +114,6 @@ const rules = [
       switch (object.type) {
         case 'bold': return <strong>{children}</strong>
         case 'italic': return <em>{children}</em>
-        case 'underlined': return <span style={{textDecoration: "underline"}}>{children}</span>
-				case 'code': return <code>{children}</code>
       }
     }
 	}
@@ -141,7 +155,9 @@ class DefaultEditor extends React.Component {
 			'onChange',
 			'onDocumentChange',
 			'onTitleChange',
-			'onKeyDown'
+			'onKeyDown',
+			'onClickMark',
+			'hasLinks'
 		)
 
 		this.debounceDocChange = debounce(this.onDocumentChange, 500)
@@ -151,6 +167,17 @@ class DefaultEditor extends React.Component {
 		}
 	}
 
+
+	/**
+   * Check whether the current selection has a link in it.
+   *
+   * @return {Boolean} hasLinks
+   */
+
+  hasLinks() {
+    const { state } = this.state
+    return state.inlines.some(inline => inline.type == 'link')
+  }
 
  /**
    * Check if the current selection has a mark with `type` in it.
@@ -196,12 +223,6 @@ class DefaultEditor extends React.Component {
       case 'i':
         mark = 'italic'
         break
-      case 'u':
-        mark = 'underlined'
-        break
-      case '`':
-        mark = 'code'
-        break
       default:
         return
     }
@@ -225,13 +246,52 @@ class DefaultEditor extends React.Component {
   onClickMark(e, type) {
     e.preventDefault()
     let { state } = this.state
+		let hasLinks = this.hasLinks()
 
-    state = state
-      .transform()
-      .toggleMark(type)
-      .apply()
+		console.log(type);
+		console.log(hasLinks)
+		if(type === 'link' && hasLinks) {
+			state = state
+        .transform()
+        .unwrapInline('link')
+        .apply()
 
-    this.setState({ state })
+			if (state.isExpanded) {
+				const href = window.prompt('Enter the URL of the link:')
+				state = state
+					.transform()
+					.wrapInline({
+						type: 'link',
+						data: { href }
+					})
+					.collapseToEnd()
+					.apply()
+			}
+
+			else {
+				const href = window.prompt('Enter the URL of the link:')
+				const text = window.prompt('Enter the text for the link:')
+				state = state
+					.transform()
+					.insertText(text)
+					.extendBackward(text.length)
+					.wrapInline({
+						type: 'link',
+						data: { href }
+					})
+					.collapseToEnd()
+					.apply()
+			}
+		}
+
+		else {
+			state = state
+				.transform()
+				.toggleMark(type)
+				.apply()
+			this.setState({ state })
+		}
+
   }
 
   /**
@@ -296,8 +356,7 @@ class DefaultEditor extends React.Component {
       <div className="menu toolbar-menu">
         {this.renderMarkButton('bold', 'fa-bold')}
         {this.renderMarkButton('italic', 'fa-italic')}
-        {this.renderMarkButton('underlined', 'fa-underline')}
-        {this.renderMarkButton('code', 'fa-code')}
+				{this.renderMarkButton('link', 'fa-link')}
         {this.renderBlockButton('heading-one', 'fa-header')}
         {this.renderBlockButton('heading-two', 'fa-header')}
         {this.renderBlockButton('block-quote', 'fa-quote-right')}
@@ -335,7 +394,7 @@ class DefaultEditor extends React.Component {
 	renderMarkButton(type, icon) {
     const isActive = this.hasMark(type)
     const onMouseDown = e => this.onClickMark(e, type)
-		const markButtonClass = "fa " + icon
+		const markButtonClass = "fa fa-fw " + icon
 
     return (
       <button className="button" onMouseDown={onMouseDown} data-active={isActive}>
@@ -347,7 +406,7 @@ class DefaultEditor extends React.Component {
 	renderBlockButton(type, icon) {
 		const isActive = this.hasBlock(type)
     const onMouseDown = e => this.onClickBlock(e, type)
-		const blockButtonClass = "fa " + icon
+		const blockButtonClass = "fa fa-fw " + icon
 
     return (
       <button className="button" onMouseDown={onMouseDown} data-active={isActive}>
