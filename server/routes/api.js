@@ -175,6 +175,7 @@ router.post('/s3/delete', jsonParser, (req, res) =>{
   size: 197202 }
 */
 router.post('/s3/create', upload.single('file'), (req, res) => {
+	let formattedFileName = Utils.formatS3Filename(req.file.originalname)
 	let createParams = {
 		Key: req.file.originalname,
 		Bucket: s3Params.Bucket,
@@ -182,8 +183,6 @@ router.post('/s3/create', upload.single('file'), (req, res) => {
 		ContentLength: req.file.size,
 		Body: req.file.buffer
 	}
-	console.log(req.file)
-	console.log(req.body)
 	S3.putObject(createParams, (err, data) => {
 		if(err) {
 			console.log(err)

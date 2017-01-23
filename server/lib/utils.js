@@ -8,7 +8,7 @@ let defaultJuiceOptions = {
 	preserveMediaQueries: false,
 }
 
-export default class Utils {
+class Utils {
 
 	/** 
 	 * Compiles handlebars template from source file with context passed in
@@ -89,4 +89,10 @@ export default class Utils {
     };
 	}
 
+	static formatS3Filename(filename) {
+		console.log("filename ", filename);
+	}
+
 }
+
+export default Utils

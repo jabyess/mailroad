@@ -11,7 +11,8 @@ export default class ImagesContainer extends React.Component {
 			'getImagesFromS3',
 			'loadMore',
 			'initialLoad',
-			'deleteImage'
+			'deleteImage',
+			'updateMediaList'
 		)
 
 		this.getImagesFromS3 = this.getImagesFromS3.bind(this)
@@ -24,15 +25,20 @@ export default class ImagesContainer extends React.Component {
 		}
 	}
 
-	getImagesFromS3() {
+	getImagesFromS3(hardRefresh) {	
 		fetch('/api/s3/list')
 			.then((results) => {
 				return results.json()
 			})
 			.then((json) => {
 				this.setState({allImages: json}, () => {
-					console.log(json)
-					this.initialLoad()
+					console.log(this.state.allImages)
+					if(hardRefresh) {
+						this.setState({images: []}, this.initialLoad)
+					}
+					else {
+						this.initialLoad()
+					}
 				})
 			})
 	}
@@ -77,13 +83,17 @@ export default class ImagesContainer extends React.Component {
 		})
 	}
 
+	updateMediaList() {
+		this.getImagesFromS3(true)
+	}
+
 	componentDidMount () {
 		this.getImagesFromS3()
-		window.addEventListener('triggerMediaListRefresh', this.forceUpdate())
+		window.addEventListener('triggerMediaListRefresh', this.updateMediaList)
 	}
 
 	componentWillUnmount () {
-		window.removeEventListener('triggerMediaListRefresh')
+		window.removeEventListener('triggerMediaListRefresh', this.updateMediaList)
 	}
 	
 
