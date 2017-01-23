@@ -28,10 +28,6 @@ module.exports = {
 				test : /(\.scss|\.sass)/,
 				loaders: ['style','css','sass'],
 			},
-			// {
-			// 	test: /\.css$/,
-			// 	loader: 'css-loader'
-			// },
 			{
 				test: /\.woff$/,
 				loader: 'url-loader',

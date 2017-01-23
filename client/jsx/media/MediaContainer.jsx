@@ -1,15 +1,9 @@
 import React from 'react'
 import NavBar from '../NavBar.jsx'
-// import S3 from '../../lib/aws.js'
+import ImagesContainer from './ImagesContainer.jsx'
+import MediaUploadForm from './MediaUploadForm.jsx'
 
 export default class MediaContainer extends React.Component {
-	constructor() {
-		super()
-	}
-
-	getImagesFromS3() {
-		
-	}
 
 	render() {
 		return (
@@ -17,6 +11,8 @@ export default class MediaContainer extends React.Component {
 				<NavBar />
 				<h1>Media</h1>
 				<div>Images will go here</div>
+				<MediaUploadForm />
+				<ImagesContainer />
 			</div>
 		)
 	}
