@@ -21,7 +21,7 @@ app.get('/editor/*', (req, res) => {
 })
 
 app.get('*', (req, res) => {
-	res.sendFile(path.join(__dirname, 'index.html'), {}, (err) => {
+	res.sendFile(path.resolve(__dirname, '../../index.html'), {}, (err) => {
 		if(err) {
 			console.log("err ", err);
 		}

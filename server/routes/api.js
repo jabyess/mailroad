@@ -6,6 +6,7 @@ import bodyParser from 'body-parser'
 import Utils from '../lib/utils.js'
 import multer from 'multer'
 import AWS from 'aws-sdk/clients/s3'
+import axios from 'axios'
 
 dotenv.config()
 
@@ -13,6 +14,13 @@ let upload = multer()
 let router = express.Router()
 let jsonParser = bodyParser.json()
 const env = process.env
+
+const COUCH_URL = 'http://127.0.0.1:5984/'
+const COUCH_DB = 'emailbuilder/'
+const COUCH_UUID = COUCH_URL + '_uuids'
+const COUCH_FULL = COUCH_URL + COUCH_DB
+
+axios.defaults.baseURL = COUCH_FULL
 
 const s3Config = {
 	region: env.AWS_REGION,
@@ -27,7 +35,8 @@ const s3Params = {
 let S3 = new AWS(s3Config)
 
 router.get('/listEmails', jsonParser, (req, res) => {
-	// db.email.findAll({
+
+	// db.email.findAll(O{
 	// 	order: '"updatedAt"DESC',
 	// 	limit: 20
 	// }).then((results) => {
@@ -63,10 +72,30 @@ router.get('/getEmail/:id', (req, res) => {
 
 router.post('/createNewEmail', jsonParser, (req,res) => {
 	let { content, title } = req.body
-	// db.email.create({ content, title }).then((results) => {
-	// 	let dataValues = results.get({ plain: true })
-	// 	res.send(dataValues)
-	// })
+	axios.get(COUCH_UUID)
+	.then((response) => {
+		let uuid = response.data.uuids[0]
+		console.log(res)
+		return uuid
+	})
+	.then((uuid) => {
+		console.log(COUCH_FULL, res)
+		axios.put(uuid, {
+			headers: {
+				'Content-Type':'application/json'
+			},
+			data: JSON.stringify({
+				content, title
+			})
+		})
+		.then((putReponse)=>{
+			console.log(putResponseA)
+		})
+	})
+	.catch((err) => {
+		console.log(err)
+	})
+	
 })
 
 router.post('/updateEmail', jsonParser, (req, res) => {

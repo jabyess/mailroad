@@ -11,8 +11,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "babel-node": "babel-node --presets=es2015",
     "start": "nodemon --exec babel-node server/lib/index.js",
-		"build": "babel server/lib -d dist",
-		"serve": "node dist/index.js",
+    "build": "webpack --progress && babel server/ -d dist",
+    "serve": "node dist/lib/index.js",
     "dev": "webpack-dev-server --open --inline"
   },
   "author": "jbyess@morningconsult.com",
@@ -25,10 +25,10 @@
   },
   "dependencies": {
     "aws-sdk": "^2.7.22",
+    "axios": "^0.15.3",
     "babel-cli": "^6.16.0",
     "body-parser": "^1.15.2",
     "classnames": "^2.2.5",
-    "cradle": "^0.7.1",
     "dotenv": "^2.0.0",
     "express": "^4.13.4",
     "express-handlebars": "^3.0.0",
