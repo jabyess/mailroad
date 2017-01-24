@@ -5,6 +5,8 @@ import EditorMetaContainer from './EditorMetaContainer.jsx'
 import { SlateEditor, DefaultEditor, DatePicker, DatesPicker } from './editor-types/EditorTypes.js'
 import EditorTypeSelect from './editor-types/EditorTypeSelect.jsx'
 import EditorTypeRow from './EditorTypeRow.jsx'
+import ImagePromptModal from '../modals/ImagePromptModal.jsx'
+import ImageGalleryModal from '../modals/ImageGalleryModal.jsx'
 import { DragDropContext } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
 import EditorControlsContainer from './EditorControlsContainer.jsx'
@@ -36,6 +38,9 @@ class EditorContainer extends React.Component {
 			'updateParentStateContent',
 			'updateComponentTitle',
 			'removeEditorFromContainer',
+			'toggleImagePromptModal',
+			'toggleExternalImageModal',
+			'toggleGalleryModal'
 		)
 
 		this.pouchDB = new PDB('pdb_emailcontent')
@@ -47,7 +52,9 @@ class EditorContainer extends React.Component {
 			templates: [],
 			content: [],
 			isEditorTypeSelectVisible: false,
-			isEditModeActive: false
+			isEditModeActive: false,
+			isGalleryModalVisible: false,
+			isImagePromptModalVisible: false
 		}
 	}
 
@@ -188,10 +195,24 @@ class EditorContainer extends React.Component {
 			// success toast popup
 		})
 	}
+	toggleImagePromptModal() {
+		this.setState({isImagePromptModalVisible: !this.state.isImagePromptModalVisible})
+	}
+
+	toggleGalleryModal() {
+		this.setState({isGalleryModalVisible: !this.state.isGalleryModalVisible}) 
+	}
+
+	toggleExternalImageModal() {
+		this.setState({isExternalImageModalVisible: !this.state.isExternalImageModalVisible}) 
+	}
 
 	componentDidMount() {
 		window.addEventListener('saveHTMLButtonClicked', this.updateEmail )
 		window.addEventListener('compileHTMLTemplate', this.compileHTMLTemplate)
+		window.addEventListener('toggleGalleryModal', this.toggleGalleryModal)
+		window.addEventListener('toggleExternalImageModal', this.toggleExternalImageModal)
+		window.addEventListener('toggleImagePromptModal', this.toggleImagePromptModal)
 
 		this.getTemplates()
 
@@ -228,6 +249,8 @@ class EditorContainer extends React.Component {
 	}
 
 	render() {
+		const renderImageGalleryModal = this.state.isGalleryModalVisible ? <ImageGalleryModal /> : null
+		const renderImagePromptModal = this.state.isImagePromptModalVisible ? <ImagePromptModal /> : null
 		return (
 			<div className="editor-container">
 				<EditorMetaContainer {...this.state} 
@@ -270,6 +293,8 @@ class EditorContainer extends React.Component {
 						isEditorTypeSelectVisible={this.state.isEditorTypeSelectVisible}
 					/>
 				</div>
+				{renderImagePromptModal}
+				{renderImageGalleryModal}
 			</div>
 		)	
 	}

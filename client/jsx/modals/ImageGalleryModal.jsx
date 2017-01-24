@@ -3,7 +3,7 @@ import autoBind from 'react-autobind'
 
 const IMAGES_PER_PAGE = 10
 
-export default class ImagesContainer extends React.Component {
+export default class ImageGalleryModal extends React.Component {
 	constructor() {
 		super()
 

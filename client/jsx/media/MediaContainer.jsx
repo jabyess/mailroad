@@ -1,6 +1,6 @@
 import React from 'react'
 import NavBar from '../NavBar.jsx'
-import ImagesContainer from './ImagesContainer.jsx'
+import ImageGalleryModal from '../modals/ImageGalleryModal.jsx'
 import MediaUploadForm from './MediaUploadForm.jsx'
 
 export default class MediaContainer extends React.Component {
@@ -12,7 +12,7 @@ export default class MediaContainer extends React.Component {
 				<h1>Media</h1>
 				<div>Images will go here</div>
 				<MediaUploadForm />
-				<ImagesContainer />
+				<ImageGalleryModal />
 			</div>
 		)
 	}
