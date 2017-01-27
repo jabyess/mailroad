@@ -1,9 +1,9 @@
 import React from 'react'
 import autoBind from 'react-autobind'
-import AddButton from './AddButton.jsx'
 import EditorMetaContainer from './EditorMetaContainer.jsx'
 import { SlateEditor, DefaultEditor, DatePicker, DatesPicker } from './editor-types/EditorTypes.js'
 import EditorTypeSelect from './editor-types/EditorTypeSelect.jsx'
+import axios from 'axios'
 import EditorTypeRow from './EditorTypeRow.jsx'
 import ImagePromptModal from '../modals/ImagePromptModal.jsx'
 import ImageGalleryModal from '../modals/ImageGalleryModal.jsx'
@@ -32,15 +32,12 @@ class EditorContainer extends React.Component {
 			'getEditorType',
 			'reorderEditorIndexes',
 			'compileHTMLTemplate',
-			'toggleEditMode',
 			'handleTitleChange',
 			'handleTemplateChange',
 			'updateParentStateContent',
 			'updateComponentTitle',
 			'removeEditorFromContainer',
-			'toggleImagePromptModal',
-			'toggleExternalImageModal',
-			'toggleGalleryModal'
+			'toggleVisible'
 		)
 
 		this.pouchDB = new PDB('pdb_emailcontent')
@@ -54,7 +51,9 @@ class EditorContainer extends React.Component {
 			isEditorTypeSelectVisible: false,
 			isEditModeActive: false,
 			isGalleryModalVisible: false,
+			isExternalImageModalVisible: false,
 			isImagePromptModalVisible: false
+		
 		}
 	}
 
@@ -102,13 +101,11 @@ class EditorContainer extends React.Component {
 	getEmailContents(id) {
 		this.pouchDB.getDoc(id, (doc) => {
 			if(doc && doc.name === "not_found") {
-				fetch(`/api/getEmail/${id}`)
-					.then((response) => {
-						return response.json()
-					})
+				axios(`/api/email/${id}`)
 					.then((json) => {
+						console.log(json)
 						let jsonResponse = {}
-						Object.assign(jsonResponse, json)
+						Object.assign(jsonResponse, json.data)
 						this.setState(jsonResponse)
 					})
 					.catch((err) => {
@@ -142,7 +139,7 @@ class EditorContainer extends React.Component {
 		}]
 		let title = 'New Email'
 		let doc = {content, title}
-		fetch('/api/createNewEmail', {
+		fetch('/api/email/create', {
 			method: 'POST',
 			headers: {
 				'Content-Type' : 'application/json'
@@ -152,10 +149,11 @@ class EditorContainer extends React.Component {
 		.then((results) => {
 			return results.json()
 		}).then((json) => {
-			let jsonResponse = Object.assign({}, json)
-			this.setState(() => {
-				return jsonResponse
-			})
+			// let jsonResponse = Object.assign({}, json)
+			console.log(json)
+			// this.setState(() => {
+			// 	return jsonResponse
+			// })
 		})
 		.catch((err) => {
 			console.log("error in createEmail: ", err)
@@ -184,8 +182,7 @@ class EditorContainer extends React.Component {
 		let currentState = this.state
 		this.pouchDB.getDoc(this.state.id, (doc) => {
 		})
-		fetch('/api/updateEmail', {
-			method: 'POST',
+		axios.post('/api/email/:id', {
 			headers: {
 				'Content-Type': 'application/json'
 			},
@@ -195,24 +192,20 @@ class EditorContainer extends React.Component {
 			// success toast popup
 		})
 	}
-	toggleImagePromptModal() {
-		this.setState({isImagePromptModalVisible: !this.state.isImagePromptModalVisible})
-	}
 
-	toggleGalleryModal() {
-		this.setState({isGalleryModalVisible: !this.state.isGalleryModalVisible}) 
-	}
-
-	toggleExternalImageModal() {
-		this.setState({isExternalImageModalVisible: !this.state.isExternalImageModalVisible}) 
+	toggleVisible(event) {
+		let visibleKey = event.detail.toString()
+		this.setState(() => {
+			let returnObj = {}
+			returnObj[visibleKey] = !this.state[visibleKey]
+			return returnObj
+		})
 	}
 
 	componentDidMount() {
 		window.addEventListener('saveHTMLButtonClicked', this.updateEmail )
 		window.addEventListener('compileHTMLTemplate', this.compileHTMLTemplate)
-		window.addEventListener('toggleGalleryModal', this.toggleGalleryModal)
-		window.addEventListener('toggleExternalImageModal', this.toggleExternalImageModal)
-		window.addEventListener('toggleImagePromptModal', this.toggleImagePromptModal)
+		window.addEventListener('toggleVisible', this.toggleVisible)
 
 		this.getTemplates()
 
@@ -235,22 +228,24 @@ class EditorContainer extends React.Component {
 		})
 	}
 
-	toggleEditMode() {
-		this.setState({isEditModeActive: !this.state.isEditModeActive})
-	}
 	
 	componentWillUnmount () {
-		window.removeEventListener('saveHTMLButtonClicked', this.updateEmail)
+		window.removeEventListener('saveHTMLButtonClicked', this.updateEmail )
 		window.removeEventListener('compileHTMLTemplate', this.compileHTMLTemplate)
+		window.removeEventListener('toggleExternalImageModal', this.toggleExternalImageModal)
+		window.removeEventListener('toggleVisible', this.toggleVisible)
 	}
 
 	componentDidUpdate(prevProps, prevState) {
-		this.pouchDB.createOrUpdateDoc(this.state)
+		// this.pouchDB.createOrUpdateDoc(this.state)
 	}
 
 	render() {
 		const renderImageGalleryModal = this.state.isGalleryModalVisible ? <ImageGalleryModal /> : null
 		const renderImagePromptModal = this.state.isImagePromptModalVisible ? <ImagePromptModal /> : null
+		const renderEditorTypeSelect = this.state.isEditModeActive ? <EditorTypeSelect 
+			addEditorToContainer={this.addEditorToContainer}
+			/> : null
 		return (
 			<div className="editor-container">
 				<EditorMetaContainer {...this.state} 
@@ -286,13 +281,7 @@ class EditorContainer extends React.Component {
 						)
 					})}
 				</div>
-				<div className="editor-type-list">
-					<EditorTypeSelect
-						addEditorToContainer={this.addEditorToContainer}
-						toggleEditorTypeSelect={this.toggleEditorTypeSelect} 
-						isEditorTypeSelectVisible={this.state.isEditorTypeSelectVisible}
-					/>
-				</div>
+				{renderEditorTypeSelect}
 				{renderImagePromptModal}
 				{renderImageGalleryModal}
 			</div>

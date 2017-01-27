@@ -22,7 +22,7 @@ export default class EmailTable extends React.Component {
 				<tbody>
 					{this.props.emailItems.map((cv, i) => {
 						return (
-							<EmailTableRow rowValue={cv} key={i} updateSelected={this.props.updateSelected}/>
+							<EmailTableRow rowValue={cv} key={i} updateSelectedCheckboxes={this.props.updateSelectedCheckboxes}/>
 						)
 					})}
 				</tbody>

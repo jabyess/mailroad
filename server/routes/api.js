@@ -34,14 +34,24 @@ const s3Params = {
 
 let S3 = new AWS(s3Config)
 
-router.get('/listEmails', jsonParser, (req, res) => {
-
-	// db.email.findAll(O{
-	// 	order: '"updatedAt"DESC',
-	// 	limit: 20
-	// }).then((results) => {
-	// 	res.send(results)
-	// })
+router.get('/email/list', jsonParser, (req, res) => {
+	const designUrl = COUCH_FULL + '_design/EmailsByUpdatedDate/_view/EmailsByUpdatedDate'
+	axios.get(designUrl, {
+		params: {
+			limit: 10,
+			descending: true
+		}
+	})
+	.then((emails) => {
+		// console.log(emails.data)
+		let data = emails.data
+		console.log(data)
+		res.send(data)
+	}).catch((err) => {
+		console.log(err)
+		throw err
+	})
+	
 })
 
 router.get('/templates', (req, res) => {
@@ -66,39 +76,29 @@ router.post('/compileTemplate', jsonParser, (req,res) => {
 	})
 })
 
-router.get('/getEmail/:id', (req, res) => {
-	let id = req.params.id
+router.get('/email/:id', (req, res) => {
+	let url = COUCH_FULL + req.params.id
+	console.log(url)
+	axios.get(url)
+		.then((emailData) => {
+			console.log(emailData.data)
+			res.send(emailData.data)
+		})
+		.catch((err) => {
+			console.log(err)
+		})
 })
 
-router.post('/createNewEmail', jsonParser, (req,res) => {
-	let { content, title } = req.body
-	axios.get(COUCH_UUID)
-	.then((response) => {
-		let uuid = response.data.uuids[0]
-		console.log(res)
-		return uuid
+router.post('/email/:id', jsonParser, (req, res) => {
+	console.log(req.params.id)
+	console.log(req.body)
+	let url = COUCH_FULL + req.params.id
+	axios.put(url, {
+		data: req.body
 	})
-	.then((uuid) => {
-		console.log(COUCH_FULL, res)
-		axios.put(uuid, {
-			headers: {
-				'Content-Type':'application/json'
-			},
-			data: JSON.stringify({
-				content, title
-			})
-		})
-		.then((putReponse)=>{
-			console.log(putResponseA)
-		})
-	})
-	.catch((err) => {
-		console.log(err)
-	})
-	
-})
-
-router.post('/updateEmail', jsonParser, (req, res) => {
+	.then((response) => [
+		console.log(response)
+	])
 	// db.email.upsert(
 	// 	Object.assign({}, req.body)
 	// ).then(() => {
@@ -108,6 +108,34 @@ router.post('/updateEmail', jsonParser, (req, res) => {
 	// 	res.status(500).send(err)
 	// })
 })
+
+
+router.post('/email/create', jsonParser, (req,res) => {
+	let { content, title } = req.body
+	let createdAt = Utils.getCurrentTimestampUTC()
+
+	axios.get(COUCH_UUID)
+		.then((response) => {
+			let uuid = response.data.uuids[0]
+			return uuid
+		})
+		.then((uuid) => {
+			return axios.put(uuid, {
+				content,
+				title,
+				createdAt,
+				updatedAt: createdAt
+			})
+			.then((putResponse)=>{
+				res.send(putResponse.data)
+			})
+		})
+		.catch((err) => {
+			console.log(err)
+		})
+	
+})
+
 
 // router.post('/deleteEmail', jsonParser, (req, res) => {
 // })

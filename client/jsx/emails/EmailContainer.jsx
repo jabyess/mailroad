@@ -1,9 +1,10 @@
 import React from 'react'
-import EmailTable from './EmailTable.jsx'
 import NavBar from '../NavBar.jsx'
 import autoBind from 'react-autobind'
+import EmailTable from './EmailTable.jsx'
 import EmailControls from './EmailControls.jsx'
 import EmailTableRow from './EmailTableRow.jsx'
+import axios from 'axios'
 
 export default class EmailContainer extends React.Component {
 	constructor() {
@@ -22,12 +23,18 @@ export default class EmailContainer extends React.Component {
 	}
 
 	listEmails() {
-		fetch('/api/listEmails')
-			.then((response) => {
-				return response.json()
-			})
-			.then((json) => {
-				this.setState({emailItems: json})
+		axios('/api/email/list')
+			.then((results) => {
+				let values = results.data.rows.map((val, ind) => {
+					let newValues = {
+						id: val.id,
+						createdAt: val.value.createdAt,
+						updatedAt: val.value.updatedAt,
+						title: val.value.title
+					}
+					return newValues
+				})
+			this.setState({emailItems: values})
 			})
 			.catch((ex) => {
 				console.log('listEmails exception: ', ex)
@@ -60,29 +67,15 @@ export default class EmailContainer extends React.Component {
 		return (
 			<container className="emailContainer">
 				<NavBar/>
-				<EmailControls selectedCheckboxes={this.state.selectedCheckboxes} refreshEmailList={this.refreshEmailList} />
-				<table className="email-table">
-					<thead>
-						<tr>
-							<th>Select</th>
-							<th>Title</th>
-							<th>Created Date</th>
-							<th>Last Updated Date</th>
-						</tr>
-					</thead>
-					<tbody>
-						{this.state.emailItems.map((cv, i) => {
-							return (
-								<EmailTableRow
-									checked={this.state.selectedCheckboxes[cv.id]}
-									rowValue={cv}
-									key={i}
-									updateSelectedCheckboxes={this.updateSelectedCheckboxes}
-								/>
-							)
-						})}
-					</tbody>
-				</table>
+				<EmailControls 
+					selectedCheckboxes={this.state.selectedCheckboxes}
+					refreshEmailList={this.refreshEmailList}
+				/>
+				<EmailTable 
+					emailItems={this.state.emailItems}
+					selectedCheckboxes={this.state.selectedCheckboxes}
+					updateSelectedCheckboxes={this.updateSelectedCheckboxes}
+				/>
 			</container>
 		)
 	}

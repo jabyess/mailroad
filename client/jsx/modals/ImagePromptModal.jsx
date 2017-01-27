@@ -9,12 +9,16 @@ export default class ImagePromptModal extends React.Component {
 	}
 	
 	handleGalleryClick() {
-		let toggleGalleryModal = new CustomEvent('toggleGalleryModal')
+		let toggleGalleryModal = new CustomEvent('toggleVisible', {
+			detail: 'isGalleryModalVisible'
+		})
 		window.dispatchEvent(toggleGalleryModal)
 	}
 
 	handleExternalClick() {
-		let toggleExternalImageModal = new CustomEvent('toggleExternalImageModal')
+		let toggleExternalImageModal = new CustomEvent('toggleVisible', {
+			detail: 'isExternalImageModalVisible'
+		})
 		window.dispatchEvent(toggleExternalImageModal)
 	}
 

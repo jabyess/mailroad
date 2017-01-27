@@ -371,7 +371,9 @@ class DefaultEditor extends React.Component {
 		// if gallery, render gallery
 		// if external, enter url
 		// this.props.function to render modal
-		let toggleImagePromptModal = new CustomEvent('toggleImagePromptModal')
+		let toggleImagePromptModal = new CustomEvent('toggleVisible', {
+			detail: 'isImagePromptModalVisible'
+		})
 		window.dispatchEvent(toggleImagePromptModal)
 	}
 	

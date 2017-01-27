@@ -7,7 +7,6 @@ export default class EditorTypeSelect extends React.Component {
 	constructor() {
 		super();
 
-		this.handleClose = this.handleClose.bind(this)
 		this.handleChange = this.handleChange.bind(this)
 		this.state = {
 			value: [],
@@ -21,12 +20,6 @@ export default class EditorTypeSelect extends React.Component {
 		}
 	}
 
-	handleClose() {
-		if(this.props.toggleEditorTypeSelect) {
-			this.props.toggleEditorTypeSelect(false)
-		}
-	}
-
 	handleChange(e) {
 		let valArray = [];
 		for(let i = 0; i < e.target.length; i++) {
@@ -37,31 +30,22 @@ export default class EditorTypeSelect extends React.Component {
 	}
 
 	render() {
-		if(this.props.isEditorTypeSelectVisible) {
-			return (
-				<div className="editor-types">
-					<button onClick={this.handleClose}>Close</button>
-					<button onClick={() => this.addComponentToPage()}>Add</button>
-					<select 
-						multiple
-						value={this.state.value}
-						className="editor-types__select"
-						onChange={this.handleChange} >
-						{this.state.editorTypeList.map((currentValue, i) => {
-							return (
-								<option value={currentValue} key={i}>{currentValue}</option>
-							)
-						})}
-					</select>
-				</div>
-			);
-		}
-		else {
-			return (
-				<div></div>
-			)
-		}
-		
+		return (
+			<div className="editor-types">
+				<button onClick={() => this.addComponentToPage()}>Add</button>
+				<select 
+					multiple
+					value={this.state.value}
+					className="editor-types__select"
+					onChange={this.handleChange} >
+					{this.state.editorTypeList.map((currentValue, i) => {
+						return (
+							<option value={currentValue} key={i}>{currentValue}</option>
+						)
+					})}
+				</select>
+			</div>
+		);
 	}
 }
 
