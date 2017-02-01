@@ -1,30 +1,35 @@
 import React from 'react'
 import autoBind from 'react-autobind'
 import classNames from 'classnames'
+import axios from 'axios'
 
 export default class EmailControls extends React.Component {
-	constructor(props) {
-		super(props)
+	constructor() {
+		super()
 
 		autoBind(this, 'handleDelete', 'handleCopy')
 
 	}
 
 	handleDelete() {
-		fetch('/api/deleteEmail', {
-			method: 'POST',
+		const ids = Object.keys(this.props.selectedCheckboxes)
+		
+		axios.delete('/api/email', {
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({
-				"selectedEmails":	Object.keys(this.props.selectedCheckboxes)
-			})
-		})
-		.then((response) => {
+			params: { id : [...ids] }
+		}).then((success) => {
+			console.log(success)
 			this.props.refreshEmailList()
-			return response.text()
-			// success toast with # of deleted emails
+		}).catch((error) => {
+			console.log(error)
 		})
+		// .then((response) => {
+		// 	this.props.refreshEmailList()
+		// 	return response.text()
+		// 	// success toast with # of deleted emails
+		// })
 	}
 
 	handleCopy() {

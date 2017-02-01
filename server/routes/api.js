@@ -43,9 +43,7 @@ router.get('/email/list', jsonParser, (req, res) => {
 		}
 	})
 	.then((emails) => {
-		// console.log(emails.data)
 		let data = emails.data
-		console.log(data)
 		res.send(data)
 	}).catch((err) => {
 		console.log(err)
@@ -76,46 +74,17 @@ router.post('/compileTemplate', jsonParser, (req,res) => {
 	})
 })
 
-router.get('/email/:id', (req, res) => {
-	let url = COUCH_FULL + req.params.id
-	console.log(url)
-	axios.get(url)
-		.then((emailData) => {
-			console.log(emailData.data)
-			res.send(emailData.data)
-		})
-		.catch((err) => {
-			console.log(err)
-		})
-})
-
-router.post('/email/:id', jsonParser, (req, res) => {
-	console.log(req.params.id)
-	console.log(req.body)
-	let url = COUCH_FULL + req.params.id
-	axios.put(url, {
-		data: req.body
-	})
-	.then((response) => [
-		console.log(response)
-	])
-	// db.email.upsert(
-	// 	Object.assign({}, req.body)
-	// ).then(() => {
-	// 	res.sendStatus(200)
-	// }).catch((err)=>{
-	// 	console.log(err)
-	// 	res.status(500).send(err)
-	// })
-})
-
 
 router.post('/email/create', jsonParser, (req,res) => {
 	let { content, title } = req.body
-	let createdAt = Utils.getCurrentTimestampUTC()
+	let createdAt, updatedAt = Utils.getCurrentTimestampUTC()
+	console.log('---/email/create body---')
+	console.log(req.body)
 
 	axios.get(COUCH_UUID)
 		.then((response) => {
+			console.log('---couch_uuid response---')
+			console.log(response.data)
 			let uuid = response.data.uuids[0]
 			return uuid
 		})
@@ -124,21 +93,93 @@ router.post('/email/create', jsonParser, (req,res) => {
 				content,
 				title,
 				createdAt,
-				updatedAt: createdAt
+				updatedAt
 			})
-			.then((putResponse)=>{
+			.then((putResponse) => {
 				res.send(putResponse.data)
+				Promise.resolve()
 			})
 		})
 		.catch((err) => {
+			console.log('---error in /email/create---')
 			console.log(err)
 		})
 	
 })
 
+router.get('/email/:id', (req, res) => {
+	let url = COUCH_FULL + req.params.id
+	axios.get(url)
+		.then((emailData) => {
+			res.send(emailData.data)
+		})
+		.catch((err) => {
+			console.log(err)
+		})
+})
 
-// router.post('/deleteEmail', jsonParser, (req, res) => {
-// })
+
+router.post('/email/:id', jsonParser, (req, res) => {
+	console.log(req.body.data)
+
+	let url = COUCH_FULL + req.params.id
+	let { content, title, template, _rev, createdAt } = req.body
+	let updatedAt = Utils.getCurrentTimestampUTC()
+
+	axios.put(url, {
+		content, 
+		title,
+		updatedAt,
+		createdAt,
+		_rev
+	})
+	.then((response) => {
+		console.log(response.data)
+		res.send(response.data)
+	})
+	.catch((err) => {
+		console.log(err)
+		res.send(err)
+	})
+
+})
+
+router.delete('/email', jsonParser, (req, res) => {
+	if(req.query && req.query.id) {
+		const ids = req.query.id
+
+		let idsToDelete = new Promise((resolveDelete, rejectDelete) => {
+			resolveDelete(ids.map((id) => {
+				let url = COUCH_FULL + id
+				axios.get(url).then((result) => {
+					let { _id, _rev } = result.data
+					axios.delete(url, {
+						params: {
+							rev: _rev
+						}
+					}).then((deleteSuccess) => {
+						//success ? 
+						console.log('delete success')
+					})
+				}).catch((error) => {
+					console.log(error)
+				})
+			}))
+		}).then((resultsOfDelete) => {
+			// console.log(resultsOfDelete)
+			console.log(idsToDelete)
+			res.sendStatus(200)
+		}).catch((catchDeleteError) => {
+			console.log(catchDeleteError)
+		})
+		// let idsToDelete = new Promise(, (rejected) => {console.log(rejected)})
+		// .then((doit) => {
+		// 	console.log(doit)
+		// }))
+
+	}
+
+})
 
 // router.post('/copyEmail', jsonParser, (req, res) => {
 // 	const id = req.body.id[0]

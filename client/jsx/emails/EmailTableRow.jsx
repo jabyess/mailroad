@@ -27,9 +27,12 @@ export default class EmailTableRow extends React.Component {
 	}
 	
 	formatDate(date) {
-		let splitDate = date.split('T');
-		let time = splitDate[1].substring(0, splitDate[1].length - 4);
-		return splitDate[0] + ' ' + time;
+		if(date) {
+			let splitDate = date.split('T');
+			let time = splitDate[1].substring(0, splitDate[1].length - 4);
+			return splitDate[0] + ' ' + time;
+		}
+		else return "bad date"
 	}
 
 	render() {
@@ -41,7 +44,7 @@ export default class EmailTableRow extends React.Component {
 						id={"checkbox-" + this.props.rowValue.id}
 						value={this.props.rowValue.id}
 						onChange={this.handleCheckboxChange}
-						checked={this.props.checked}
+						checked={this.state.checked}
 					/>
 				</td>
 				<td className="email-table__row__title"><Link to={`/editor/${this.props.rowValue.id}`}>{this.props.rowValue.title}</Link></td>

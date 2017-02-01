@@ -1,6 +1,5 @@
 import React from 'react'
 import autoBind from 'react-autobind'
-import PDB from '../../lib/pouchdb.js'
 
 export default class EditorMetaContainer extends React.Component {
 
@@ -8,8 +7,6 @@ export default class EditorMetaContainer extends React.Component {
 		super(props);
 
 		autoBind(this, 'handleTitleChange', 'handleTemplateChange')
-
-		this.pouchDB = new PDB('pdb_emailcontent')
 
 		this.state = {
 			template: this.props.template, 

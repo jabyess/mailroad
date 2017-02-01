@@ -5,6 +5,7 @@ import EmailTable from './EmailTable.jsx'
 import EmailControls from './EmailControls.jsx'
 import EmailTableRow from './EmailTableRow.jsx'
 import axios from 'axios'
+import PouchDB from '../../lib/pouchdb.js'
 
 export default class EmailContainer extends React.Component {
 	constructor() {
@@ -15,6 +16,8 @@ export default class EmailContainer extends React.Component {
 			'updateSelectedCheckboxes',
 			'refreshEmailList'
 		)
+
+		this.pouchDB = new PouchDB('emailbuilder')
 		
 		this.state = {
 			emailItems: [],
@@ -34,7 +37,7 @@ export default class EmailContainer extends React.Component {
 					}
 					return newValues
 				})
-			this.setState({emailItems: values})
+			this.setState({ emailItems: values })
 			})
 			.catch((ex) => {
 				console.log('listEmails exception: ', ex)
@@ -42,8 +45,11 @@ export default class EmailContainer extends React.Component {
 	}
 
 	refreshEmailList() {
+		console.log('refreshing email list')
 		this.listEmails()
-		this.setState({ selectedCheckboxes: {} }) 
+		this.setState((state) => {
+			return state.selectedCheckboxes = {}
+		}, console.log('reset selectedCheckboxes'))
 	}
 
 	updateSelectedCheckboxes(value) {

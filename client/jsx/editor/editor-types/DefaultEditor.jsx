@@ -31,7 +31,7 @@ const schema = {
 			const src = node.data.get('src')
 			const className = isFocused ? 'active' : null
 			return (
-				<img src={src} className={className} {...props.attributes} />
+				<img sxc={src} className={className} {...props.attributes} />
 			)
 		},
 		'link': (props) => {

@@ -40,9 +40,9 @@ class EditorContainer extends React.Component {
 			'toggleVisible'
 		)
 
-		this.pouchDB = new PDB('pdb_emailcontent')
+		this.pouchDB = new PDB('emailbuilder')
 
-		this.pouchDB.createOrUpdateDoc = debounce(this.pouchDB.createOrUpdateDoc, 1000)
+		this.pouchDB.syncDoc = debounce(this.pouchDB.syncDoc, 2000)
 
 		this.state = {
 			template: '',
@@ -53,7 +53,6 @@ class EditorContainer extends React.Component {
 			isGalleryModalVisible: false,
 			isExternalImageModalVisible: false,
 			isImagePromptModalVisible: false
-		
 		}
 	}
 
@@ -99,21 +98,14 @@ class EditorContainer extends React.Component {
 	}
 
 	getEmailContents(id) {
+		console.log('getEmailContents running')
 		this.pouchDB.getDoc(id, (doc) => {
-			if(doc && doc.name === "not_found") {
-				axios(`/api/email/${id}`)
-					.then((json) => {
-						console.log(json)
-						let jsonResponse = {}
-						Object.assign(jsonResponse, json.data)
-						this.setState(jsonResponse)
-					})
-					.catch((err) => {
-						console.log('exception in getEmailContents: ', err)
-					})
+			if(doc) {
+				console.log('getEmailContents doc', doc)
+				this.setState(doc)
 			}
 			else {
-				this.setState(doc)
+				console.log('no doc')
 			}
 		})
 	}
@@ -138,25 +130,22 @@ class EditorContainer extends React.Component {
 			componentTitle: "New Component"
 		}]
 		let title = 'New Email'
-		let doc = {content, title}
-		fetch('/api/email/create', {
-			method: 'POST',
-			headers: {
-				'Content-Type' : 'application/json'
-			},
-			body: JSON.stringify(doc)
-		})
-		.then((results) => {
-			return results.json()
+
+		axios.post('/api/email/create', {
+			content: content,
+			title: title
 		}).then((json) => {
-			// let jsonResponse = Object.assign({}, json)
-			console.log(json)
-			// this.setState(() => {
-			// 	return jsonResponse
-			// })
+			let url = '/api/email/' + json.data.id
+			axios.get(url)
+			.then((contents) => {
+				this.setState(contents.data)
+			})
+			.catch((err) => {
+				console.log('error after createEmail, on response:', err)
+			})
 		})
 		.catch((err) => {
-			console.log("error in createEmail: ", err)
+			console.log("error during createEmail:", err)
 		})
 	}
 
@@ -180,13 +169,14 @@ class EditorContainer extends React.Component {
 
 	updateEmail() {
 		let currentState = this.state
-		this.pouchDB.getDoc(this.state.id, (doc) => {
-		})
-		axios.post('/api/email/:id', {
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(currentState)
+		let url = `/api/email/${this.state._id}`
+		console.log(currentState)
+		axios.post(url, {
+			_rev: this.state._rev,
+			content: this.state.content,
+			title: this.state.title,
+			template: this.state.template,
+			createdAt: this.state.createdAt
 		}).then((json) => {
 			console.log(json)
 			// success toast popup
@@ -227,7 +217,6 @@ class EditorContainer extends React.Component {
 			return this.state.content
 		})
 	}
-
 	
 	componentWillUnmount () {
 		window.removeEventListener('saveHTMLButtonClicked', this.updateEmail )
@@ -237,7 +226,8 @@ class EditorContainer extends React.Component {
 	}
 
 	componentDidUpdate(prevProps, prevState) {
-		// this.pouchDB.createOrUpdateDoc(this.state)
+		console.log('prevstateRev', prevState._rev, this.state._rev)
+		this.pouchDB.syncDoc(this.state)
 	}
 
 	render() {
