@@ -28,12 +28,15 @@ export default class EmailContainer extends React.Component {
 	listEmails() {
 		axios('/api/email/list')
 			.then((results) => {
+				
 				let values = results.data.rows.map((val, ind) => {
+					console.log(val.value)
 					let newValues = {
 						id: val.id,
 						createdAt: val.value.createdAt,
 						updatedAt: val.value.updatedAt,
-						title: val.value.title
+						title: val.value.title,
+						template: val.value.template
 					}
 					return newValues
 				})
@@ -49,7 +52,7 @@ export default class EmailContainer extends React.Component {
 		this.listEmails()
 		this.setState((state) => {
 			return state.selectedCheckboxes = {}
-		}, console.log('reset selectedCheckboxes'))
+		})
 	}
 
 	updateSelectedCheckboxes(value) {

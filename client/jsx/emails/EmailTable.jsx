@@ -15,6 +15,7 @@ export default class EmailTable extends React.Component {
 					<tr>
 						<th>Select</th>
 						<th>Title</th>
+						<th>Template</th>
 						<th>Created Date</th>
 						<th>Last Updated Date</th>
 					</tr>
@@ -22,7 +23,7 @@ export default class EmailTable extends React.Component {
 				<tbody>
 					{this.props.emailItems.map((cv, i) => {
 						return (
-							<EmailTableRow rowValue={cv} key={i} checked={this.props.selectedCheckboxes[cv.id]} updateSelectedCheckboxes={this.props.updateSelectedCheckboxes} />
+							<EmailTableRow rowValues={cv} key={i} checked={this.props.selectedCheckboxes[cv.id]} updateSelectedCheckboxes={this.props.updateSelectedCheckboxes} />
 						)
 					})}
 				</tbody>
