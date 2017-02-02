@@ -67,6 +67,7 @@ export default class EmailContainer extends React.Component {
 	}
 
 	componentDidMount() {
+		this.pouchDB.syncEverything()
 		this.listEmails()
 	}
 

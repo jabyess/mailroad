@@ -8,7 +8,20 @@ export default class PDB {
 		this.pouchDB = new PouchDB(dbname, {auto_compaction: true})
 	}
 
-	syncDoc(doc, updateStateCallback) {
+	syncEverything() {
+		PouchDB.sync(this.dbname, 'http://localhost:5984/' + this.dbname, {
+			pull: {
+				query_params: {
+					limit: 10
+				}
+			}
+		})
+		.on('complete', (complete) => {
+			console.log('completed full sync', complete)
+		})
+	}
+
+	updateDoc(doc) {
 		this.pouchDB.get(doc._id).then((newDoc) => {
 			if(newDoc) {
 				
@@ -44,6 +57,7 @@ export default class PDB {
 			returnValueCallback(result)
 		},
 		(notFound) => {
+			console.error('doc not found in PDB')
 			PouchDB.replicate('http://localhost:5984/' + this.dbname, this.dbname, {
 				doc_ids: [ id ]
 			})

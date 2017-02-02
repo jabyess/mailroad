@@ -76,11 +76,10 @@ router.post('/compileTemplate', jsonParser, (req,res) => {
 
 
 router.post('/email/create', jsonParser, (req,res) => {
-	let { content, title } = req.body
-	let createdAt, updatedAt = Utils.getCurrentTimestampUTC()
-	console.log('---/email/create body---')
-	console.log(req.body)
-
+	const { content, title } = req.body
+	const createdAt = Utils.getCurrentTimestampUTC()
+	const updatedAt = Utils.getCurrentTimestampUTC()
+	
 	axios.get(COUCH_UUID)
 		.then((response) => {
 			console.log('---couch_uuid response---')
@@ -131,7 +130,6 @@ router.post('/email/:id', jsonParser, (req, res) => {
 		title,
 		updatedAt,
 		createdAt,
-		_rev
 	})
 	.then((response) => {
 		console.log(response.data)

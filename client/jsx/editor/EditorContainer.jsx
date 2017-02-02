@@ -8,6 +8,7 @@ import ImageGalleryModal from '../modals/ImageGalleryModal.jsx'
 import HTML5Backend from 'react-dnd-html5-backend'
 import EditorControlsContainer from './EditorControlsContainer.jsx'
 import CompileHTMLButton from './CompileHTMLButton.jsx'
+import SaveButton from './SaveButton.jsx'
 import NavBar from '../NavBar.jsx'
 import PDB from '../../lib/pouchdb.js'
 import axios from 'axios'
@@ -44,7 +45,7 @@ class EditorContainer extends React.Component {
 
 		this.pouchDB = new PDB('emailbuilder')
 
-		this.pouchDB.syncDoc = debounce(this.pouchDB.syncDoc, 2000)
+		this.pouchDB.updateDoc = debounce(this.pouchDB.updateDoc, 2000)
 
 		this.state = {
 			template: '',
@@ -129,7 +130,7 @@ class EditorContainer extends React.Component {
 		let content = [{
 			content: '<p>Just start typing</p>',
 			editorType: 'DefaultEditor',
-			componentTitle: "New Component"
+			componentTitle: 'New Component'
 		}]
 		let title = 'New Email'
 
@@ -170,15 +171,11 @@ class EditorContainer extends React.Component {
 	}
 
 	updateEmail() {
-		let currentState = this.state
 		let url = `/api/email/${this.state._id}`
-		console.log(currentState)
 		axios.post(url, {
-			_rev: this.state._rev,
 			content: this.state.content,
 			title: this.state.title,
 			template: this.state.template,
-			createdAt: this.state.createdAt
 		}).then((json) => {
 			console.log(json)
 			// success toast popup
@@ -195,8 +192,6 @@ class EditorContainer extends React.Component {
 	}
 
 	componentDidMount() {
-		window.addEventListener('saveHTMLButtonClicked', this.updateEmail )
-		window.addEventListener('compileHTMLTemplate', this.compileHTMLTemplate)
 		window.addEventListener('toggleVisible', this.toggleVisible)
 
 		this.getTemplates()
@@ -208,7 +203,7 @@ class EditorContainer extends React.Component {
 
 		//if we have no ID from react-router, create new email instance
 		if(!this.props.params.id) {
-			this.createEmail();
+			this.createEmail()
 		}
 	}
 
@@ -221,18 +216,12 @@ class EditorContainer extends React.Component {
 	}
 	
 	componentWillUnmount () {
-		window.removeEventListener('saveHTMLButtonClicked', this.updateEmail )
-		window.removeEventListener('compileHTMLTemplate', this.compileHTMLTemplate)
 		window.removeEventListener('toggleExternalImageModal', this.toggleExternalImageModal)
 		window.removeEventListener('toggleVisible', this.toggleVisible)
 	}
 
-	componentDidUpdate(prevProps, prevState) {
-		this.pouchDB.syncDoc(this.state, (successObject) => {
-			console.log('prevstateRev', prevState._rev, this.state._rev, successObject.rev)
-			// console.log('successCallbackRev', successObject.rev)
-			// this.setState({_rev: successObject.rev})
-		})
+	componentDidUpdate() {
+		this.pouchDB.updateDoc(this.state)
 	}
 
 	render() {
@@ -254,7 +243,7 @@ class EditorContainer extends React.Component {
 				/>
 				<div className="editor-editor-container">
 					{this.state.content.map((content, i) => {
-						let DynamicEditorType = dynamicEditorTypeList[content.editorType];
+						let DynamicEditorType = dynamicEditorTypeList[content.editorType]
 						return (
 							<EditorTypeRow 
 								key={i}
@@ -280,7 +269,8 @@ class EditorContainer extends React.Component {
 				{renderEditorTypeSelect}
 				{renderImagePromptModal}
 				{renderImageGalleryModal}
-				<CompileHTMLButton />
+				<SaveButton saveToDB={this.saveToDB} />
+				<CompileHTMLButton compileHTMLTemplate={this.compileHTMLTemplate} />
 			</div>
 		)	
 	}
