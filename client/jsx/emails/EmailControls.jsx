@@ -6,9 +6,7 @@ import axios from 'axios'
 export default class EmailControls extends React.Component {
 	constructor() {
 		super()
-
 		autoBind(this, 'handleDelete', 'handleCopy')
-
 	}
 
 	handleDelete() {

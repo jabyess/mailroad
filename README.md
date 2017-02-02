@@ -6,7 +6,15 @@
 ### Development
 * clone this repo
 * `npm install`
-* edit .env file with your database creds: PGUSER=username, PGDATABASE=dbname, PGPASSWORD=password
+* create a .env file in the root dir and include credentials (more TBD)
+	* AWS_ACCESS_KEY_ID=xxxxxxx
+	* AWS_SECRET_ACCESS_KEY=xxxxxx
+	* AWS_REGION=region-east-x
+	* AWS_BUCKET=bucket-name-here
+
 * `npm start` to start nodemon with babel hook
 * `npm run dev` to start webpack and watcher
-* navigate yourself to localhost:3000
+
+### Layout
+Code is divided into /client and /server folders. `client` contains react router code, jsx, sass, fonts, and some client side libs.
+`server` contains the express code (api routes), email templates, server side libs, other logic.

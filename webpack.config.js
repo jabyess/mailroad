@@ -9,7 +9,7 @@ const PATHS = {
 
 module.exports = {
 	entry : {
-		main: ['whatwg-fetch', path.join(__dirname, 'client/react-main.jsx')],
+		main: ['whatwg-fetch', path.join(__dirname, 'client/jsx/react-main.jsx')],
 	},
 	output: {
 		path: PATHS.build,

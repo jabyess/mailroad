@@ -1,17 +1,19 @@
 import React from 'react'
 import autoBind from 'react-autobind'
 import EditorMetaContainer from './EditorMetaContainer.jsx'
-import { SlateEditor, DefaultEditor, DatePicker, DatesPicker } from './editor-types/EditorTypes.js'
 import EditorTypeSelect from './editor-types/EditorTypeSelect.jsx'
-import axios from 'axios'
 import EditorTypeRow from './EditorTypeRow.jsx'
 import ImagePromptModal from '../modals/ImagePromptModal.jsx'
 import ImageGalleryModal from '../modals/ImageGalleryModal.jsx'
-import { DragDropContext } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
 import EditorControlsContainer from './EditorControlsContainer.jsx'
+import CompileHTMLButton from './CompileHTMLButton.jsx'
+import NavBar from '../NavBar.jsx'
 import PDB from '../../lib/pouchdb.js'
+import axios from 'axios'
+import { DragDropContext } from 'react-dnd'
 import { debounce } from '../../lib/utils.js'
+import { SlateEditor, DefaultEditor, DatePicker, DatesPicker } from './editor-types/EditorTypes.js'
 
 const dynamicEditorTypeList = {
 	DefaultEditor,
@@ -241,6 +243,7 @@ class EditorContainer extends React.Component {
 			/> : null
 		return (
 			<div className="editor-container">
+				<NavBar />
 				<EditorMetaContainer {...this.state} 
 					handleTitleChange={this.handleTitleChange}
 					handleTemplateChange={this.handleTemplateChange}
@@ -277,6 +280,7 @@ class EditorContainer extends React.Component {
 				{renderEditorTypeSelect}
 				{renderImagePromptModal}
 				{renderImageGalleryModal}
+				<CompileHTMLButton />
 			</div>
 		)	
 	}

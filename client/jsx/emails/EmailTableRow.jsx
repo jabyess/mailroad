@@ -32,7 +32,7 @@ export default class EmailTableRow extends React.Component {
 			let time = splitDate[1].substring(0, splitDate[1].length - 4);
 			return splitDate[0] + ' ' + time;
 		}
-		else return "bad date"
+		else return "bad or missing date"
 	}
 
 	render() {
