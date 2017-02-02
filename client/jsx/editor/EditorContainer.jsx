@@ -226,8 +226,11 @@ class EditorContainer extends React.Component {
 	}
 
 	componentDidUpdate(prevProps, prevState) {
-		console.log('prevstateRev', prevState._rev, this.state._rev)
-		this.pouchDB.syncDoc(this.state)
+		this.pouchDB.syncDoc(this.state, (successObject) => {
+			console.log('prevstateRev', prevState._rev, this.state._rev, successObject.rev)
+			// console.log('successCallbackRev', successObject.rev)
+			// this.setState({_rev: successObject.rev})
+		})
 	}
 
 	render() {

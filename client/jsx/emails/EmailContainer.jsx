@@ -28,9 +28,7 @@ export default class EmailContainer extends React.Component {
 	listEmails() {
 		axios('/api/email/list')
 			.then((results) => {
-				
 				let values = results.data.rows.map((val, ind) => {
-					console.log(val.value)
 					let newValues = {
 						id: val.id,
 						createdAt: val.value.createdAt,

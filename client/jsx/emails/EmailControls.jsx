@@ -13,23 +13,19 @@ export default class EmailControls extends React.Component {
 
 	handleDelete() {
 		const ids = Object.keys(this.props.selectedCheckboxes)
-		
 		axios.delete('/api/email', {
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			params: { id : [...ids] }
+			params: {
+				id : [...ids]
+			}
 		}).then((success) => {
 			console.log(success)
 			this.props.refreshEmailList()
 		}).catch((error) => {
 			console.log(error)
 		})
-		// .then((response) => {
-		// 	this.props.refreshEmailList()
-		// 	return response.text()
-		// 	// success toast with # of deleted emails
-		// })
 	}
 
 	handleCopy() {
