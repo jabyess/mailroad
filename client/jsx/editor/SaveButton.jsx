@@ -19,4 +19,8 @@ class SaveButton extends React.Component {
 	}
 }
 
+SaveButton.propTypes = {
+	saveToDB: React.PropTypes.func
+}
+
 export default SaveButton

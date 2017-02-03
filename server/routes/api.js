@@ -118,29 +118,29 @@ router.get('/email/:id', (req, res) => {
 })
 
 
-router.post('/email/:id', jsonParser, (req, res) => {
-	console.log(req.body.data)
+// router.post('/email/:id', jsonParser, (req, res) => {
+// 	console.log(req.body.data)
 
-	let url = COUCH_FULL + req.params.id
-	let { content, title, template, _rev, createdAt } = req.body
-	let updatedAt = Utils.getCurrentTimestampUTC()
+// 	let url = COUCH_FULL + req.params.id
+// 	let { content, title, template, createdAt } = req.body
+// 	let updatedAt = Utils.getCurrentTimestampUTC()
 
-	axios.put(url, {
-		content, 
-		title,
-		updatedAt,
-		createdAt,
-	})
-	.then((response) => {
-		console.log(response.data)
-		res.send(response.data)
-	})
-	.catch((err) => {
-		console.log(err)
-		res.send(err)
-	})
+// 	axios.put(url, {
+// 		content, 
+// 		title,
+// 		updatedAt,
+// 		createdAt,
+// 	})
+// 	.then((response) => {
+// 		console.log(response.data)
+// 		res.send(response.data)
+// 	})
+// 	.catch((err) => {
+// 		console.log(err)
+// 		res.send(err)
+// 	})
 
-})
+// })
 
 router.delete('/email', jsonParser, (req, res) => {
 	if(req.query && req.query.id) {

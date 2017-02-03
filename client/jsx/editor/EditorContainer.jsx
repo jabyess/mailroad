@@ -14,22 +14,21 @@ import PDB from '../../lib/pouchdb.js'
 import axios from 'axios'
 import { DragDropContext } from 'react-dnd'
 import { debounce } from '../../lib/utils.js'
-import { SlateEditor, DefaultEditor, DatePicker, DatesPicker } from './editor-types/EditorTypes.js'
+import { DefaultEditor, DatePicker, DatesPicker } from './editor-types/EditorTypes.js'
 
 const dynamicEditorTypeList = {
 	DefaultEditor,
-	SlateEditor,
 	DatePicker,
 	DatesPicker
 }
 
 class EditorContainer extends React.Component {
 	constructor() {
-		super();
+		super()
 
 		autoBind(this, 
 			'createEmail',
-			'updateEmail',
+			'saveToDB',
 			'getEmailContents',
 			'addEditorToContainer',
 			'getEditorType',
@@ -37,7 +36,7 @@ class EditorContainer extends React.Component {
 			'compileHTMLTemplate',
 			'handleTitleChange',
 			'handleTemplateChange',
-			'updateParentStateContent',
+			'updateContentValue',
 			'updateComponentTitle',
 			'removeEditorFromContainer',
 			'toggleVisible'
@@ -45,7 +44,8 @@ class EditorContainer extends React.Component {
 
 		this.pouchDB = new PDB('emailbuilder')
 
-		this.pouchDB.updateDoc = debounce(this.pouchDB.updateDoc, 2000)
+		this.pouchDB.updateDoc = debounce(this.pouchDB.updateDoc, 2000, false)
+
 
 		this.state = {
 			template: '',
@@ -54,6 +54,7 @@ class EditorContainer extends React.Component {
 			isEditorTypeSelectVisible: false,
 			isEditModeActive: false,
 			isGalleryModalVisible: false,
+			isSaveButtonVisible: false,
 			isExternalImageModalVisible: false,
 			isImagePromptModalVisible: false
 		}
@@ -83,14 +84,14 @@ class EditorContainer extends React.Component {
 		this.setState({template: value})
 	}
 
-	updateParentStateContent(content, index) {
+	updateContentValue(content, index) {
 		this.setState(() => {
 			this.state.content[index].content = content
-		}, () => { console.log(this.state.content[index].content )})
+		}, console.info(content) )
 	}
 
 	updateComponentTitle(title, index) {
-		this.setState(() => {this.state.content[index].componentTitle = title})
+		this.setState(() => { this.state.content[index].componentTitle = title })
 	}
 
 	getEditorType(editorList, eventDetail) {
@@ -102,6 +103,7 @@ class EditorContainer extends React.Component {
 
 	getEmailContents(id) {
 		console.log('getEmailContents running')
+		console.log(id)
 		this.pouchDB.getDoc(id, (doc) => {
 			if(doc) {
 				console.log('getEmailContents doc', doc)
@@ -148,12 +150,12 @@ class EditorContainer extends React.Component {
 			})
 		})
 		.catch((err) => {
-			console.log("error during createEmail:", err)
+			console.log('error during createEmail:', err)
 		})
 	}
 
 	compileHTMLTemplate() {
-	 	let {content, title, template} = this.state
+		let {content, title, template} = this.state
 		let context = { content, title, template }
 		fetch('/api/compileTemplate', {
 			method: 'POST',
@@ -170,15 +172,9 @@ class EditorContainer extends React.Component {
 		})
 	}
 
-	updateEmail() {
-		let url = `/api/email/${this.state._id}`
-		axios.post(url, {
-			content: this.state.content,
-			title: this.state.title,
-			template: this.state.template,
-		}).then((json) => {
-			console.log(json)
-			// success toast popup
+	saveToDB() {
+		this.pouchDB.syncToDB(this.state, (complete) => {
+			console.log('complete', complete)
 		})
 	}
 
@@ -230,6 +226,7 @@ class EditorContainer extends React.Component {
 		const renderEditorTypeSelect = this.state.isEditModeActive ? <EditorTypeSelect 
 			addEditorToContainer={this.addEditorToContainer}
 			/> : null
+		
 		return (
 			<div className="editor-container">
 				<NavBar />
@@ -257,9 +254,8 @@ class EditorContainer extends React.Component {
 									index={i}
 									componentTitle={content.componentTitle}
 									updateComponentTitle={this.updateComponentTitle}
-									updateParentStateContent={this.updateParentStateContent}
+									updateContentValue={this.updateContentValue}
 									isEditModeActive={this.state.isEditModeActive}
-									id={this.state.id}
 									editorType={content.editorType}
 								/>
 							</EditorTypeRow>
@@ -269,11 +265,15 @@ class EditorContainer extends React.Component {
 				{renderEditorTypeSelect}
 				{renderImagePromptModal}
 				{renderImageGalleryModal}
-				<SaveButton saveToDB={this.saveToDB} />
+				<SaveButton saveToDB={this.saveToDB}/>
 				<CompileHTMLButton compileHTMLTemplate={this.compileHTMLTemplate} />
 			</div>
 		)	
 	}
 }
 
-export default DragDropContext(HTML5Backend)(EditorContainer);
+EditorContainer.propTypes = {
+	params: React.PropTypes.string
+}
+
+export default DragDropContext(HTML5Backend)(EditorContainer)

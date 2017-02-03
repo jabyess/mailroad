@@ -1,5 +1,5 @@
-let PouchDB = require('pouchdb-browser')
 import moment from 'moment'
+import PouchDB from 'pouchdb-browser'
 
 export default class PDB {
 
@@ -21,15 +21,31 @@ export default class PDB {
 		})
 	}
 
+	syncToDB(doc, saveCompleteCallback) {
+		this.pouchDB.get(doc._id).then((newDoc) => {
+			// console.log('saving', newDoc, 'to db')
+			PouchDB.replicate(this.dbname, 'http://localhost:5984/' + this.dbname, {
+				doc_ids: [ doc._id ]
+			})
+			.on('complete', (complete) => {
+				console.log('save to db replicate complete', complete)
+				saveCompleteCallback(complete)
+			})
+		})
+
+
+	}
+
 	updateDoc(doc) {
 		this.pouchDB.get(doc._id).then((newDoc) => {
 			if(newDoc) {
 				
 				let updatedDoc = Object.assign({}, newDoc, doc)
 				updatedDoc._rev = newDoc._rev
-				updatedDoc.updatedAt = moment().format()
+				updatedDoc.updatedAt = moment.utc().format()
 
 				this.pouchDB.put(updatedDoc).then((putSuccess) => {
+					// console.log('putSuccess', putSuccess)
 					Promise.resolve(putSuccess)
 				},
 				(rejected) => {
@@ -41,7 +57,7 @@ export default class PDB {
 			}
 		})
 		.catch((error) => {
-			console.error('error in getdoc SyncDoc', error)
+			console.error('error in updateDoc SyncDoc', error)
 		})
 	}
 
@@ -49,7 +65,7 @@ export default class PDB {
 		this.pouchDB.get(id).then((doc) => {
 			return this.pouchDB.remove(doc)
 		})
-		console.log('deleted ', id)
+		// console.log('deleted ', id)
 	}
 
 	getDoc(id, returnValueCallback) {

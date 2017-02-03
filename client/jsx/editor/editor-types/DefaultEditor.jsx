@@ -94,23 +94,23 @@ const rules = [
 		serialize(object, children) {
 			if (object.kind != 'block') return
 			switch (object.type) {
-				case 'heading-one': return <h1>{children}</h1>
-				case 'heading-two': return <h2>{children}</h2>
-				case 'heading-three': return <h3>{children}</h3>
-				case 'heading-four': return <h4>{children}</h4>
-				case 'heading-five': return <h5>{children}</h5>
-				case 'heading-six': return <h6>{children}</h6>
-				case 'paragraph': return <p>{children}</p>
-				case 'blockquote': return <blockquote>{children}</blockquote>
-				case 'numbered-list' : return <ol>{children}</ol>
-				case 'bulleted-list': return <ul>{children}</ul>
-				case 'list-item': return <li>{children}</li>
-				case 'link' : return <a>{children}</a>
-				case 'table': return <table>{children}</table>
-				case 'table-row': return <tr>{children}</tr>
-				case 'table-cell' : return <td>{children}</td>
-				case 'table-header': return <th>{children}</th>
-				case 'image' : return <img />
+			case 'heading-one': return <h1>{children}</h1>
+			case 'heading-two': return <h2>{children}</h2>
+			case 'heading-three': return <h3>{children}</h3>
+			case 'heading-four': return <h4>{children}</h4>
+			case 'heading-five': return <h5>{children}</h5>
+			case 'heading-six': return <h6>{children}</h6>
+			case 'paragraph': return <p>{children}</p>
+			case 'blockquote': return <blockquote>{children}</blockquote>
+			case 'numbered-list' : return <ol>{children}</ol>
+			case 'bulleted-list': return <ul>{children}</ul>
+			case 'list-item': return <li>{children}</li>
+			case 'link' : return <a>{children}</a>
+			case 'table': return <table>{children}</table>
+			case 'table-row': return <tr>{children}</tr>
+			case 'table-cell' : return <td>{children}</td>
+			case 'table-header': return <th>{children}</th>
+			case 'image' : return <img />
 			}
 		}
 	},
@@ -407,7 +407,7 @@ class DefaultEditor extends React.Component {
 	
 	onDocumentChange(document, state) {
 		let updatedContent = html.serialize(state)
-		this.props.updateParentStateContent(updatedContent, this.props.index)
+		this.props.updateContentValue(updatedContent, this.props.index)
 	}
 
 	onTitleChange(event) {

@@ -1,5 +1,4 @@
 import handlebars from 'handlebars'
-import path from 'path'
 import fs from 'fs'
 import juice from 'juice'
 import moment from 'moment'
@@ -53,7 +52,7 @@ class Utils {
 	static arrayEquals(arrayOne, arrayTwo) {
 
 		if(arrayOne.length !== arrayTwo.length) {
-			return false;
+			return false
 		}
 
 		arrayOne.forEach((value, index) => {
@@ -65,33 +64,8 @@ class Utils {
 	} 
 
 
-	/**
-	 * Wraps a function and fires it based on the delay specified.
-	 * @param {function} func - function to debounce
-	 * @param {int} wait - delay between function execution in milliseconds
-	 * @param {boolean} immediate - executes function at beginning of timeout or end
-	 */
-
-	static debounce(func, wait, immediate) {
-    let timeout, args, context, timestamp, result;
-
-    const later = () => {
-      let last = _.now() - timestamp;
-
-      if (last < wait && last >= 0) {
-        timeout = setTimeout(later, wait - last);
-      } else {
-        timeout = null;
-        if (!immediate) {
-          result = func.apply(context, args);
-          if (!timeout) context = args = null;
-        }
-      }
-    };
-	}
-
 	static formatS3Filename(filename) {
-		console.log("filename ", filename);
+		console.log('filename ', filename)
 	}
 
 	static getCurrentTimestampUTC() {
