@@ -127,8 +127,8 @@ const rules = [
 		serialize(object, children) {
 			if (object.kind != 'mark') return
 			switch (object.type) {
-				case 'bold': return <strong>{children}</strong>
-				case 'italic': return <em>{children}</em>
+			case 'bold': return <strong>{children}</strong>
+			case 'italic': return <em>{children}</em>
 			}
 		}
 	}
@@ -232,14 +232,14 @@ class DefaultEditor extends React.Component {
 		let mark
 
 		switch (data.key) {
-			case 'b':
-				mark = 'bold'
-				break
-			case 'i':
-				mark = 'italic'
-				break
-			default:
-				return
+		case 'b':
+			mark = 'bold'
+			break
+		case 'i':
+			mark = 'italic'
+			break
+		default:
+			return
 		}
 
 		state = state
@@ -322,7 +322,7 @@ class DefaultEditor extends React.Component {
 		let transform = state.transform()
 		const { document } = state
 
-		 // Handle everything but list buttons.
+		// Handle everything but list buttons.
 		if (type != 'bulleted-list' && type != 'numbered-list') {
 			const isActive = this.hasBlock(type)
 			const isList = this.hasBlock('list-item')
@@ -434,7 +434,7 @@ class DefaultEditor extends React.Component {
 	renderBlockButton(type, icon) {
 		const isActive = this.hasBlock(type)
 		const onMouseDown = e => this.onClickBlock(e, type)
-		const blockButtonClass = "fa fa-fw " + icon
+		const blockButtonClass =  'fa fa-fw ' + icon
 
 		return (
 			<button className="button" onMouseDown={onMouseDown} data-active={isActive}>
@@ -446,7 +446,7 @@ class DefaultEditor extends React.Component {
 	renderImageButton(type, icon) {
 		const isActive = this.hasBlock(type)
 		const onMouseDown = e => this.onClickImageButton(e)
-		const blockButtonClass = "fa fa-fw " + icon
+		const blockButtonClass = 'fa fa-fw ' + icon
 
 		return (
 			<button className="button" onMouseDown={onMouseDown} data-active={isActive}>
@@ -481,6 +481,14 @@ class DefaultEditor extends React.Component {
 			</div>
 		)
 	}
+}
+
+DefaultEditor.propTypes = {
+	componentTitle: React.PropTypes.string,
+	index: React.PropTypes.number,
+	updateComponentTitle: React.PropTypes.func,
+	updateContentValue: React.PropTypes.func
+
 }
 
 export default DragSource(ItemTypes.DEFAULTEDITOR, defaultEditorSource, collect)(DefaultEditor)

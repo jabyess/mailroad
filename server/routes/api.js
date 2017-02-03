@@ -59,7 +59,7 @@ router.get('/templates', (req, res) => {
 			throw new Exception('error reading templates: ', err)
 		}
 		else {
-			let fileList = files.map( (f, i) => {
+			let fileList = files.map( (f) => {
 				return path.basename(f, '.hbs')
 			})
 			res.send(fileList)
@@ -150,7 +150,7 @@ router.delete('/email', jsonParser, (req, res) => {
 			resolveDelete(ids.map((id) => {
 				let url = COUCH_FULL + id
 				axios.get(url).then((result) => {
-					let { _id, _rev } = result.data
+					let { _rev } = result.data
 					axios.delete(url, {
 						params: {
 							rev: _rev
@@ -192,12 +192,12 @@ router.get('/s3/list', (req, res) => {
 			res.send(err)
 		}
 		else {
-			let imagesArray = data.Contents.filter((image, index) => {
+			let imagesArray = data.Contents.filter((image) => {
 				if(approvedImageExtensions.some((extension) => {
 					return extension === path.extname(image.Key)
 				})) { 
 					return image
-				 }
+				}
 			}).map((image) => {
 				return {
 					url: '//' + env.AWS_BUCKET + '.s3.amazonaws.com/' + image.Key,

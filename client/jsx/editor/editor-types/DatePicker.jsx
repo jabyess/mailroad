@@ -34,6 +34,7 @@ class DatePicker extends React.Component {
 				focused={this.state.focused}
 				onDateChange={this.onDateChange}
 				onFocusChange={({focused}) => {this.setState({focused})}}
+				numberOfMonths={1}
 			/>
 		)
 	}

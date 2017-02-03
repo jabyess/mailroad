@@ -42,8 +42,7 @@ axios.get('http://127.0.0.1:5984')
 				console.log(files)
 				axios.get('http://127.0.0.1:5984/_uuids', {
 					count: files.length
-				}).then((uuidResponse) => {
-					let uuids = uuidResponse.data.uuids
+				}).then(() => {
 					let responses = files.map((file, index) => {
 						let parsedName = file.split('.')[0]
 						let url = `http://127.0.0.1:5984/emailbuilder/_design/${parsedName}`
@@ -56,7 +55,7 @@ axios.get('http://127.0.0.1:5984')
 						// finish logic to sync views to db
 						app.listen(3000, () => {
 							console.log('Express listening on port 3000!')
-						});
+						})
 					}))
 					
 				})
