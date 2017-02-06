@@ -9,7 +9,7 @@ const PATHS = {
 
 module.exports = {
 	entry : {
-		main: ['whatwg-fetch', path.join(__dirname, 'client/jsx/react-main.jsx')],
+		main: [path.join(__dirname, 'client/jsx/react-main.jsx')],
 	},
 	output: {
 		path: PATHS.build,
@@ -26,7 +26,7 @@ module.exports = {
 		loaders: [
 			{
 				test : /(\.scss|\.sass)/,
-				loaders: ['style','css','sass'],
+				loaders: ['style-loader','css-loader','sass-loader'],
 			},
 			{
 				test: /\.woff$/,
@@ -41,7 +41,7 @@ module.exports = {
 			{
 				test: /\.jsx?$/,
 				include: PATHS.app,
-				loader: 'babel',
+				loader: 'babel-loader',
 				exclude: /node_modules/,
 				query: {
 					presets: [ 'es2015', 'react' ],
