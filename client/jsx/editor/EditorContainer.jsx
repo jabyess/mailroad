@@ -87,7 +87,7 @@ class EditorContainer extends React.Component {
 	updateContentValue(content, index) {
 		this.setState(() => {
 			this.state.content[index].content = content
-		}, console.info(content) )
+		})
 	}
 
 	updateComponentTitle(title, index) {
@@ -216,6 +216,10 @@ class EditorContainer extends React.Component {
 		window.removeEventListener('toggleVisible', this.toggleVisible)
 	}
 
+	componentWillReceiveProps (nextProps) {
+		console.log('editorContainer nextprops:', nextProps)
+	}
+
 	componentDidUpdate() {
 		this.pouchDB.updateDoc(this.state)
 	}
@@ -273,7 +277,10 @@ class EditorContainer extends React.Component {
 }
 
 EditorContainer.propTypes = {
-	params: React.PropTypes.string
+	params: React.PropTypes.oneOfType([
+		React.PropTypes.string,
+		React.PropTypes.object
+	])
 }
 
 export default DragDropContext(HTML5Backend)(EditorContainer)

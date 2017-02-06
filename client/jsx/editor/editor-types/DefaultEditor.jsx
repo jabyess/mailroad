@@ -422,7 +422,7 @@ class DefaultEditor extends React.Component {
 	renderMarkButton(type, icon) {
 		const isActive = this.hasMark(type)
 		const onMouseDown = e => this.onClickMark(e, type)
-		const markButtonClass = "fa fa-fw " + icon
+		const markButtonClass = 'fa fa-fw ' + icon
 
 		return (
 			<button className="button" onMouseDown={onMouseDown} data-active={isActive}>
@@ -464,12 +464,12 @@ class DefaultEditor extends React.Component {
 				onKeyDown={this.onKeyDown}
 				onDocumentChange={this.debounceDocChange}
 				onChange={this.onChange}
-			/>		
+			/>
 		)
 	}
 
 	render() {
-		const { isDragging, connectDragSource, text } = this.props
+		const { connectDragSource } = this.props
 		return connectDragSource(
 			<div className="slate-editor">
 				<div className="component-title">
@@ -485,6 +485,8 @@ class DefaultEditor extends React.Component {
 
 DefaultEditor.propTypes = {
 	componentTitle: React.PropTypes.string,
+	content: React.PropTypes.string,
+	connectDragSource: React.PropTypes.func,
 	index: React.PropTypes.number,
 	updateComponentTitle: React.PropTypes.func,
 	updateContentValue: React.PropTypes.func

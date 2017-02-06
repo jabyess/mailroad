@@ -1,10 +1,10 @@
 import React from 'react'
 import autoBind from 'react-autobind'
 
-export default class EditorMetaContainer extends React.Component {
+class EditorMetaContainer extends React.Component {
 
 	constructor(props) {
-		super(props);
+		super(props)
 
 		autoBind(this, 'handleTitleChange', 'handleTemplateChange')
 
@@ -56,3 +56,15 @@ export default class EditorMetaContainer extends React.Component {
 	}
 
 }
+
+EditorMetaContainer.propTypes = {
+	createdAt: React.PropTypes.string,
+	updatedAt: React.PropTypes.string,
+	templates: React.PropTypes.array,
+	template: React.PropTypes.string,
+	title: React.PropTypes.string,
+	handleTemplateChange: React.PropTypes.func,
+	handleTitleChange: React.PropTypes.func
+}
+
+export default EditorMetaContainer

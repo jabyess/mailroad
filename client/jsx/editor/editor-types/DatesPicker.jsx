@@ -1,32 +1,37 @@
 import React from 'react'
 import { DateRangePicker } from 'react-dates'
-// import { START_DATE, END_DATE } from 'react-dates/constants'
+import autoBind from 'react-autobind'
 import moment from 'moment'
 
 class DatesPicker extends React.Component {
 	constructor() {
 		super()
 
-		this.onDatesChange = this.onDatesChange.bind(this)
-		this.onFocusChange = this.onFocusChange.bind(this)
+		autoBind(this,
+		'onDatesChange',
+		'onFocusChange',
+		'onTitleChange'
+		)
 
 		this.state = {
 			startDate: null,
 			endDate: null,
-			focusedInput: null
+			focusedInput: null,
 		}
 	}
 
 	onDatesChange({ startDate, endDate }) {
 		this.setState({ startDate, endDate })
-		
+
+		console.log(startDate, endDate)
+
 		let dates = this.convertDatesToString(startDate, endDate)
 		this.props.updateContentValue(dates, this.props.index)
 	}
 
 	convertDatesToString(startDate, endDate) {
-		let newStart = startDate ? startDate.toISOString() : this.props.startDate.toISOString()
-		let newEnd = endDate ? endDate.toISOString() : this.props.endDate.toISOString()
+		let newStart = startDate ? startDate.toISOString() : null
+		let newEnd = endDate ? endDate.toISOString() : null
 		let content = { startDate: newStart, endDate: newEnd }
 		return content
 	}
@@ -37,16 +42,23 @@ class DatesPicker extends React.Component {
 		return { startDate: newStart, endDate: newEnd }
 	}
 
+	onTitleChange(event) {
+		event.persist()
+		let title = event.target.value
+		this.setState({ title })
+		if(this.props.updateComponentTitle) {
+			this.props.updateComponentTitle(title, this.props.index)
+		}
+	}
+
 	onFocusChange(focusedInput) {
 		this.setState({ focusedInput })
 	}
 
 	componentWillReceiveProps(nextProps) {
-		console.log(nextProps)
 		let dates = this.convertDatesToMoment(nextProps.content.startDate, nextProps.content.endDate)
 		this.setState({startDate: dates.startDate, endDate: dates.endDate})
 	}
-	
 
 	render() {
 		return (
@@ -61,6 +73,7 @@ class DatesPicker extends React.Component {
 					id={'date-range-picker' + this.index}
 					focusedInput={this.state.focusedInput}
 					onDatesChange={this.onDatesChange}
+					showClearDates={true}
 					onFocusChange={this.onFocusChange}
 				/>
 			</div>
@@ -70,6 +83,7 @@ class DatesPicker extends React.Component {
 
 DatesPicker.propTypes = {
 	updateContentValue: React.PropTypes.func,
+	updateComponentTitle: React.PropTypes.func,
 	componentTitle: React.PropTypes.string,
 	index: React.PropTypes.number,
 	startDate: React.PropTypes.string,
