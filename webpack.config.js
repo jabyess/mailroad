@@ -5,7 +5,8 @@ const PATHS = {
 	app: path.join(__dirname, 'client'),
 	build: path.join(__dirname, 'dist'),
 	sass: path.join(__dirname, 'client/sass'),
-	css: path.join(__dirname, 'dist/base.css')
+	css: path.join(__dirname, 'dist/base.css'),
+	bulma: path.resolve(__dirname, 'node_modules/bulma')
 }
 
 module.exports = {
@@ -28,21 +29,12 @@ module.exports = {
 		rules: [
 			{
 				test : /(\.scss|\.sass)/,
-				include: [PATHS.sass, 'bulma'],
+				include: PATHS.sass,
 				enforce: 'pre',
-				use: [
-					'style-loader',
-					'css-loader',
-					'sass-loader',
-					// {	
-					// 	loader: 'sass-loader',
-					// 	includePaths: 'bulma'
-					// }
-				],
+				use: [ 'style-loader', 'css-loader', 'sass-loader' ],
 			},
 			{
 				test: /\.jsx?$/,
-				// include: path.resolve(__dirname, 'client/jsx/'),
 				exclude: /node_modules/,
 				use: [
 					{
