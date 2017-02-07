@@ -5,17 +5,15 @@ import hbs from 'express-handlebars'
 import { API } from '../routes/api.js'
 import axios from 'axios'
 import fs from 'fs'
-import webpackDevMiddleware from 'webpack-dev-middleware'
 
+dotenv.config()
 
-dotenv.config();
+let app = express()
 
-let app = express();
-
-app.engine('handlebars', hbs({ defaultLayout: 'main' }));
-app.set('view engine', 'handlebars');
-app.use('/scripts', express.static(path.join(__dirname, 'dist')));
-app.use('/api', API);
+app.engine('handlebars', hbs({ defaultLayout: 'main' }))
+app.set('view engine', 'handlebars')
+app.use('/scripts', express.static(path.join(__dirname, 'dist')))
+app.use('/api', API)
 
 
 app.get('/editor/*', (req, res) => {
@@ -25,7 +23,7 @@ app.get('/editor/*', (req, res) => {
 app.get('*', (req, res) => {
 	res.sendFile(path.resolve(__dirname, '../../index.html'), {}, (err) => {
 		if(err) {
-			console.log("err ", err);
+			console.log('err sendFile ', err)
 		}
 	})
 })

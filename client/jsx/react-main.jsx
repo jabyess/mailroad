@@ -7,7 +7,7 @@ import MediaContainer from './media/MediaContainer.jsx'
 import App from './App.jsx'
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import '../sass/main.sass'
-import 'bulma'
+// import bulma from 'bulma'
 
 ReactDOM.render(
 	<Router history={browserHistory}>
