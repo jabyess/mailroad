@@ -3,13 +3,12 @@ import NavBar from '../NavBar.jsx'
 import autoBind from 'react-autobind'
 import EmailTable from './EmailTable.jsx'
 import EmailControls from './EmailControls.jsx'
-import EmailTableRow from './EmailTableRow.jsx'
 import axios from 'axios'
 import PouchDB from '../../lib/pouchdb.js'
 
 export default class EmailContainer extends React.Component {
 	constructor() {
-		super();
+		super()
 
 		autoBind(this, 
 			'listEmails', 
@@ -28,7 +27,7 @@ export default class EmailContainer extends React.Component {
 	listEmails() {
 		axios('/api/email/list')
 			.then((results) => {
-				let values = results.data.rows.map((val, ind) => {
+				let values = results.data.rows.map((val) => {
 					let newValues = {
 						id: val.id,
 						createdAt: val.value.createdAt,
@@ -38,7 +37,7 @@ export default class EmailContainer extends React.Component {
 					}
 					return newValues
 				})
-			this.setState({ emailItems: values })
+				this.setState({ emailItems: values })
 			})
 			.catch((ex) => {
 				console.log('listEmails exception: ', ex)
@@ -47,10 +46,10 @@ export default class EmailContainer extends React.Component {
 
 	refreshEmailList() {
 		console.log('refreshing email list')
-		this.listEmails()
+		
 		this.setState((state) => {
 			return state.selectedCheckboxes = {}
-		})
+		}, this.listEmails)
 	}
 
 	updateSelectedCheckboxes(value) {
@@ -67,8 +66,12 @@ export default class EmailContainer extends React.Component {
 	}
 
 	componentDidMount() {
-		this.pouchDB.syncEverything()
-		this.listEmails()
+		this.pouchDB.syncEverything((syncComplete) => {
+			if(syncComplete) {
+				this.listEmails()
+			}
+		})
+
 	}
 
 	render() {

@@ -8,7 +8,7 @@ export default class PDB {
 		this.pouchDB = new PouchDB(dbname, {auto_compaction: true})
 	}
 
-	syncEverything() {
+	syncEverything(syncCompleteCallback) {
 		PouchDB.sync(this.dbname, 'http://localhost:5984/' + this.dbname, {
 			pull: {
 				query_params: {
@@ -18,6 +18,7 @@ export default class PDB {
 		})
 		.on('complete', (complete) => {
 			console.log('completed full sync', complete)
+			syncCompleteCallback(complete)
 		})
 	}
 
@@ -32,33 +33,44 @@ export default class PDB {
 				saveCompleteCallback(complete)
 			})
 		})
-
-
 	}
 
 	updateDoc(doc) {
-		this.pouchDB.get(doc._id).then((newDoc) => {
+		this.pouchDB.get(doc._id).catch((error) => {
+			console.error('error in updateDoc get', error)
+
+			if(error.name === 'not_found') {
+
+				PouchDB.replicate('http://localhost:5984' + this.dbname, this.dbname)
+				.on('complete', () => {
+
+					return this.pouchDB.get(doc._id).then((newDoc) => {
+						console.log('getting doc for second time', newDoc)
+						return newDoc
+					})
+				})
+			}
+		}).then((newDoc) => {
 			if(newDoc) {
-				
+				console.log('returned updateDoc', newDoc)
 				let updatedDoc = Object.assign({}, newDoc, doc)
 				updatedDoc._rev = newDoc._rev
 				updatedDoc.updatedAt = moment.utc().format()
 
 				this.pouchDB.put(updatedDoc).then((putSuccess) => {
-					// console.log('putSuccess', putSuccess)
-					Promise.resolve(putSuccess)
+					console.log('putSuccess', putSuccess)
+					return putSuccess
 				},
 				(rejected) => {
-					console.info('syncDoc put rejected', rejected)
+					console.info('updateDoc put rejected', rejected)
+					return rejected
 				})
 				.catch((error) => {
-					console.error('syncDoc put error', error)
+					console.error('updateDoc put error', error)
 				})
 			}
 		})
-		.catch((error) => {
-			console.error('error in updateDoc SyncDoc', error)
-		})
+		
 	}
 
 	deleteDoc(id) {

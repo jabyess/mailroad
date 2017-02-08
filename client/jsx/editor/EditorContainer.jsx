@@ -5,6 +5,7 @@ import EditorTypeSelect from './editor-types/EditorTypeSelect.jsx'
 import EditorTypeRow from './EditorTypeRow.jsx'
 import ImagePromptModal from '../modals/ImagePromptModal.jsx'
 import ImageGalleryModal from '../modals/ImageGalleryModal.jsx'
+import LinkModal from '../modals/LinkModal.jsx'
 import HTML5Backend from 'react-dnd-html5-backend'
 import EditorControlsContainer from './EditorControlsContainer.jsx'
 import CompileHTMLButton from './CompileHTMLButton.jsx'
@@ -56,7 +57,8 @@ class EditorContainer extends React.Component {
 			isGalleryModalVisible: false,
 			isSaveButtonVisible: false,
 			isExternalImageModalVisible: false,
-			isImagePromptModalVisible: false
+			isImagePromptModalVisible: false,
+			isLinkModalVisible: false
 		}
 	}
 
@@ -139,15 +141,22 @@ class EditorContainer extends React.Component {
 		axios.post('/api/email/create', {
 			content: content,
 			title: title
-		}).then((json) => {
-			let url = '/api/email/' + json.data.id
-			axios.get(url)
-			.then((contents) => {
-				this.setState(contents.data)
-			})
-			.catch((err) => {
-				console.log('error after createEmail, on response:', err)
-			})
+		}).then((jsonResponse) => {
+			// let url = '/api/email/' + json.data.id
+			console.log('createEmail json', jsonResponse)
+			if(jsonResponse.data) {
+				this.setState(jsonResponse.data)
+			}
+			// axios.get(url)
+			// .then((contents) => {
+			// 	console.log(contents)
+			// 	this.setState(contents.data)
+			// })
+			// .catch((err) => {
+			// 	console.log('error after createEmail, on response:', err)
+			// })
+		}, (rejected) => {
+			console.log('error in createEmail post', rejected)
 		})
 		.catch((err) => {
 			console.log('error during createEmail:', err)
@@ -230,6 +239,7 @@ class EditorContainer extends React.Component {
 		const renderEditorTypeSelect = this.state.isEditModeActive ? <EditorTypeSelect 
 			addEditorToContainer={this.addEditorToContainer}
 			/> : null
+		const renderLinkModal = this.state.isLinkModalVisible ? <LinkModal /> : null
 		
 		return (
 			<div className="editor-container">
@@ -269,6 +279,7 @@ class EditorContainer extends React.Component {
 				{renderEditorTypeSelect}
 				{renderImagePromptModal}
 				{renderImageGalleryModal}
+				{renderLinkModal}
 				<SaveButton saveToDB={this.saveToDB}/>
 				<CompileHTMLButton compileHTMLTemplate={this.compileHTMLTemplate} />
 			</div>

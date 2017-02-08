@@ -1,11 +1,9 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
-import classNames from 'classnames'
 import * as EditorTypes from './EditorTypes.js'
 
-export default class EditorTypeSelect extends React.Component {
+class EditorTypeSelect extends React.Component {
 	constructor() {
-		super();
+		super()
 
 		this.handleChange = this.handleChange.bind(this)
 		this.state = {
@@ -21,7 +19,7 @@ export default class EditorTypeSelect extends React.Component {
 	}
 
 	handleChange(e) {
-		let valArray = [];
+		let valArray = []
 		for(let i = 0; i < e.target.length; i++) {
 			let option = e.target[i]
 			if(option.selected) { valArray.push(option.value) }
@@ -45,8 +43,12 @@ export default class EditorTypeSelect extends React.Component {
 					})}
 				</select>
 			</div>
-		);
+		)
 	}
 }
 
+EditorTypeSelect.propTypes = {
+	addEditorToContainer: React.PropTypes.func
+}
 
+export default EditorTypeSelect

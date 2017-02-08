@@ -88,15 +88,23 @@ router.post('/email/create', jsonParser, (req,res) => {
 			return uuid
 		})
 		.then((uuid) => {
-			return axios.put(uuid, {
+			let url = COUCH_FULL + uuid
+			return axios.put(url, {
 				content,
 				title,
 				createdAt,
 				updatedAt
 			})
 			.then((putResponse) => {
-				res.send(putResponse.data)
-				Promise.resolve()
+				let url = COUCH_FULL + putResponse.data.id
+				return axios.get(url)
+					.then((getResponse) => {
+						res.send(getResponse.data)
+						return getResponse.data
+					})
+			}).catch((rejectError) => {
+				res.send(rejectError)
+				return rejectError
 			})
 		})
 		.catch((err) => {
@@ -146,30 +154,49 @@ router.delete('/email', jsonParser, (req, res) => {
 	if(req.query && req.query.id) {
 		const ids = req.query.id
 
-		let idsToDelete = new Promise((resolveDelete, rejectDelete) => {
-			resolveDelete(ids.map((id) => {
-				let url = COUCH_FULL + id
-				axios.get(url).then((result) => {
-					let { _rev } = result.data
-					axios.delete(url, {
-						params: {
-							rev: _rev
-						}
-					}).then((deleteSuccess) => {
-						//success ? 
-						console.log('delete success')
-					})
-				}).catch((error) => {
-					console.log(error)
-				})
-			}))
-		}).then((resultsOfDelete) => {
-			// console.log(resultsOfDelete)
-			console.log(idsToDelete)
-			res.sendStatus(200)
-		}).catch((catchDeleteError) => {
-			console.log(catchDeleteError)
+		console.log('ids:', ids)
+
+		let idsToDelete = ids.map((id) => {
+			let url = COUCH_FULL + id
+			return axios.get(url).then((result) => {
+				let { _rev } = result.data
+				return { id, _rev }
+			})
+			.catch((error) => {
+				console.log(error)
+			})
 		})
+
+
+		Promise.all(idsToDelete).then((deleteObject) => {
+			return deleteObject.map(({id, _rev}) => {
+				console.log(id, _rev)
+				let url = COUCH_FULL + id
+				return axios.delete(url, {
+					params: { rev: _rev }
+				}).then((deleted) => {
+					console.log(deleted.data)
+				}).catch((err) => {
+					console.log('err deleting', err.data)
+				})
+			})
+		}, rejected => {
+			console.log('rejected', rejected.data)
+		}).then((returned) => {
+			console.log('returned', returned)
+			res.sendStatus(200)
+		})
+
+		// new Promise((resolveDelete, rejectDelete) => {
+		// 	return 
+		// }).then((resultsOfMap) => {
+		// 	console.log('results', resultsOfMap)
+		// 	// console.log(idsToDelete)
+		// 	res.sendStatus(200)
+		// }).catch((catchDeleteError) => {
+		// 	console.log(catchDeleteError)
+		// })
+
 		// let idsToDelete = new Promise(, (rejected) => {console.log(rejected)})
 		// .then((doit) => {
 		// 	console.log(doit)

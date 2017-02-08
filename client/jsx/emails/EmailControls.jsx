@@ -3,7 +3,7 @@ import autoBind from 'react-autobind'
 import classNames from 'classnames'
 import axios from 'axios'
 
-export default class EmailControls extends React.Component {
+class EmailControls extends React.Component {
 	constructor() {
 		super()
 		autoBind(this, 'handleDelete', 'handleCopy')
@@ -33,7 +33,7 @@ export default class EmailControls extends React.Component {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				"id":	Object.keys(this.props.selectedCheckboxes)
+				'id':	Object.keys(this.props.selectedCheckboxes)
 			})
 		})
 		.then((response) => {
@@ -56,3 +56,11 @@ export default class EmailControls extends React.Component {
 		)
 	}
 }
+
+EmailControls.propTypes =  {
+	selectedCheckboxes: React.PropTypes.object,
+	refreshEmailList: React.PropTypes.func,
+
+}
+
+export default EmailControls

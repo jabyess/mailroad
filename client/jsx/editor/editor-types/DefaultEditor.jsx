@@ -15,7 +15,7 @@ const DEFAULT_NODE = 'paragraph'
 
 const schema = {
 	nodes: {
-		'blockquote': props => <blockquote {...props.attributes}>{props.children}</blockquote>,
+		blockquote: props => <blockquote {...props.attributes}>{props.children}</blockquote>,
 		'heading-one': props => <h1 {...props.attributes}>{props.children}</h1>,
 		'heading-two': props => <h2 {...props.attributes}>{props.children}</h2>,
 		'heading-three': props => <h3 {...props.attributes}>{props.children}</h3>,
@@ -25,7 +25,7 @@ const schema = {
 		'bulleted-list': props => <ul {...props.attributes}>{props.children}</ul>,
 		'numbered-list': props => <ol {...props.attributes}>{props.children}</ol>,
 		'list-item': props => <li {...props.attributes}>{props.children}</li>,
-		'image': (props) => {
+		image: (props) => {
 			const { node, state } = props
 			const isFocused = state.selection.hasEdgeIn(node)
 			const src = node.data.get('src')
@@ -34,19 +34,15 @@ const schema = {
 				<img sxc={src} className={className} {...props.attributes} />
 			)
 		},
-		'link': (props) => {
+		link: (props) => {
 			const { data } = props.node
 			const href = data.get('href')
-			return <a href={href} {...props.attributes}>{props.children}</a>
+			return <a {...props.attributes} href={href}>{props.children}</a>
 		}
 	},
 	marks: {
 		bold: {
 			fontWeight: 'bold'
-		},
-		link: {
-			textDecoration: 'underline',
-			color: 'blue'
 		},
 		italic: {
 			fontStyle: 'italic'
@@ -71,7 +67,8 @@ const BLOCK_TAGS = {
 	tr: 'table-row',
 	td: 'table-cell',
 	th: 'table-header',
-	img: 'image'
+	img: 'image',
+	a: 'link'
 }
 
 const MARK_TAGS = {
@@ -111,6 +108,11 @@ const rules = [
 			case 'table-cell' : return <td>{children}</td>
 			case 'table-header': return <th>{children}</th>
 			case 'image' : return <img />
+			case 'link': props => {
+				const { data } = props.node
+				const href = data.get('href')
+				return <a href={href} {...props.attributes}>{children}</a>
+			}
 			}
 		}
 	},
@@ -191,6 +193,7 @@ class DefaultEditor extends React.Component {
 
 	hasLinks() {
 		const { state } = this.state
+		console.log(state.inlines)
 		return state.inlines.some(inline => inline.type == 'link')
 	}
 
@@ -263,8 +266,8 @@ class DefaultEditor extends React.Component {
 		let { state } = this.state
 		let hasLinks = this.hasLinks()
 
-		console.log(type);
-		console.log(hasLinks)
+		console.log(type)
+		// console.log(hasLinks)
 		if(type === 'link' && hasLinks) {
 			state = state
 				.transform()
@@ -306,7 +309,6 @@ class DefaultEditor extends React.Component {
 				.apply()
 			this.setState({ state })
 		}
-
 	}
 
 	/**
@@ -370,7 +372,7 @@ class DefaultEditor extends React.Component {
 		// popup modal that says insert image from: gallery, external source
 		// if gallery, render gallery
 		// if external, enter url
-		// this.props.function to render modal
+		// dispatch event to render modal
 		let toggleImagePromptModal = new CustomEvent('toggleVisible', {
 			detail: 'isImagePromptModalVisible'
 		})
