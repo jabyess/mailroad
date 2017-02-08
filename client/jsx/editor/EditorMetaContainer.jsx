@@ -9,8 +9,8 @@ class EditorMetaContainer extends React.Component {
 		autoBind(this, 'handleTitleChange', 'handleTemplateChange')
 
 		this.state = {
-			template: this.props.template, 
-			title: this.props.title
+			template: this.props.template || '', 
+			title: this.props.title || ''
 		}
 	}
 

@@ -19,8 +19,9 @@ class EmailControls extends React.Component {
 				id : [...ids]
 			}
 		}).then((success) => {
-			console.log(success)
+			// console.log(success)
 			this.props.refreshEmailList()
+			return success
 		}).catch((error) => {
 			console.log(error)
 		})

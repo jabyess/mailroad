@@ -1,17 +1,19 @@
 import React from 'react'
 import { Link } from 'react-router'
-import autoBind from 'react-autobind'
+import moment from 'moment'
 
-export default class EmailTableRow extends React.Component {
+const DATE_STRING = 'YYYY-MM-DD HH:mm:ss'
+
+class EmailTableRow extends React.Component {
 
 	constructor(props) {
 		super(props)
 
 		this.state = {
-			checked: this.props.checked || false
+			checked: false
 		}
 
-		autoBind(this, 'formatDate', 'handleCheckboxChange')
+		this.handleCheckboxChange = this.handleCheckboxChange.bind(this)
 	}
 
 	handleCheckboxChange(event) {
@@ -28,11 +30,9 @@ export default class EmailTableRow extends React.Component {
 	
 	formatDate(date) {
 		if(date) {
-			let splitDate = date.split('T');
-			let time = splitDate[1].substring(0, splitDate[1].length - 4);
-			return splitDate[0] + ' ' + time;
+			return moment(date).format(DATE_STRING)
 		}
-		else return "bad or missing date"
+		else return 'bad or missing date'
 	}
 
 	render() {
@@ -41,10 +41,9 @@ export default class EmailTableRow extends React.Component {
 				<td className="email-table__row__select">
 					<input
 						type="checkbox"
-						id={"checkbox-" + this.props.rowValues.id}
+						id={'checkbox-' + this.props.rowValues.id}
 						value={this.props.rowValues.id}
 						onChange={this.handleCheckboxChange}
-						checked={this.state.checked}
 					/>
 				</td>
 				<td className="email-table__row__title"><Link to={`/editor/${this.props.rowValues.id}`}>{this.props.rowValues.title}</Link></td>
@@ -55,3 +54,10 @@ export default class EmailTableRow extends React.Component {
 		)
 	}
 }
+
+EmailTableRow.propTypes = {
+	rowValues: React.PropTypes.object,
+	updateSelectedCheckboxes: React.PropTypes.func,
+	checked: React.PropTypes.bool
+}
+export default EmailTableRow

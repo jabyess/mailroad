@@ -1,12 +1,7 @@
 import React from 'react'
-import autoBind from 'react-autobind'
 import EmailTableRow from './EmailTableRow.jsx'
 
 export default class EmailTable extends React.Component {
-	constructor() {
-		super()
-
-	}
 	
 	render() {
 		return (
