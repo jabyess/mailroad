@@ -2,6 +2,7 @@ import handlebars from 'handlebars'
 import fs from 'fs'
 import juice from 'juice'
 import moment from 'moment'
+import path from 'path'
 
 let defaultJuiceOptions = {
 	preserveImportant: true,
@@ -64,8 +65,15 @@ class Utils {
 	} 
 
 
-	static formatS3Filename(filename) {
-		console.log('filename ', filename)
+	static formatS3Filename(filename, sizes) {
+		const now = moment().format('YYYY-MM-DD-HH-mm-ss')
+		const ext = path.extname(filename)
+		let filenames = sizes.map(size => 
+			filename + size[0] + 'x' + size[1] + '-' + now + ext
+		)
+		console.log(filenames)
+		return filenames
+
 	}
 
 	static getCurrentTimestampUTC() {

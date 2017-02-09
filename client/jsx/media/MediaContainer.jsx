@@ -10,7 +10,6 @@ export default class MediaContainer extends React.Component {
 			<div className="media-container">
 				<NavBar />
 				<h1>Media</h1>
-				<div>Images will go here</div>
 				<MediaUploadForm />
 				<ImageGalleryModal />
 			</div>

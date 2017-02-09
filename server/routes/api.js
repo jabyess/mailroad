@@ -19,6 +19,7 @@ const COUCH_URL = 'http://127.0.0.1:5984/'
 const COUCH_DB = 'emailbuilder/'
 const COUCH_UUID = COUCH_URL + '_uuids'
 const COUCH_FULL = COUCH_URL + COUCH_DB
+const COUCH_SEARCH = COUCH_FULL + '_find'
 
 axios.defaults.baseURL = COUCH_FULL
 
@@ -125,31 +126,6 @@ router.get('/email/:id', (req, res) => {
 		})
 })
 
-
-// router.post('/email/:id', jsonParser, (req, res) => {
-// 	console.log(req.body.data)
-
-// 	let url = COUCH_FULL + req.params.id
-// 	let { content, title, template, createdAt } = req.body
-// 	let updatedAt = Utils.getCurrentTimestampUTC()
-
-// 	axios.put(url, {
-// 		content, 
-// 		title,
-// 		updatedAt,
-// 		createdAt,
-// 	})
-// 	.then((response) => {
-// 		console.log(response.data)
-// 		res.send(response.data)
-// 	})
-// 	.catch((err) => {
-// 		console.log(err)
-// 		res.send(err)
-// 	})
-
-// })
-
 router.delete('/email', jsonParser, (req, res) => {
 	if(req.query && req.query.id) {
 		const ids = req.query.id
@@ -166,7 +142,6 @@ router.delete('/email', jsonParser, (req, res) => {
 				console.log(error)
 			})
 		})
-
 
 		Promise.all(idsToDelete).then((deleteObject) => {
 			return deleteObject.map(({id, _rev}) => {
@@ -186,24 +161,17 @@ router.delete('/email', jsonParser, (req, res) => {
 			console.log('returned', returned)
 			res.sendStatus(200)
 		})
-
-		// new Promise((resolveDelete, rejectDelete) => {
-		// 	return 
-		// }).then((resultsOfMap) => {
-		// 	console.log('results', resultsOfMap)
-		// 	// console.log(idsToDelete)
-		// 	res.sendStatus(200)
-		// }).catch((catchDeleteError) => {
-		// 	console.log(catchDeleteError)
-		// })
-
-		// let idsToDelete = new Promise(, (rejected) => {console.log(rejected)})
-		// .then((doit) => {
-		// 	console.log(doit)
-		// }))
-
 	}
+})
 
+router.post('/email/search', jsonParser, (req, res) => {
+	let searchText = req.body.searchText
+	console.log('hit search', searchText)
+	// axios.post(COUCH_SEARCH, {
+	// 	selector: {
+	// 		title: searchText
+	// 	}
+	// })
 })
 
 // router.post('/copyEmail', jsonParser, (req, res) => {
@@ -212,7 +180,7 @@ router.delete('/email', jsonParser, (req, res) => {
 
 // AWS_BUCKET + .s3.amazonaws.com/ + data.key
 router.get('/s3/list', (req, res) => {
-	const approvedImageExtensions = ['.png','.jpg','.gif','.tiff','.jpeg','.bmp']
+	const approvedImageExtensions = ['.png','.jpg','.gif','.jpeg','.bmp']
 	S3.listObjects(s3Params, (err, data) => {
 		if(err) {
 			console.log(err, err.stack)
@@ -220,9 +188,7 @@ router.get('/s3/list', (req, res) => {
 		}
 		else {
 			let imagesArray = data.Contents.filter((image) => {
-				if(approvedImageExtensions.some((extension) => {
-					return extension === path.extname(image.Key)
-				})) { 
+				if(approvedImageExtensions.some(ext => ext === path.extname(image.Key))) { 
 					return image
 				}
 			}).map((image) => {
@@ -239,11 +205,11 @@ router.get('/s3/list', (req, res) => {
 })
 
 router.post('/s3/delete', jsonParser, (req, res) =>{
-	let tempParams = {
+	const deleteParams = {
 		Bucket: s3Params.Bucket,
 		Key: req.body.key
 	}
-	S3.deleteObject(tempParams, (err, data) => {
+	S3.deleteObject(deleteParams, (err, data) => {
 		if(err) {
 			console.log(err)
 		}
@@ -266,28 +232,39 @@ router.post('/s3/delete', jsonParser, (req, res) =>{
   path: 'uploads/62bec39493e5729f980b562c2a4bdee6',
   size: 197202 }
 */
-router.post('/s3/create', upload.single('file'), (req, res) => {
-	let formattedFileName = Utils.formatS3Filename(req.file.originalname)
-	let createParams = {
-		Key: req.file.originalname,
-		Bucket: s3Params.Bucket,
-		ContentType: req.file.mimetype,
-		ContentLength: req.file.size,
-		Body: req.file.buffer
-	}
-	S3.putObject(createParams, (err, data) => {
-		if(err) {
-			console.log(err)
-			res.sendStatus(500)
-		}
-		else {
-			console.log(data)
-			res.sendStatus(200)
-		}
-	})
+
+// const multerImageUpload = upload.array('droppedFile')
+const multerImageUpload = upload.fields([
+	{ name: 'droppedFile' },
+	{ name: 'sizeInputs' }
+])
+
+router.post('/s3/create', multerImageUpload, (req, res) => {
+	// let formattedFileNames = Utils.formatS3Filename(req.file.originalname, [[300,200]])
+	console.log(JSON.parse(req.body.sizes))
+	console.log(req.files)
+
+	// console.log(req.data.)
+	// let createParams = {
+	// 	Key: req.file.originalname,
+	// 	Bucket: s3Params.Bucket,
+	// 	ContentType: req.file.mimetype,
+	// 	ContentLength: req.file.size,
+	// 	Body: req.file.buffer
+	// }
+	// S3.putObject(createParams, (err, data) => {
+	// 	if(err) {
+	// 		console.log(err)
+	// 		res.sendStatus(500)
+	// 	}
+	// 	else {
+	// 		console.log(data)
+	// 		res.sendStatus(200)
+	// 	}
+	// })
 
 	// console.log('request')
-	// res.sendStatus(200)
+	res.sendStatus(200)
 })
 
 export { router as API }

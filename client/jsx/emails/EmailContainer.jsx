@@ -65,6 +65,20 @@ export default class EmailContainer extends React.Component {
 		}
 	}
 
+	triggerSearch(searchText) {
+		console.log(searchText)
+		axios.post('/api/email/search', {
+			searchText
+		})
+		.then((results) => {
+			console.log(results)
+		})
+		.catch((err) => {
+			console.log('error searching:',err)
+		})
+
+	}
+
 	componentDidMount() {
 		this.pouchDB.syncEverything((syncComplete) => {
 			if(syncComplete) {
@@ -81,6 +95,7 @@ export default class EmailContainer extends React.Component {
 				<EmailControls 
 					selectedCheckboxes={this.state.selectedCheckboxes}
 					refreshEmailList={this.refreshEmailList}
+					triggerSearch={this.triggerSearch}
 				/>
 				<EmailTable 
 					emailItems={this.state.emailItems}
