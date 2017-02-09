@@ -7,6 +7,7 @@ import Utils from '../lib/utils.js'
 import multer from 'multer'
 import AWS from 'aws-sdk/clients/s3'
 import axios from 'axios'
+import sharp from 'sharp'
 
 dotenv.config()
 
@@ -241,8 +242,30 @@ const multerImageUpload = upload.fields([
 
 router.post('/s3/create', multerImageUpload, (req, res) => {
 	// let formattedFileNames = Utils.formatS3Filename(req.file.originalname, [[300,200]])
-	console.log(JSON.parse(req.body.sizes))
-	console.log(req.files)
+	const sizes = JSON.parse(req.body.sizes)
+
+	//makes sure we generate a thumbnail size
+	if(!sizes.some(size => size.width === 150 && size.height === 150)) {
+		console.log('no thumbnail size, adding')
+		sizes.push({width: 150, height: 150})
+	}
+
+	const files = req.files.droppedFile
+	console.log(sizes)
+	console.log(files)
+
+	let imagesToProcess = files.map((file) => {
+		return sizes.map((size) => {
+			sharp(file.buffer)
+			.resize(size.width, size.height)
+			.max()
+			.toFile(Utils.formatS3Filename(file.originalname, size.width, size.height))
+		})
+	})
+	Promise.all(imagesToProcess).then((completed) => {
+		console.log(completed)
+	})
+
 
 	// console.log(req.data.)
 	// let createParams = {

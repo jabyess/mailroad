@@ -65,15 +65,12 @@ class Utils {
 	} 
 
 
-	static formatS3Filename(filename, sizes) {
+	static formatS3Filename(filename, width, height) {
 		const now = moment().format('YYYY-MM-DD-HH-mm-ss')
 		const ext = path.extname(filename)
-		let filenames = sizes.map(size => 
-			filename + size[0] + 'x' + size[1] + '-' + now + ext
-		)
-		console.log(filenames)
-		return filenames
-
+		const prefix = filename.split('.')[0]
+		const formattedFilename = `${width}x${height}-${now}-${prefix}${ext}`
+		return formattedFilename
 	}
 
 	static getCurrentTimestampUTC() {

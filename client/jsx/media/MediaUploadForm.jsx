@@ -34,12 +34,18 @@ export default class MediaUploadForm extends React.Component {
 	}
 
 	startUpload() {
-		//validate inputs first
+		//validate inputs first, do i even need to do this?
 		const validatedSizes = this.state.sizeInputs.map((size) => {
 			const height = parseInt(size.height, 10)
 			const width = parseInt(size.width, 10)
 			return { height, width }
 		})
+
+		const config = {
+			onUploadProgress: (progressEvent) => {
+				this.setState({percentCompleted: Math.round((progressEvent.loaded * 100) / progressEvent.total)})
+			}
+		}
 
 		if(this.state.droppedFiles) {
 			const formData = new FormData()
@@ -47,13 +53,7 @@ export default class MediaUploadForm extends React.Component {
 				formData.append('droppedFile', file)
 			})
 			formData.append('sizes', JSON.stringify(validatedSizes))
-			console.log(validatedSizes)
-			console.log(formData)
-			const config = {
-				onUploadProgress: (progressEvent) => {
-					this.setState({percentCompleted: Math.round((progressEvent.loaded * 100) / progressEvent.total)})
-				}
-			}
+
 			axios.post('/api/s3/create', formData, config).then((response) => {
 				return response
 			})
