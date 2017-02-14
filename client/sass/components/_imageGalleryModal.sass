@@ -5,13 +5,19 @@
 	flex-wrap: wrap
 
 	.imagesContainer--image
-		padding: 10px
+		width: 150px
+		height: 150px
 		margin-top: 10px
 		margin-bottom: 10px
-		img
-			max-width: 250px
-			&:hover
-				opacity: 0.8
+		background-size: cover
+		position: relative
+		&:hover
+			opacity: 0.8
+
+		.imagesContainer--delete
+			position: absolute
+			right: 0
+			bottom: 0
 
 	.imagesContainer--loadMore
 		flex-wrap: nowrap

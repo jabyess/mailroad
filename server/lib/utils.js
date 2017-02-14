@@ -64,13 +64,17 @@ class Utils {
 		})
 	} 
 
-
 	static formatS3Filename(filename, width, height) {
 		const now = moment().format('YYYY-MM-DD-HH-mm-ss')
 		const ext = path.extname(filename)
 		const prefix = filename.split('.')[0]
-		const formattedFilename = `${width}x${height}-${now}-${prefix}${ext}`
+		const formattedFilename = width + 'x' + height + '-' + now + '-' + prefix + ext
 		return formattedFilename
+	}
+
+	static cleanupTempDir(tempFolderPath) {
+		fs.rmdirSync(tempFolderPath)
+		console.log('removed temp dir')
 	}
 
 	static getCurrentTimestampUTC() {

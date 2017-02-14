@@ -27,6 +27,7 @@
     "aws-sdk": "^2.7.22",
     "axios": "^0.15.3",
     "babel-cli": "^6.16.0",
+    "bluebird": "^3.4.7",
     "body-parser": "^1.15.2",
     "classnames": "^2.2.5",
     "dotenv": "^2.0.0",

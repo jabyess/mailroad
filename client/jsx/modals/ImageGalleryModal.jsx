@@ -1,5 +1,6 @@
 import React from 'react'
 import autoBind from 'react-autobind'
+import axios from 'axios'
 
 const IMAGES_PER_PAGE = 10
 
@@ -15,10 +16,6 @@ export default class ImageGalleryModal extends React.Component {
 			'updateMediaList'
 		)
 
-		this.getImagesFromS3 = this.getImagesFromS3.bind(this)
-		this.loadMore = this.loadMore.bind(this)
-		this.initialLoad = this.initialLoad.bind(this)
-
 		this.state = {
 			images: [],
 			page: 1
@@ -26,13 +23,9 @@ export default class ImageGalleryModal extends React.Component {
 	}
 
 	getImagesFromS3(hardRefresh) {	
-		fetch('/api/s3/list')
-			.then((results) => {
-				return results.json()
-			})
-			.then((json) => {
-				this.setState({allImages: json}, () => {
-					console.log(this.state.allImages)
+		axios('/api/s3/list')
+			.then((imageResponse) => {
+				this.setState({allImages: imageResponse.data}, () => {
 					if(hardRefresh) {
 						this.setState({images: []}, this.initialLoad)
 					}
@@ -41,23 +34,29 @@ export default class ImageGalleryModal extends React.Component {
 					}
 				})
 			})
+			.catch((err) => {
+				console.error('error refreshing s3 images', err)
+			})
 	}
 
 	initialLoad() {
-		this.setState(()=>{
-			for(let i = 0; i < IMAGES_PER_PAGE; i++) {
+		const maxLength = this.state.allImages.length
+		const loopLength = maxLength < IMAGES_PER_PAGE ? maxLength : IMAGES_PER_PAGE
+		this.setState(() => {
+			for(let i = 0; i < loopLength; i++) {
 				this.state.images.push(this.state.allImages[i])
 			}
 		}) 
 	}
 
 	loadMore() {
+		const maxLength = this.state.allImages.length
 		this.setState(() => {
 			let index = IMAGES_PER_PAGE * this.state.page
-			console.log(index)
 			for(let i = index; i < index + IMAGES_PER_PAGE; i++) {
-				console.log(this.state.allImages[index])
-				this.state.images.push(this.state.allImages[i])
+				if(i <= maxLength) {
+					this.state.images.push(this.state.allImages[i])
+				}
 			}
 			this.state.page = this.state.page++
 		})
@@ -67,12 +66,11 @@ export default class ImageGalleryModal extends React.Component {
 		let index = e.target.dataset.index
 		let fileName = this.state.images[index].fileName
 		console.log(fileName)
-		fetch('/api/s3/delete', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({key: fileName})
+		axios.post('/api/s3/delete', {
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({key: fileName})
 		}).then((response) => {
 			return response.text()
 		}).then((text) => {
@@ -98,16 +96,19 @@ export default class ImageGalleryModal extends React.Component {
 	
 
 	render() {
+		const images = this.state.images ? this.state.images.map((image, index) => {
+			const bgImage = {
+				backgroundImage: 'url(' + image.url + ')'
+			}
+			return (
+				<div className="imagesContainer--image" style={bgImage} key={index} >
+					<button className="imagesContainer--delete" onClick={this.deleteImage} data-index={index}>x</button>
+				</div>
+			)
+		}) : null
 		return (
 			<div className="imagesContainer">
-				{this.state.images.map((image, index) => {
-					return (
-						<div className="imagesContainer--image" key={index} >
-							<img src={image.url} alt=""/>
-							<button onClick={this.deleteImage} data-index={index}>x</button>
-						</div>
-					)
-				})}
+				{images}
 				<button className="imagesContainer--loadMore" onClick={this.loadMore}>Load More</button>
 			</div>	
 		)

@@ -66,7 +66,12 @@ module.exports = {
 		]
 	},
 	plugins: [
-		new ExtractTextPlugin(PATHS.css)
+		new ExtractTextPlugin(PATHS.css),
+		// new webpack.DefinePlugin({
+		// 	'process.env': {
+		// 		'NODE_ENV': 'development'
+		// 	}
+		// })
 	],
 	watchOptions: {
 		ignored: /node_modules/	

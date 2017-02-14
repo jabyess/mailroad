@@ -5,6 +5,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import Utils from '../lib/utils.js'
 import multer from 'multer'
+import Promise from 'bluebird'
 import AWS from 'aws-sdk/clients/s3'
 import axios from 'axios'
 import sharp from 'sharp'
@@ -35,6 +36,7 @@ const s3Params = {
 }
 
 let S3 = new AWS(s3Config)
+// S3.config.setPromisesDependency(require('bluebird'))
 
 router.get('/email/list', jsonParser, (req, res) => {
 	const designUrl = COUCH_FULL + '_design/EmailsByUpdatedDate/_view/EmailsByUpdatedDate'
@@ -58,7 +60,7 @@ router.get('/templates', (req, res) => {
 	const templateDir = path.resolve(__dirname, '../templates')
 	fs.readdir(templateDir, (err, files) => {
 		if(err) {
-			throw new Exception('error reading templates: ', err)
+			throw Error('error reading templates: ', err)
 		}
 		else {
 			let fileList = files.map( (f) => {
@@ -181,13 +183,19 @@ router.post('/email/search', jsonParser, (req, res) => {
 
 // AWS_BUCKET + .s3.amazonaws.com/ + data.key
 router.get('/s3/list', (req, res) => {
-	const approvedImageExtensions = ['.png','.jpg','.gif','.jpeg','.bmp']
-	S3.listObjects(s3Params, (err, data) => {
+	const approvedImageExtensions = ['.jpeg','.jpg','.png','.gif','.bmp']
+	const listParams = {
+		Bucket: s3Params.Bucket,
+		Prefix: '150x150',
+		EncodingType: 'url'
+	}
+	S3.listObjectsV2(listParams, (err, data) => {
 		if(err) {
 			console.log(err, err.stack)
 			res.send(err)
 		}
 		else {
+			console.log(data)
 			let imagesArray = data.Contents.filter((image) => {
 				if(approvedImageExtensions.some(ext => ext === path.extname(image.Key))) { 
 					return image
@@ -233,61 +241,53 @@ router.post('/s3/delete', jsonParser, (req, res) =>{
   path: 'uploads/62bec39493e5729f980b562c2a4bdee6',
   size: 197202 }
 */
-
-// const multerImageUpload = upload.array('droppedFile')
 const multerImageUpload = upload.fields([
-	{ name: 'droppedFile' },
-	{ name: 'sizeInputs' }
+	{ name: 'droppedFiles' },
+	{ name: 'sizes' }
 ])
 
 router.post('/s3/create', multerImageUpload, (req, res) => {
-	// let formattedFileNames = Utils.formatS3Filename(req.file.originalname, [[300,200]])
+
 	const sizes = JSON.parse(req.body.sizes)
+	const files = req.files.droppedFiles
 
-	//makes sure we generate a thumbnail size
-	if(!sizes.some(size => size.width === 150 && size.height === 150)) {
-		console.log('no thumbnail size, adding')
-		sizes.push({width: 150, height: 150})
-	}
+	// //make sure we generate a thumbnail size
+	sizes.forEach((imageSize) => {
+		// console.log('imageSize', imageSize)
+		if(!imageSize.some((size) => size.width === 150 && size.height === 150)) {
+			imageSize.push({ width: 150, height: 150 })
+		}
+	})
+	console.log('thumbsizes', sizes)
 
-	const files = req.files.droppedFile
-	console.log(sizes)
-	console.log(files)
-
-	let imagesToProcess = files.map((file) => {
-		return sizes.map((size) => {
-			sharp(file.buffer)
-			.resize(size.width, size.height)
-			.max()
-			.toFile(Utils.formatS3Filename(file.originalname, size.width, size.height))
+	Promise.map(files, (file, i) => {
+		return Promise.map(sizes[i], (size) => {
+			return new Promise((resolve) => {
+				resolve(sharp(file.buffer).resize(size.width, size.height).max().toBuffer())
+			}).then(resolvedBuffer => {
+				return {
+					Bucket: s3Params.Bucket,
+					Key: Utils.formatS3Filename(file.originalname, size.width, size.height),
+					Body: resolvedBuffer,
+				}
+			})
 		})
+		.then((sizes) => sizes)
+		.catch(err => Error(err))
 	})
-	Promise.all(imagesToProcess).then((completed) => {
-		console.log(completed)
+	.then((imagesToProcess) => {
+		return Promise.map(imagesToProcess, image => {
+			return Promise.map(image, size => {
+				return S3.putObject(size).promise()
+			})
+		})
+	}).then((resolved) => {
+		if(resolved) {
+			res.status(200).send('uploaded ' + resolved.length + ' images')
+		}
 	})
-
-
-	// console.log(req.data.)
-	// let createParams = {
-	// 	Key: req.file.originalname,
-	// 	Bucket: s3Params.Bucket,
-	// 	ContentType: req.file.mimetype,
-	// 	ContentLength: req.file.size,
-	// 	Body: req.file.buffer
-	// }
-	// S3.putObject(createParams, (err, data) => {
-	// 	if(err) {
-	// 		console.log(err)
-	// 		res.sendStatus(500)
-	// 	}
-	// 	else {
-	// 		console.log(data)
-	// 		res.sendStatus(200)
-	// 	}
-	// })
-
-	// console.log('request')
-	res.sendStatus(200)
+	.catch((err) => {throw Error(err)})
+	
 })
 
 export { router as API }
