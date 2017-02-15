@@ -64,11 +64,11 @@ class Utils {
 		})
 	} 
 
-	static formatS3Filename(filename, width, height) {
-		const now = moment().format('YYYY-MM-DD-HH-mm-ss')
+	static formatS3Filename(filename, width, height, random) {
+		const now = moment().format('YYYYMMDDHHmmss')
 		const ext = path.extname(filename)
 		const prefix = filename.split('.')[0]
-		const formattedFilename = width + 'x' + height + '-' + now + '-' + prefix + ext
+		const formattedFilename = width + 'x' + height + '-' + random + now + '-' + prefix + ext
 		return formattedFilename
 	}
 

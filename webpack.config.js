@@ -1,4 +1,5 @@
 var path = require('path')
+const DotenvPlugin = require('webpack-dotenv-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 const PATHS = {
@@ -72,6 +73,10 @@ module.exports = {
 		// 		'NODE_ENV': 'development'
 		// 	}
 		// })
+		new DotenvPlugin({
+			sample: './.env.sample',
+			path: './.env'
+		})
 	],
 	watchOptions: {
 		ignored: /node_modules/	

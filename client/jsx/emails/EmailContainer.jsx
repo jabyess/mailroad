@@ -4,7 +4,7 @@ import autoBind from 'react-autobind'
 import EmailTable from './EmailTable.jsx'
 import EmailControls from './EmailControls.jsx'
 import axios from 'axios'
-import PouchDB from '../../lib/pouchdb.js'
+import PDB from '../../lib/pouchdb.js'
 
 export default class EmailContainer extends React.Component {
 	constructor() {
@@ -16,7 +16,7 @@ export default class EmailContainer extends React.Component {
 			'refreshEmailList'
 		)
 
-		this.pouchDB = new PouchDB('emailbuilder')
+		this.pouchDB = new PDB()
 		
 		this.state = {
 			emailItems: [],

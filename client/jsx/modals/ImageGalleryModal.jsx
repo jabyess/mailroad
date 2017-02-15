@@ -67,17 +67,12 @@ export default class ImageGalleryModal extends React.Component {
 		let fileName = this.state.images[index].fileName
 		console.log(fileName)
 		axios.post('/api/s3/delete', {
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({key: fileName})
-		}).then((response) => {
-			return response.text()
+			key: fileName
 		}).then((text) => {
 			console.log(text)
-			this.setState(() => {
-				this.state.images.splice(index,1)
-			})
+			// this.setState(() => {
+			// 	this.state.images.splice(index,1)
+			// })
 		})
 	}
 

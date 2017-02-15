@@ -3,13 +3,18 @@ import PouchDB from 'pouchdb-browser'
 
 export default class PDB {
 
-	constructor(dbname) {
-		this.dbname = dbname
-		this.pouchDB = new PouchDB(dbname, {auto_compaction: true})
+	constructor() {
+		this.imageDBName = process.env.IMAGE_DB
+		this.emailDBName = process.env.EMAIL_DB
+		this.pouchDBURL = process.env.COUCHDB_URL
+
+		console.log(process.env)
+		this.emailDB = new PouchDB(this.emailDBName, {auto_compaction: true})
+		this.imageDB = new PouchDB(this.imageDBName, {auto_compaction: true})
 	}
 
 	syncEverything(syncCompleteCallback) {
-		PouchDB.sync(this.dbname, 'http://localhost:5984/' + this.dbname, {
+		PouchDB.sync(this.emailDBName, this.pouchDBURL + this.emailDBName, {
 			pull: {
 				query_params: {
 					limit: 10
@@ -23,9 +28,9 @@ export default class PDB {
 	}
 
 	syncToDB(doc, saveCompleteCallback) {
-		this.pouchDB.get(doc._id).then((newDoc) => {
+		this.emailDB.get(doc._id).then((newDoc) => {
 			// console.log('saving', newDoc, 'to db')
-			PouchDB.replicate(this.dbname, 'http://localhost:5984/' + this.dbname, {
+			PouchDB.replicate(this.emailDBName, this.pouchDBURL + this.emailDBName, {
 				doc_ids: [ doc._id ]
 			})
 			.on('complete', (complete) => {
@@ -36,15 +41,15 @@ export default class PDB {
 	}
 
 	updateDoc(doc) {
-		this.pouchDB.get(doc._id).catch((error) => {
+		this.emailDB.get(doc._id).catch((error) => {
 			console.error('error in updateDoc get', error)
 
 			if(error.name === 'not_found') {
 
-				PouchDB.replicate('http://localhost:5984' + this.dbname, this.dbname)
+				PouchDB.replicate(this.pouchDBURL + this.emailDBName, this.emailDBName)
 				.on('complete', () => {
 
-					return this.pouchDB.get(doc._id).then((newDoc) => {
+					return this.emailDB.get(doc._id).then((newDoc) => {
 						console.log('getting doc for second time', newDoc)
 						return newDoc
 					})
@@ -57,7 +62,7 @@ export default class PDB {
 				updatedDoc._rev = newDoc._rev
 				updatedDoc.updatedAt = moment.utc().format()
 
-				this.pouchDB.put(updatedDoc).then((putSuccess) => {
+				this.emailDB.put(updatedDoc).then((putSuccess) => {
 					console.log('putSuccess', putSuccess)
 					return putSuccess
 				},
@@ -74,23 +79,23 @@ export default class PDB {
 	}
 
 	deleteDoc(id) {
-		this.pouchDB.get(id).then((doc) => {
-			return this.pouchDB.remove(doc)
+		this.emailDB.get(id).then((doc) => {
+			return this.emailDB.remove(doc)
 		})
 		// console.log('deleted ', id)
 	}
 
 	getDoc(id, returnValueCallback) {
-		this.pouchDB.get(id).then((result) => {
+		this.emailDB.get(id).then((result) => {
 			returnValueCallback(result)
 		},
 		(notFound) => {
 			console.error('doc not found in PDB')
-			PouchDB.replicate('http://localhost:5984/' + this.dbname, this.dbname, {
+			PouchDB.replicate(this.pouchDBURL + this.emailDBName, this.emailDBName, {
 				doc_ids: [ id ]
 			})
 			.on('complete', (complete) => {
-				this.pouchDB.get(id).then((result) => {
+				this.emailDB.get(id).then((result) => {
 					returnValueCallback(result)
 				})
 				.catch((error) => {

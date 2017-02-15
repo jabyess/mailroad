@@ -7,6 +7,9 @@ import axios from 'axios'
 import fs from 'fs'
 
 dotenv.config()
+const { COUCHDB_URL, EMAIL_DB, IMAGE_DB, USER_DB } = process.env
+const EMAILDB_URL = COUCHDB_URL + EMAIL_DB
+const UUID_URL = COUCHDB_URL + '_uuids'
 
 let app = express()
 
@@ -32,35 +35,11 @@ app.get('*', (req, res) => {
 // if so, make sure all couchdb-views are in the system by making http requests against them
 // if so, start db
 // if not, create them then start db
-axios.get('http://127.0.0.1:5984')
+axios.get(COUCHDB_URL)
 	.then((response) => {
 		if(response && response.data) {
-			let viewPath = path.resolve(__dirname, '../couchdb-views')
-			fs.readdir(viewPath, (err, files)=>{
-				console.log(files)
-				axios.get('http://127.0.0.1:5984/_uuids', {
-					count: files.length
-				}).then(() => {
-					let responses = files.map((file, index) => {
-						let parsedName = file.split('.')[0]
-						let url = `http://127.0.0.1:5984/emailbuilder/_design/${parsedName}`
-						return axios.get(url)
-					})
-					axios.all(responses)
-					.then(axios.spread((...responses) => {
-						console.log('made',responses.length, 'requests')
-						// console.log(arguments)
-						// finish logic to sync views to db
-						app.listen(3000, () => {
-							console.log('Express listening on port 3000!')
-						})
-					}))
-					
-				})
-				.catch((err)=>{
-					console.log(err)
-					throw err
-				})
+			app.listen(3000, () => {
+				console.log('Express listening on port 3000!')
 			})
 		}
 		else {
@@ -69,6 +48,6 @@ axios.get('http://127.0.0.1:5984')
 	})
 	.catch((err) => {
 		console.log(err)
-		throw new err
+		throw err
 	})
 

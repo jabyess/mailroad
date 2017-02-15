@@ -17,11 +17,11 @@ let router = express.Router()
 let jsonParser = bodyParser.json()
 const env = process.env
 
-const COUCH_URL = 'http://127.0.0.1:5984/'
-const COUCH_DB = 'emailbuilder/'
+const COUCH_URL = env.COUCHDB_URL
+const COUCH_DB = env.EMAIL_DB
 const COUCH_UUID = COUCH_URL + '_uuids'
-const COUCH_FULL = COUCH_URL + COUCH_DB
-const COUCH_SEARCH = COUCH_FULL + '_find'
+const COUCH_FULL = COUCH_URL + COUCH_DB + '/'
+// const COUCH_SEARCH = COUCH_FULL + '_find'
 
 axios.defaults.baseURL = COUCH_FULL
 
@@ -36,10 +36,9 @@ const s3Params = {
 }
 
 let S3 = new AWS(s3Config)
-// S3.config.setPromisesDependency(require('bluebird'))
 
 router.get('/email/list', jsonParser, (req, res) => {
-	const designUrl = COUCH_FULL + '_design/EmailsByUpdatedDate/_view/EmailsByUpdatedDate'
+	const designUrl = COUCH_FULL + '/_design/EmailsByUpdatedDate/_view/EmailsByUpdatedDate'
 	axios.get(designUrl, {
 		params: {
 			limit: 10,
@@ -213,21 +212,35 @@ router.get('/s3/list', (req, res) => {
 	})
 })
 
-router.post('/s3/delete', jsonParser, (req, res) =>{
-	const deleteParams = {
-		Bucket: s3Params.Bucket,
-		Key: req.body.key
-	}
-	S3.deleteObject(deleteParams, (err, data) => {
-		if(err) {
-			console.log(err)
-		}
-		else {
-			console.log(data)
-			res.sendStatus(200)
-		}
+const randomLength = '1340373163133890020170215113235'.length
+router.post('/s3/delete', jsonParser, (req, res) => {
+	const random = req.body.key.split('-')[1]
+
+	S3.listObjectsV2(s3Params).promise().then((s3Objects) => {
+		console.log(s3Objects)
+		console.log(random)
+		console.log(randomLength)
+		let deleteKeys = s3Objects.Contents.filter((obj) => {
+			if(obj.Key.includes(random)) {
+				return obj.Key
+			}
+		})
+		console.log('deletekeys', deleteKeys)
+		// return val.CommonPrefixes
 
 	})
+	// console.log(req.body)
+	// S3.deleteObject(deleteParams, (err, data) => {
+	// 	if(err) {
+	// 		console.log(err)
+	// 	}
+	// 	else {
+	// 		console.log(data)
+	// 		res.sendStatus(200)
+	// 	}
+	res.sendStatus(200)
+
+	// })
 })
 
 /* 
@@ -250,6 +263,9 @@ router.post('/s3/create', multerImageUpload, (req, res) => {
 
 	const sizes = JSON.parse(req.body.sizes)
 	const files = req.files.droppedFiles
+	const fileRandom = files.map((file) => {
+		return Math.floor(Math.random() * 1000000000000000000)
+	})
 
 	// //make sure we generate a thumbnail size
 	sizes.forEach((imageSize) => {
@@ -258,7 +274,6 @@ router.post('/s3/create', multerImageUpload, (req, res) => {
 			imageSize.push({ width: 150, height: 150 })
 		}
 	})
-	console.log('thumbsizes', sizes)
 
 	Promise.map(files, (file, i) => {
 		return Promise.map(sizes[i], (size) => {
@@ -267,7 +282,7 @@ router.post('/s3/create', multerImageUpload, (req, res) => {
 			}).then(resolvedBuffer => {
 				return {
 					Bucket: s3Params.Bucket,
-					Key: Utils.formatS3Filename(file.originalname, size.width, size.height),
+					Key: Utils.formatS3Filename(file.originalname, size.width, size.height, fileRandom[i]),
 					Body: resolvedBuffer,
 				}
 			})

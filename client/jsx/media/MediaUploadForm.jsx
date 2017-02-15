@@ -43,24 +43,21 @@ export default class MediaUploadForm extends React.Component {
 			})
 		})
 
-		const config = {
-			onUploadProgress: (progressEvent) => {
-				console.log(Math.round((progressEvent.loaded * 100) / progressEvent.total))
-				this.setState({percentCompleted: Math.round((progressEvent.loaded * 100) / progressEvent.total)})
-			}
-		}
+		// const config = {
+		// 	onUploadProgress: (progressEvent) => {
+		// 		console.log(Math.round((progressEvent.loaded * 100) / progressEvent.total))
+		// 		this.setState({percentCompleted: Math.round((progressEvent.loaded * 100) / progressEvent.total)})
+		// 	}
+		// }
 
 		if(this.state.droppedFiles) {
-			const formData = new FormData()
+			const imageData = new FormData()
 			this.state.droppedFiles.forEach((file) => {
-				formData.append('droppedFiles', file)
+				imageData.append('droppedFiles', file)
 			})
-			formData.append('sizes', JSON.stringify(validatedSizes))
+			imageData.append('sizes', JSON.stringify(validatedSizes))
 
-			axios.post('/api/s3/create', formData, config).then((response) => {
-				return response
-			})
-			.then((res) => {
+			axios.post('/api/s3/create', imageData).then((res) => {
 				console.log(res)
 				if(res.status === 200) {
 					let triggerMediaListRefresh = new CustomEvent('triggerMediaListRefresh')
