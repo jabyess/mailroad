@@ -79,7 +79,7 @@ export default class MediaUploadForm extends React.Component {
 				}
 			})
 		}).then((sizeInputs) => {
-			console.log(sizeInputs)
+			// console.log(sizeInputs)
 			this.setState({droppedFiles, sizeInputs})
 		})
 

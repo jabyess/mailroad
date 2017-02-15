@@ -21,6 +21,7 @@ const COUCH_URL = env.COUCHDB_URL
 const COUCH_DB = env.EMAIL_DB
 const COUCH_UUID = COUCH_URL + '_uuids'
 const COUCH_FULL = COUCH_URL + COUCH_DB + '/'
+const COUCH_IMAGES = COUCH_URL + env.IMAGE_DB + '/_bulk_docs'
 // const COUCH_SEARCH = COUCH_FULL + '_find'
 
 axios.defaults.baseURL = COUCH_FULL
@@ -38,7 +39,7 @@ const s3Params = {
 let S3 = new AWS(s3Config)
 
 router.get('/email/list', jsonParser, (req, res) => {
-	const designUrl = COUCH_FULL + '/_design/EmailsByUpdatedDate/_view/EmailsByUpdatedDate'
+	const designUrl = COUCH_FULL + '_design/EmailsByUpdatedDate/_view/EmailsByUpdatedDate'
 	axios.get(designUrl, {
 		params: {
 			limit: 10,
@@ -194,7 +195,6 @@ router.get('/s3/list', (req, res) => {
 			res.send(err)
 		}
 		else {
-			console.log(data)
 			let imagesArray = data.Contents.filter((image) => {
 				if(approvedImageExtensions.some(ext => ext === path.extname(image.Key))) { 
 					return image
@@ -263,8 +263,8 @@ router.post('/s3/create', multerImageUpload, (req, res) => {
 
 	const sizes = JSON.parse(req.body.sizes)
 	const files = req.files.droppedFiles
-	const fileRandom = files.map((file) => {
-		return Math.floor(Math.random() * 1000000000000000000)
+	const fileRandom = files.map(() => {
+		return Math.floor(Math.random() * 10000000000)
 	})
 
 	// //make sure we generate a thumbnail size
@@ -275,6 +275,9 @@ router.post('/s3/create', multerImageUpload, (req, res) => {
 		}
 	})
 
+	//run images through sharp resizer
+	//format filenames
+	//keep in nested array structure
 	Promise.map(files, (file, i) => {
 		return Promise.map(sizes[i], (size) => {
 			return new Promise((resolve) => {
@@ -290,18 +293,55 @@ router.post('/s3/create', multerImageUpload, (req, res) => {
 		.then((sizes) => sizes)
 		.catch(err => Error(err))
 	})
-	.then((imagesToProcess) => {
-		return Promise.map(imagesToProcess, image => {
-			return Promise.map(image, size => {
-				return S3.putObject(size).promise()
+	.then(s3ImageObjects => {
+		const s3UploadPromises = s3ImageObjects.map(images => {
+			return images.map(size => {
+				return S3.putObject(size).promise().catch(err => {
+					console.log('error uploading to s3', err)
+					return err
+				})
 			})
 		})
-	}).then((resolved) => {
-		if(resolved) {
-			res.status(200).send('uploaded ' + resolved.length + ' images')
-		}
+
+		const dbUploadDocs = s3ImageObjects.map(imageObjects => {
+			return imageObjects.map(imageObject => {
+				const imageName = imageObject.Key.split('-'),
+					size = imageName[0],
+					date = imageName[1],
+					grouping = imageName[2],
+					filename = imageName[3]
+
+				return {
+					_id: imageObject.Key,
+					url: Utils.formatImageDocURL(env.AWS_BUCKET, imageObject.Key),
+					date, 
+					grouping,
+					filename,
+					size
+				}
+			})
+		})
+
+		const flatDBUploadDocs = [].concat.apply([], dbUploadDocs)
+
+		let dbUploadPromise = [axios.post(COUCH_IMAGES, {
+			docs: flatDBUploadDocs
+		})]
+
+		// flatten all promises into one array for promise.all
+		const allPromises = dbUploadPromise.concat([].concat.apply([], s3UploadPromises))
+
+		Promise.all(allPromises)
+		.then((allUploaded) => {
+			console.log(allUploaded)
+			res.status(200).send('uploaded')
+		})
+
 	})
-	.catch((err) => {throw Error(err)})
+	.catch((err) => {
+		console.log('error in /s3/create', err)
+		throw err
+	})
 	
 })
 

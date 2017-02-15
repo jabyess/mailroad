@@ -108,5 +108,20 @@ export default class PDB {
 		})
 	}
 
+	// createImages(images, callback) {
+	// 	console.log(images)
+	// 	const pouchImages = images.map((image) => {
+			
+	// 		return {
+	// 			_id: image.Key,
+	// 			size,
+	// 			grouping
+	// 		}
+	// 	})
+	// 	console.log(pouchImages)
+	// 	this.imageDB.bulkDocs(pouchImages)
+	// 	callback('success')
+	// }
+
 
 }

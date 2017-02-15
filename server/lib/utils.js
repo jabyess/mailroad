@@ -68,7 +68,7 @@ class Utils {
 		const now = moment().format('YYYYMMDDHHmmss')
 		const ext = path.extname(filename)
 		const prefix = filename.split('.')[0]
-		const formattedFilename = width + 'x' + height + '-' + random + now + '-' + prefix + ext
+		const formattedFilename = width + 'x' + height + '-' + now + '-' + random + '-' + prefix + ext
 		return formattedFilename
 	}
 
@@ -81,6 +81,11 @@ class Utils {
 		// let offset = moment().utcOffset()
 		return moment.utc().format()
 	}
+
+	static formatImageDocURL(bucketName, fileName) {
+		return '//s3.amazonaws.com/' + bucketName + '/' + fileName
+	}
+	
 
 }
 
