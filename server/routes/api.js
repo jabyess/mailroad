@@ -21,8 +21,9 @@ const COUCH_URL = env.COUCHDB_URL
 const COUCH_DB = env.EMAIL_DB
 const COUCH_UUID = COUCH_URL + '_uuids'
 const COUCH_FULL = COUCH_URL + COUCH_DB + '/'
+const COUCH_IMAGES = COUCH_URL + env.IMAGE_DB + '/'
 const COUCH_IMAGES_BULK = COUCH_URL + env.IMAGE_DB + '/_bulk_docs'
-const COUCH_IMAGES_VIEW = COUCH_URL + env.IMAGE_DB + '/'
+const COUCH_IMAGES_FIND = COUCH_IMAGES + '_find'
 // const COUCH_SEARCH = COUCH_FULL + '_find'
 
 axios.defaults.baseURL = COUCH_FULL
@@ -184,7 +185,7 @@ router.post('/email/search', jsonParser, (req, res) => {
 
 router.get('/s3/list/:skip?', (req, res) => {
 	const skip = req.query && req.query.skip ? req.query.skip : null
-	const url = COUCH_IMAGES_VIEW + '_design/ImagesByDate/_view/ImagesByDate'
+	const url = COUCH_IMAGES + '_design/ImagesByDate/_view/ImagesByDate'
 
 	axios.get(url, {
 		params: {
@@ -212,43 +213,80 @@ router.get('/s3/list/:skip?', (req, res) => {
 })
 
 router.post('/s3/delete', jsonParser, (req, res) => {
-	console.log(req.body)
-	const fileName = req.body.fileName.split('-'),
-		size = fileName[0],
-		date = fileName[1],
-		grouping = fileName[2],
-		originalname = fileName[3]
+	const fileName = req.body.fileName.split('-')
+	const grouping = fileName[2]
 
+	axios.post(COUCH_IMAGES_FIND, {
+		selector: {
+			grouping: grouping
+		}
+	})
+	.then(response => {
+		//build delete objects to pass to methods below
+		if(!response && !response.data) {
+			return false
+		}
 
-		// axios.get()
+		const couchDeleteDocs = response.data.docs.map(doc => {
+			return {
+				id: doc._id,
+				rev: doc._rev
+			}
+		})
 
+		const s3DeleteDocs = response.data.docs.map(doc => {
+			return {
+				Key: doc._id
+			}
+		})
 
+		const deleteDocs = {
+			couchDeleteDocs, s3DeleteDocs
+		}
 
-	// S3.listObjectsV2(s3Params).promise().then((s3Objects) => {
-	// 	console.log(s3Objects)
-	// 	console.log(random)
-	// 	console.log(randomLength)
-	// 	let deleteKeys = s3Objects.Contents.filter((obj) => {
-	// 		if(obj.Key.includes(random)) {
-	// 			return obj.Key
-	// 		}
-	// 	})
-	// 	console.log('deletekeys', deleteKeys)
-	// 	// return val.CommonPrefixes
+		return deleteDocs
+	})
+	.then(docsToDelete => {
+		const couchDeletePromises = docsToDelete.couchDeleteDocs.map((doc) => {
+			let url = COUCH_IMAGES + doc.id
+			return axios.delete(url, {
+				params: {
+					rev: doc.rev
+				}
+			}).catch(err => {
+				console.log('error deleting image from couchdb', err)
+				return err
+			})
+		})
 
-	// })
-	// console.log(req.body)
-	// S3.deleteObject(deleteParams, (err, data) => {
-	// 	if(err) {
-	// 		console.log(err)
-	// 	}
-	// 	else {
-	// 		console.log(data)
-	// 		res.sendStatus(200)
-	// 	}
-	res.sendStatus(200)
+		const s3DeletePromise = S3.deleteObjects({
+			Bucket: s3Params.Bucket,
+			Delete: {
+				Objects: docsToDelete.s3DeleteDocs
+			}
+		}).promise()
 
-	// })
+		const allPromises = couchDeletePromises.concat(s3DeletePromise)
+		return allPromises
+	})
+	.then(allPromises => {
+		return Promise.all(allPromises).then((successDelete) => {
+			console.log('successfully deleted image', successDelete)
+
+		})
+		.catch((err) => {
+			console.log('error deleting images', err)
+			return err
+		})
+	})
+	.then((allResolved) => {
+		res.sendStatus(200)
+		return allResolved
+	})
+	.catch(err => {
+		console.log('error in /s3/delete', err)
+		res.status(500).send(err)
+	})
 })
 
 /* 

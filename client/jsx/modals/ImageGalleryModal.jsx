@@ -61,8 +61,10 @@ export default class ImageGalleryModal extends React.Component {
 		console.log(fileName)
 		axios.post('/api/s3/delete', {
 			fileName
-		}).then((text) => {
-			console.log(text)
+		}).then((deleteResponse) => {
+			if(deleteResponse.status === 200) {
+				this.updateMediaList()
+			}
 		})
 	}
 
