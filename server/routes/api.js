@@ -21,7 +21,8 @@ const COUCH_URL = env.COUCHDB_URL
 const COUCH_DB = env.EMAIL_DB
 const COUCH_UUID = COUCH_URL + '_uuids'
 const COUCH_FULL = COUCH_URL + COUCH_DB + '/'
-const COUCH_IMAGES = COUCH_URL + env.IMAGE_DB + '/_bulk_docs'
+const COUCH_IMAGES_BULK = COUCH_URL + env.IMAGE_DB + '/_bulk_docs'
+const COUCH_IMAGES_VIEW = COUCH_URL + env.IMAGE_DB + '/'
 // const COUCH_SEARCH = COUCH_FULL + '_find'
 
 axios.defaults.baseURL = COUCH_FULL
@@ -181,54 +182,61 @@ router.post('/email/search', jsonParser, (req, res) => {
 // 	const id = req.body.id[0]
 // })
 
-// AWS_BUCKET + .s3.amazonaws.com/ + data.key
-router.get('/s3/list', (req, res) => {
-	const approvedImageExtensions = ['.jpeg','.jpg','.png','.gif','.bmp']
-	const listParams = {
-		Bucket: s3Params.Bucket,
-		Prefix: '150x150',
-		EncodingType: 'url'
-	}
-	S3.listObjectsV2(listParams, (err, data) => {
-		if(err) {
-			console.log(err, err.stack)
-			res.send(err)
+router.get('/s3/list/:skip?', (req, res) => {
+	const skip = req.query && req.query.skip ? req.query.skip : null
+	const url = COUCH_IMAGES_VIEW + '_design/ImagesByDate/_view/ImagesByDate'
+
+	axios.get(url, {
+		params: {
+			descending: true,
+			limit: 10,
+			skip: skip
 		}
-		else {
-			let imagesArray = data.Contents.filter((image) => {
-				if(approvedImageExtensions.some(ext => ext === path.extname(image.Key))) { 
-					return image
-				}
-			}).map((image) => {
+	}).then((imageResults) => {
+
+		const images = {
+			totalRows: imageResults.data.total_rows,
+			images: imageResults.data.rows.map((image) => {
 				return {
-					url: '//' + env.AWS_BUCKET + '.s3.amazonaws.com/' + image.Key,
-					lastModified: image.LastModified,
-					size: image.Size,
-					fileName: image.Key
+					url: image.value.url,
+					size: image.value.size,
+					date: image.key,
+					id: image.id
 				}
 			})
-			res.send(imagesArray)
 		}
+		
+		res.status(200).send(images)
 	})
+
 })
 
-const randomLength = '1340373163133890020170215113235'.length
 router.post('/s3/delete', jsonParser, (req, res) => {
-	const random = req.body.key.split('-')[1]
+	console.log(req.body)
+	const fileName = req.body.fileName.split('-'),
+		size = fileName[0],
+		date = fileName[1],
+		grouping = fileName[2],
+		originalname = fileName[3]
 
-	S3.listObjectsV2(s3Params).promise().then((s3Objects) => {
-		console.log(s3Objects)
-		console.log(random)
-		console.log(randomLength)
-		let deleteKeys = s3Objects.Contents.filter((obj) => {
-			if(obj.Key.includes(random)) {
-				return obj.Key
-			}
-		})
-		console.log('deletekeys', deleteKeys)
-		// return val.CommonPrefixes
 
-	})
+		// axios.get()
+
+
+
+	// S3.listObjectsV2(s3Params).promise().then((s3Objects) => {
+	// 	console.log(s3Objects)
+	// 	console.log(random)
+	// 	console.log(randomLength)
+	// 	let deleteKeys = s3Objects.Contents.filter((obj) => {
+	// 		if(obj.Key.includes(random)) {
+	// 			return obj.Key
+	// 		}
+	// 	})
+	// 	console.log('deletekeys', deleteKeys)
+	// 	// return val.CommonPrefixes
+
+	// })
 	// console.log(req.body)
 	// S3.deleteObject(deleteParams, (err, data) => {
 	// 	if(err) {
@@ -324,17 +332,15 @@ router.post('/s3/create', multerImageUpload, (req, res) => {
 
 		const flatDBUploadDocs = [].concat.apply([], dbUploadDocs)
 
-		let dbUploadPromise = [axios.post(COUCH_IMAGES, {
+		let dbUploadPromise = [axios.post(COUCH_IMAGES_BULK, {
 			docs: flatDBUploadDocs
 		})]
 
 		// flatten all promises into one array for promise.all
 		const allPromises = dbUploadPromise.concat([].concat.apply([], s3UploadPromises))
 
-		Promise.all(allPromises)
-		.then((allUploaded) => {
-			console.log(allUploaded)
-			res.status(200).send('uploaded')
+		Promise.all(allPromises).then(() => {
+			res.sendStatus(200)
 		})
 
 	})

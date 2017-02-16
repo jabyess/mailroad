@@ -18,20 +18,17 @@ export default class ImageGalleryModal extends React.Component {
 
 		this.state = {
 			images: [],
-			page: 1
+			page: 1,
+			loadMoreVisible: true,
 		}
 	}
 
-	getImagesFromS3(hardRefresh) {	
+	getImagesFromS3() {
 		axios('/api/s3/list')
 			.then((imageResponse) => {
-				this.setState({allImages: imageResponse.data}, () => {
-					if(hardRefresh) {
-						this.setState({images: []}, this.initialLoad)
-					}
-					else {
-						this.initialLoad()
-					}
+				this.setState({
+					images: imageResponse.data.images,
+					totalRows: imageResponse.data.totalRows,
 				})
 			})
 			.catch((err) => {
@@ -39,45 +36,38 @@ export default class ImageGalleryModal extends React.Component {
 			})
 	}
 
-	initialLoad() {
-		const maxLength = this.state.allImages.length
-		const loopLength = maxLength < IMAGES_PER_PAGE ? maxLength : IMAGES_PER_PAGE
-		this.setState(() => {
-			for(let i = 0; i < loopLength; i++) {
-				this.state.images.push(this.state.allImages[i])
-			}
-		}) 
-	}
-
 	loadMore() {
-		const maxLength = this.state.allImages.length
-		this.setState(() => {
-			let index = IMAGES_PER_PAGE * this.state.page
-			for(let i = index; i < index + IMAGES_PER_PAGE; i++) {
-				if(i <= maxLength) {
-					this.state.images.push(this.state.allImages[i])
+		if(this.state.images.length < this.state.totalRows) {
+			axios.get('/api/s3/list/', {
+				params: {
+					skip: this.state.page * IMAGES_PER_PAGE
 				}
-			}
-			this.state.page = this.state.page++
-		})
+			}).then((imageResponse) => {
+				const maxLength = imageResponse.data.images.length
+				const loopLength = maxLength <= this.state.images.length ? maxLength : this.state.totalRows - this.state.images.length
+				this.setState((state) => {
+					for(let i = 0; i < loopLength; i++) {
+						state.images.push(imageResponse.data.images[i])
+					}
+					this.state.page = this.state.page++
+				})
+			})
+		}
 	}
 
 	deleteImage(e) {
 		let index = e.target.dataset.index
-		let fileName = this.state.images[index].fileName
+		let fileName = this.state.images[index].id
 		console.log(fileName)
 		axios.post('/api/s3/delete', {
-			key: fileName
+			fileName
 		}).then((text) => {
 			console.log(text)
-			// this.setState(() => {
-			// 	this.state.images.splice(index,1)
-			// })
 		})
 	}
 
 	updateMediaList() {
-		this.getImagesFromS3(true)
+		this.getImagesFromS3()
 	}
 
 	componentDidMount () {
@@ -101,10 +91,11 @@ export default class ImageGalleryModal extends React.Component {
 				</div>
 			)
 		}) : null
+		const loadMoreVisible = this.state.loadMoreVisible ? <button className="imagesContainer--loadMore" onClick={this.loadMore}>Load More</button>  : null
 		return (
 			<div className="imagesContainer">
 				{images}
-				<button className="imagesContainer--loadMore" onClick={this.loadMore}>Load More</button>
+				{loadMoreVisible}
 			</div>	
 		)
 		
