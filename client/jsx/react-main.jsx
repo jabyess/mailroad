@@ -7,7 +7,6 @@ import MediaContainer from './media/MediaContainer.jsx'
 import App from './App.jsx'
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import '../sass/main.sass'
-// import bulma from 'bulma'
 
 ReactDOM.render(
 	<Router history={browserHistory}>
@@ -21,4 +20,4 @@ ReactDOM.render(
 		</Route>
 	</Router>,
 		document.getElementById('emailbuilder-root')
-);
+)

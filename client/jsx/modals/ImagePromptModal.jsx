@@ -6,30 +6,42 @@ export default class ImagePromptModal extends React.Component {
 
 		this.handleGalleryClick = this.handleGalleryClick.bind(this)
 		this.handleExternalClick = this.handleExternalClick.bind(this)
+
+		this.toggleGalleryModal = new CustomEvent('toggleVisible', {
+			detail: 'isGalleryModalVisible'
+		})
+		this.toggleExternalImageModal = new CustomEvent('toggleVisible', {
+			detail: 'isExternalImageModalVisible'
+		})
+		this.toggleImagePromptModal = new CustomEvent('toggleVisible', {
+			detail: 'isImagePromptModalVisible'
+		})
 	}
 	
 	handleGalleryClick() {
-		let toggleGalleryModal = new CustomEvent('toggleVisible', {
-			detail: 'isGalleryModalVisible'
-		})
-		window.dispatchEvent(toggleGalleryModal)
+		window.dispatchEvent(this.toggleGalleryModal)
+		window.dispatchEvent(this.toggleImagePromptModal)
 	}
 
 	handleExternalClick() {
-		let toggleExternalImageModal = new CustomEvent('toggleVisible', {
-			detail: 'isExternalImageModalVisible'
-		})
-		window.dispatchEvent(toggleExternalImageModal)
+		window.dispatchEvent(this.toggleExternalImageModal)
+		window.dispatchEvent(this.toggleImagePromptModal)
 	}
 
 	render() {
 		return (
-			<div className="imagePromptModal">
-				<div className="imagePromptModal--content">
-					<h1 className="imagePromptModal--title">Insert Image from: </h1>
-					<button className="imagePromptModal--button" onClick={this.handleGalleryClick}>Gallery</button>
-					<button className="imagePromptModal--button" onClick={this.handleExternalClick}>External URL</button>
+			<div className="modal">
+				<div className="modal-background"></div>
+				<div className="modal-card">
+					<header className="modal-card-head">
+						<p className="modal-card-title"></p>
+					</header>
+					<section className="modal-card-body">
+						<button className="button"onClick={this.handleGalleryClick}>Gallery</button>
+						<button className="button" onClick={this.handleExternalClick}>External URL</button>
+					</section>
 				</div>
+				<div className="modal-close"></div>
 			</div>
 		)
 	}

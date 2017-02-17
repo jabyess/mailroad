@@ -4,16 +4,16 @@ import axios from 'axios'
 
 const IMAGES_PER_PAGE = 10
 
-export default class ImageGalleryModal extends React.Component {
-	constructor() {
-		super()
+class ImageGalleryModal extends React.Component {
+	constructor(props) {
+		super(props)
 
 		autoBind(this,
-			'getImagesFromS3',
+			'getImagesFromDB',
 			'loadMore',
-			'initialLoad',
 			'deleteImage',
-			'updateMediaList'
+			'updateMediaList',
+			'getImageURL'
 		)
 
 		this.state = {
@@ -23,7 +23,7 @@ export default class ImageGalleryModal extends React.Component {
 		}
 	}
 
-	getImagesFromS3() {
+	getImagesFromDB() {
 		axios('/api/s3/list')
 			.then((imageResponse) => {
 				this.setState({
@@ -65,42 +65,72 @@ export default class ImageGalleryModal extends React.Component {
 			if(deleteResponse.status === 200) {
 				this.updateMediaList()
 			}
+		}).catch(err => {
+			console.error('error deleting image', err)
+			throw err
 		})
 	}
 
+	getImageURL(e) {
+		e.persist()
+		const index = e.target.dataset.index
+		const url = this.state.images[index].url
+		this.props.getImageURL(url)
+	}
+
 	updateMediaList() {
-		this.getImagesFromS3()
+		this.getImagesFromDB()
 	}
 
 	componentDidMount () {
-		this.getImagesFromS3()
+		this.getImagesFromDB()
 		window.addEventListener('triggerMediaListRefresh', this.updateMediaList)
 	}
 
 	componentWillUnmount () {
 		window.removeEventListener('triggerMediaListRefresh', this.updateMediaList)
 	}
-	
 
 	render() {
-		const images = this.state.images ? this.state.images.map((image, index) => {
-			const bgImage = {
-				backgroundImage: 'url(' + image.url + ')'
-			}
-			return (
-				<div className="imagesContainer--image" style={bgImage} key={index} >
-					<button className="imagesContainer--delete" onClick={this.deleteImage} data-index={index}>x</button>
+		const isGalleryModalVisible = this.props.isGalleryModalVisible ? 
+		(
+			<div className="modal imagesContainer">
+				<div className="modal-background"></div>
+				<div className="imagesContainer--content">
+					{this.state.images.map((image, index) => {
+						const bgImage = {
+							backgroundImage: 'url(' + image.url + ')'
+						}
+						return (
+							<div 
+								className="imagesContainer--image" 
+								style={bgImage}
+								data-index={index}
+								key={index}
+								onClick={this.getImageURL}
+							>
+								<button
+									className="button imagesContainer--delete"
+									onClick={this.deleteImage}
+									data-index={index}
+								>X</button>
+							</div>
+						)
+					})}
+					<button className="button imagesContainer--loadMore" onClick={this.loadMore}>Load More</button>
 				</div>
-			)
-		}) : null
-		const loadMoreVisible = this.state.loadMoreVisible ? <button className="imagesContainer--loadMore" onClick={this.loadMore}>Load More</button>  : null
-		return (
-			<div className="imagesContainer">
-				{images}
-				{loadMoreVisible}
-			</div>	
-		)
-		
+				<button className="modal-close" onClick={this.props.toggleImageGalleryModal}></button>
+			</div>
+		) : null
+
+		return (<div>{isGalleryModalVisible}</div>)
 	}
 }
 
+ImageGalleryModal.propTypes = {
+	isGalleryModalVisible: React.PropTypes.bool,
+	getImageURL: React.PropTypes.func,
+	toggleImageGalleryModal: React.PropTypes.func,
+}
+
+export default ImageGalleryModal

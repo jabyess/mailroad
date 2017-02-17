@@ -34,7 +34,7 @@ class EditorMetaContainer extends React.Component {
 		return (
 			<div className="email-meta--container">
 				<select 
-				className="email-meta--template"
+				className="select email-meta--template"
 				name="EmailTemplate"
 				onChange={this.handleTemplateChange}
 				value={this.state.template}>

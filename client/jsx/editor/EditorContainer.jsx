@@ -10,7 +10,6 @@ import HTML5Backend from 'react-dnd-html5-backend'
 import EditorControlsContainer from './EditorControlsContainer.jsx'
 import CompileHTMLButton from './CompileHTMLButton.jsx'
 import SaveButton from './SaveButton.jsx'
-import NavBar from '../NavBar.jsx'
 import PDB from '../../lib/pouchdb.js'
 import axios from 'axios'
 import { DragDropContext } from 'react-dnd'
@@ -40,6 +39,7 @@ class EditorContainer extends React.Component {
 			'updateContentValue',
 			'updateComponentTitle',
 			'removeEditorFromContainer',
+			'toggleImageGalleryModal',
 			'toggleVisible'
 		)
 
@@ -189,6 +189,7 @@ class EditorContainer extends React.Component {
 
 	toggleVisible(event) {
 		let visibleKey = event.detail.toString()
+		console.log(visibleKey)
 		this.setState(() => {
 			let returnObj = {}
 			returnObj[visibleKey] = !this.state[visibleKey]
@@ -219,6 +220,10 @@ class EditorContainer extends React.Component {
 			return this.state.content
 		})
 	}
+
+	toggleImageGalleryModal() {
+		this.setState({isGalleryModalVisible: !this.state.isGalleryModalVisible})
+	}
 	
 	componentWillUnmount () {
 		window.removeEventListener('toggleExternalImageModal', this.toggleExternalImageModal)
@@ -234,20 +239,33 @@ class EditorContainer extends React.Component {
 	}
 
 	render() {
-		const renderImageGalleryModal = this.state.isGalleryModalVisible ? <ImageGalleryModal /> : null
+		const renderImageGalleryModal = this.state.isGalleryModalVisible ? 
+		<ImageGalleryModal
+			toggleImageGalleryModal={this.toggleImageGalleryModal}
+			isGalleryModalVisible={this.state.isGalleryModalVisible}
+			getImageURL={this.getImageURL}
+		/> : null
+
 		const renderImagePromptModal = this.state.isImagePromptModalVisible ? <ImagePromptModal /> : null
+
 		const renderEditorTypeSelect = this.state.isEditModeActive ? <EditorTypeSelect 
+
 			addEditorToContainer={this.addEditorToContainer}
 			/> : null
 		const renderLinkModal = this.state.isLinkModalVisible ? <LinkModal /> : null
 		
 		return (
+			
 			<div className="editor-container">
-				<NavBar />
-				<EditorMetaContainer {...this.state} 
+				<div className="columns">
+					<div className="column is-10 is-offset-1">
+
+					<EditorMetaContainer {...this.state} 
 					handleTitleChange={this.handleTitleChange}
 					handleTemplateChange={this.handleTemplateChange}
 				/>
+				{renderImagePromptModal}
+				{renderImageGalleryModal}
 				<EditorControlsContainer 
 					toggleEditMode={this.toggleEditMode} 
 					isEditModeActive={this.state.isEditModeActive}
@@ -277,11 +295,16 @@ class EditorContainer extends React.Component {
 					})}
 				</div>
 				{renderEditorTypeSelect}
-				{renderImagePromptModal}
-				{renderImageGalleryModal}
+				
 				{renderLinkModal}
 				<SaveButton saveToDB={this.saveToDB}/>
 				<CompileHTMLButton compileHTMLTemplate={this.compileHTMLTemplate} />
+
+
+
+					</div>
+				</div>
+				
 			</div>
 		)	
 	}

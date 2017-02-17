@@ -1,11 +1,22 @@
 import React from 'react'
+import NavBar from './NavBar.jsx'
 
-export default class App extends React.Component {
+class App extends React.Component {
 	constructor() {
 		super()
 	}
 
 	render() {
-		return this.props.children
+		return (
+			<div>
+				<NavBar />
+				{this.props.children}
+			</div>
+		)
 	}
 }
+App.propTypes = {
+	children: React.PropTypes.element
+}
+
+export default App

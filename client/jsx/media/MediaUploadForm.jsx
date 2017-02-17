@@ -13,7 +13,7 @@ const allowedFileTypes = [
 	'image/bmp'
 ]
 
-export default class MediaUploadForm extends React.Component {
+class MediaUploadForm extends React.Component {
 	constructor() {
 		super()
 		
@@ -23,7 +23,8 @@ export default class MediaUploadForm extends React.Component {
 		'removeSizeRow',
 		'handleHeightChange',
 		'handleWidthChange',
-		'onDrop'
+		'onDrop',
+		'showGalleryModal'
 		)
 
 		this.state = {
@@ -88,6 +89,12 @@ export default class MediaUploadForm extends React.Component {
 		}
 	}
 
+	showGalleryModal() {
+		if(this.props.displayImageGalleryModal) {
+			this.props.displayImageGalleryModal()
+		}
+	}
+
 	handleHeightChange(height, imageIndex, sizeIndex) {
 		this.setState(state => state.sizeInputs[imageIndex][sizeIndex].height = height)
 	}
@@ -121,6 +128,7 @@ export default class MediaUploadForm extends React.Component {
 
 		return (
 			<div className="mediaUploadForm">
+				<button className="button" onClick={this.props.toggleImageGalleryModal}>View Gallery</button>
 				<Dropzone 
 					className="mediaUploadForm__dropzone"
 					onDrop={this.onDrop}
@@ -134,8 +142,14 @@ export default class MediaUploadForm extends React.Component {
 					<img key={i} src={file.preview} className="mediaUploadForm__img" />)}
 				</div>
 				{imageSizes}
-				<input type="submit" onClick={this.startUpload} />
+				<input className="input" type="submit" onClick={this.startUpload} />
 			</div>
 		)
 	}
 }
+
+MediaUploadForm.propTypes = {
+	toggleImageGalleryModal: React.PropTypes.func
+}
+
+export default MediaUploadForm

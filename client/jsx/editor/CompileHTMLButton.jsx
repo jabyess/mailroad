@@ -6,13 +6,13 @@ export default class CompileHTMLButton extends React.Component {
 	}
 
 	handleClick() {
-		let compileButtonClicked = new Event('compileHTMLTemplate');
-		window.dispatchEvent(compileButtonClicked);
+		let compileButtonClicked = new Event('compileHTMLTemplate')
+		window.dispatchEvent(compileButtonClicked)
 	}
 
 	render() {
 		return (
-			<button onClick={this.handleClick}>Compile HTML</button>
-		);
+			<button className="button" onClick={this.handleClick}>Compile HTML</button>
+		)
 	}
 }

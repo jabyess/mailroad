@@ -1,5 +1,4 @@
 import React from 'react'
-import NavBar from '../NavBar.jsx'
 import autoBind from 'react-autobind'
 import EmailTable from './EmailTable.jsx'
 import EmailControls from './EmailControls.jsx'
@@ -91,7 +90,6 @@ export default class EmailContainer extends React.Component {
 	render() {
 		return (
 			<container className="emailContainer">
-				<NavBar/>
 				<EmailControls 
 					selectedCheckboxes={this.state.selectedCheckboxes}
 					refreshEmailList={this.refreshEmailList}

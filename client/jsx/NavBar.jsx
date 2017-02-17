@@ -4,15 +4,15 @@ import { Link, IndexLink } from 'react-router'
 export default class NavBar extends React.Component {
 	render() {
 		return (
-			<div className="navbar">
-				<div className="navbar__section">
-					<div className="navbar__item"><IndexLink activeClassName="active" to="/">Home</IndexLink></div>
-					<div className="navbar__item"><Link activeClassName="active" to="/editor">Create Email</Link></div>
-					<div className="navbar__item"><Link activeClassName="active" to="/admin">Admin</Link></div>
-					<div className="navbar__item"><Link activeClassName="active" to="/media">Media</Link></div>
+			<div className="nav navbar has-shadow">
+				<div className="nav-left navbar__section">
+					<IndexLink className="nav-item is-tab"  activeClassName="is-active" to="/">Home</IndexLink>
+					<Link className="nav-item is-tab"  activeClassName="is-active" to="/editor">Create Email</Link>
+					<Link className="nav-item is-tab"  activeClassName="is-active" to="/admin">Admin</Link>
+					<Link className="nav-item is-tab"  activeClassName="is-active" to="/media">Media</Link>
 				</div>
 			</div>
-		);
+		)
 	}
 
 }

@@ -1,25 +1,26 @@
-.imagesContainer 
+.imagesContainer
 	display: flex
-	max-width: 100%
-	justify-content: space-around
 	flex-wrap: wrap
 
+	.imagesContainer--content
+		max-width: 1200px 
+		min-width: 300px
+		display: flex
+		flex-wrap: wrap
+
 	.imagesContainer--image
+		background-size: cover
 		width: 150px
 		height: 150px
 		margin-top: 10px
 		margin-bottom: 10px
-		background-size: cover
 		position: relative
 		&:hover
 			opacity: 0.8
 
-		.imagesContainer--delete
-			position: absolute
-			right: 0
-			bottom: 0
-
-	.imagesContainer--loadMore
-		flex-wrap: nowrap
+	.imagesContainer--delete
+		position: absolute
+		right: 0
+		bottom: 0
 		
 

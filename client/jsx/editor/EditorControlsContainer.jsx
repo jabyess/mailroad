@@ -19,7 +19,7 @@ export default class EditorControlsContainer extends React.Component {
 	render() {
 		return (
 			<div className="editor-controls">
-				<button className="editor-controls--button" onClick={this.handleEditClick}>Edit Mode</button>
+				<button className="button editor-controls--button" onClick={this.handleEditClick}>Edit Mode</button>
 			</div>
 		)
 	}

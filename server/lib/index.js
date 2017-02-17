@@ -15,7 +15,7 @@ let app = express()
 
 app.engine('handlebars', hbs({ defaultLayout: 'main' }))
 app.set('view engine', 'handlebars')
-app.use('/scripts', express.static(path.join(__dirname, 'dist')))
+// app.use('/scripts', express.static(path.join(__dirname, 'dist')))
 app.use('/api', API)
 
 
