@@ -96,7 +96,7 @@ class ImageGalleryModal extends React.Component {
 		(
 			<div className="modal imagesContainer">
 				<div className="modal-background"></div>
-				<div className="imagesContainer--content">
+				<div className="modal-content imagesContainer--content">
 					{this.state.images.map((image, index) => {
 						const bgImage = {
 							backgroundImage: 'url(' + image.url + ')'

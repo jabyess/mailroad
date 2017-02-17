@@ -51,7 +51,7 @@ class EditorTypeRow extends React.Component {
 		return connectDropTarget(
 		<div className="editor-type-row" style={isOverCSS}>
 		{isEditModeActive ? 
-			<button onClick={this.removeEditor}>X</button>
+			<button className="button" onClick={this.removeEditor}>X</button>
 			: ''
 		}
 		{this.props.children}

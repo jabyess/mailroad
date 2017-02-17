@@ -9,8 +9,16 @@ class App extends React.Component {
 	render() {
 		return (
 			<div>
-				<NavBar />
-				{this.props.children}
+				<div className="columns">
+					<div className="column">
+						<NavBar />
+					</div>
+				</div>
+				<div className="app-content columns">
+					<div className="column is-10 is-offset-1">
+						{this.props.children}
+					</div>
+				</div>
 			</div>
 		)
 	}

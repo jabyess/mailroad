@@ -29,12 +29,12 @@ class EditorTypeSelect extends React.Component {
 
 	render() {
 		return (
-			<div className="editor-types">
-				<button onClick={() => this.addComponentToPage()}>Add</button>
+			<div className="box editor-type-select">
+				<button className="button" onClick={() => this.addComponentToPage()}>Add</button>
 				<select 
 					multiple
 					value={this.state.value}
-					className="editor-types__select"
+					className="textarea is-medium"
 					onChange={this.handleChange} >
 					{this.state.editorTypeList.map((currentValue, i) => {
 						return (

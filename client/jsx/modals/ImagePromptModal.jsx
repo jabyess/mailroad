@@ -6,6 +6,7 @@ export default class ImagePromptModal extends React.Component {
 
 		this.handleGalleryClick = this.handleGalleryClick.bind(this)
 		this.handleExternalClick = this.handleExternalClick.bind(this)
+		this.closeModal = this.closeModal.bind(this)
 
 		this.toggleGalleryModal = new CustomEvent('toggleVisible', {
 			detail: 'isGalleryModalVisible'
@@ -28,9 +29,13 @@ export default class ImagePromptModal extends React.Component {
 		window.dispatchEvent(this.toggleImagePromptModal)
 	}
 
+	closeModal() {
+		window.dispatchEvent(this.toggleImagePromptModal)
+	}
+
 	render() {
 		return (
-			<div className="modal">
+			<div className="modal is-active">
 				<div className="modal-background"></div>
 				<div className="modal-card">
 					<header className="modal-card-head">
@@ -41,7 +46,7 @@ export default class ImagePromptModal extends React.Component {
 						<button className="button" onClick={this.handleExternalClick}>External URL</button>
 					</section>
 				</div>
-				<div className="modal-close"></div>
+				<div className="modal-close" onClick={this.closeModal}></div>
 			</div>
 		)
 	}

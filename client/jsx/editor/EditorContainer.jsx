@@ -8,8 +8,6 @@ import ImageGalleryModal from '../modals/ImageGalleryModal.jsx'
 import LinkModal from '../modals/LinkModal.jsx'
 import HTML5Backend from 'react-dnd-html5-backend'
 import EditorControlsContainer from './EditorControlsContainer.jsx'
-import CompileHTMLButton from './CompileHTMLButton.jsx'
-import SaveButton from './SaveButton.jsx'
 import PDB from '../../lib/pouchdb.js'
 import axios from 'axios'
 import { DragDropContext } from 'react-dnd'
@@ -40,13 +38,13 @@ class EditorContainer extends React.Component {
 			'updateComponentTitle',
 			'removeEditorFromContainer',
 			'toggleImageGalleryModal',
-			'toggleVisible'
+			'toggleVisible',
+			'getImageURL'
 		)
 
 		this.pouchDB = new PDB('emailbuilder')
 
 		this.pouchDB.updateDoc = debounce(this.pouchDB.updateDoc, 2000, false)
-
 
 		this.state = {
 			template: '',
@@ -60,6 +58,35 @@ class EditorContainer extends React.Component {
 			isImagePromptModalVisible: false,
 			isLinkModalVisible: false
 		}
+	}
+
+	componentDidMount() {
+		window.addEventListener('toggleVisible', this.toggleVisible)
+
+		this.getTemplates()
+
+		//if we have an ID from react-router, make db call to get data
+		if(this.props.params.id) {
+			this.getEmailContents(this.props.params.id)
+		}
+
+		//if we have no ID from react-router, create new email instance
+		if(!this.props.params.id) {
+			this.createEmail()
+		}
+	}
+
+	componentWillUnmount () {
+		window.removeEventListener('toggleExternalImageModal', this.toggleExternalImageModal)
+		window.removeEventListener('toggleVisible', this.toggleVisible)
+	}
+
+	componentWillReceiveProps (nextProps) {
+		console.log('editorContainer nextprops:', nextProps)
+	}
+
+	componentDidUpdate() {
+		this.pouchDB.updateDoc(this.state)
 	}
 
 	addEditorToContainer(editorName) {
@@ -87,6 +114,7 @@ class EditorContainer extends React.Component {
 	}
 
 	updateContentValue(content, index) {
+		console.log(content)
 		this.setState(() => {
 			this.state.content[index].content = content
 		})
@@ -197,22 +225,6 @@ class EditorContainer extends React.Component {
 		})
 	}
 
-	componentDidMount() {
-		window.addEventListener('toggleVisible', this.toggleVisible)
-
-		this.getTemplates()
-
-		//if we have an ID from react-router, make db call to get data
-		if(this.props.params.id) {
-			this.getEmailContents(this.props.params.id)
-		}
-
-		//if we have no ID from react-router, create new email instance
-		if(!this.props.params.id) {
-			this.createEmail()
-		}
-	}
-
 	reorderEditorIndexes(oldIndex, newIndex) {
 		this.setState(() => {
 			let removed = this.state.content.splice(oldIndex, 1)
@@ -224,20 +236,11 @@ class EditorContainer extends React.Component {
 	toggleImageGalleryModal() {
 		this.setState({isGalleryModalVisible: !this.state.isGalleryModalVisible})
 	}
+
+	getImageURL(url) {
+		console.log(url)
+	}
 	
-	componentWillUnmount () {
-		window.removeEventListener('toggleExternalImageModal', this.toggleExternalImageModal)
-		window.removeEventListener('toggleVisible', this.toggleVisible)
-	}
-
-	componentWillReceiveProps (nextProps) {
-		console.log('editorContainer nextprops:', nextProps)
-	}
-
-	componentDidUpdate() {
-		this.pouchDB.updateDoc(this.state)
-	}
-
 	render() {
 		const renderImageGalleryModal = this.state.isGalleryModalVisible ? 
 		<ImageGalleryModal
@@ -255,21 +258,20 @@ class EditorContainer extends React.Component {
 		const renderLinkModal = this.state.isLinkModalVisible ? <LinkModal /> : null
 		
 		return (
-			
 			<div className="editor-container">
-				<div className="columns">
-					<div className="column is-10 is-offset-1">
-
-					<EditorMetaContainer {...this.state} 
+				{renderImagePromptModal}
+				{renderImageGalleryModal}
+				{renderLinkModal}
+				<EditorMetaContainer {...this.state} 
 					handleTitleChange={this.handleTitleChange}
 					handleTemplateChange={this.handleTemplateChange}
 				/>
-				{renderImagePromptModal}
-				{renderImageGalleryModal}
 				<EditorControlsContainer 
 					toggleEditMode={this.toggleEditMode} 
 					isEditModeActive={this.state.isEditModeActive}
+					saveToDB={this.saveToDB}
 				/>
+				{renderEditorTypeSelect}
 				<div className="editor-editor-container">
 					{this.state.content.map((content, i) => {
 						let DynamicEditorType = dynamicEditorTypeList[content.editorType]
@@ -294,17 +296,7 @@ class EditorContainer extends React.Component {
 						)
 					})}
 				</div>
-				{renderEditorTypeSelect}
-				
-				{renderLinkModal}
-				<SaveButton saveToDB={this.saveToDB}/>
-				<CompileHTMLButton compileHTMLTemplate={this.compileHTMLTemplate} />
 
-
-
-					</div>
-				</div>
-				
 			</div>
 		)	
 	}

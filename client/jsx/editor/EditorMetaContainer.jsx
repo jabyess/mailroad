@@ -32,25 +32,32 @@ class EditorMetaContainer extends React.Component {
 		
 	render() {
 		return (
-			<div className="email-meta--container">
-				<select 
-				className="select email-meta--template"
-				name="EmailTemplate"
-				onChange={this.handleTemplateChange}
-				value={this.state.template}>
-					<option disabled>--Select a Template--</option>
-					{this.props.templates.map((cv, i) => {
-						return <option value={cv} key={i}>{cv}</option>
-					})}
-				</select>
-				<input className="email-meta--title"
-					type="text"
-					value={this.state.title}
-					onChange={this.handleTitleChange}
-				/>
-				<div className="email-meta--id">{this.props.id}</div>
-				<div className="email-meta--created-at">{this.props.createdAt}</div>
-				<div className="email-meta--updated-at">{this.props.updatedAt}</div>
+			<div className="panel">
+				<div className="panel-heading">Details</div>
+				<div className="panel-block">ID: {this.props._id}</div>
+				<div className="panel-block">Created At: {this.props.createdAt}</div>
+				<div className="panel-block">Updated At: {this.props.updatedAt}</div>
+				<div className="panel-block">
+					<span>Template: </span>
+					<select
+						className="select is-medium email-meta--template"
+						name="EmailTemplate"
+						onChange={this.handleTemplateChange}
+						value={this.state.template}>
+						<option disabled>--Select a Template--</option>
+						{this.props.templates.map((cv, i) => {
+							return <option value={cv} key={i}>{cv}</option>
+						})}
+					</select>
+				</div>
+				<div className="panel-block">
+					<span>Title: </span>
+					<input className="input"
+						type="text"
+						value={this.state.title}
+						onChange={this.handleTitleChange}
+					/>
+				</div>
 			</div> 
 		)
 	}
