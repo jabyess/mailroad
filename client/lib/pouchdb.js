@@ -8,7 +8,6 @@ export default class PDB {
 		this.emailDBName = process.env.EMAIL_DB
 		this.pouchDBURL = process.env.COUCHDB_URL
 
-		console.log(process.env)
 		this.emailDB = new PouchDB(this.emailDBName, {auto_compaction: true})
 		this.imageDB = new PouchDB(this.imageDBName, {auto_compaction: true})
 	}
@@ -22,19 +21,16 @@ export default class PDB {
 			}
 		})
 		.on('complete', (complete) => {
-			console.log('completed full sync', complete)
 			syncCompleteCallback(complete)
 		})
 	}
 
 	syncToDB(doc, saveCompleteCallback) {
 		this.emailDB.get(doc._id).then((newDoc) => {
-			// console.log('saving', newDoc, 'to db')
 			PouchDB.replicate(this.emailDBName, this.pouchDBURL + this.emailDBName, {
 				doc_ids: [ doc._id ]
 			})
 			.on('complete', (complete) => {
-				console.log('save to db replicate complete', complete)
 				saveCompleteCallback(complete)
 			})
 		})
@@ -50,20 +46,17 @@ export default class PDB {
 				.on('complete', () => {
 
 					return this.emailDB.get(doc._id).then((newDoc) => {
-						console.log('getting doc for second time', newDoc)
 						return newDoc
 					})
 				})
 			}
 		}).then((newDoc) => {
 			if(newDoc) {
-				console.log('returned updateDoc', newDoc)
 				let updatedDoc = Object.assign({}, newDoc, doc)
 				updatedDoc._rev = newDoc._rev
 				updatedDoc.updatedAt = moment.utc().format()
 
 				this.emailDB.put(updatedDoc).then((putSuccess) => {
-					console.log('putSuccess', putSuccess)
 					return putSuccess
 				},
 				(rejected) => {
@@ -82,7 +75,6 @@ export default class PDB {
 		this.emailDB.get(id).then((doc) => {
 			return this.emailDB.remove(doc)
 		})
-		// console.log('deleted ', id)
 	}
 
 	getDoc(id, returnValueCallback) {
@@ -107,21 +99,5 @@ export default class PDB {
 			console.error('error in getDoc', err)
 		})
 	}
-
-	// createImages(images, callback) {
-	// 	console.log(images)
-	// 	const pouchImages = images.map((image) => {
-			
-	// 		return {
-	// 			_id: image.Key,
-	// 			size,
-	// 			grouping
-	// 		}
-	// 	})
-	// 	console.log(pouchImages)
-	// 	this.imageDB.bulkDocs(pouchImages)
-	// 	callback('success')
-	// }
-
 
 }

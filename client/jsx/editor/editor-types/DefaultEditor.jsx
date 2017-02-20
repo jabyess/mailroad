@@ -8,13 +8,14 @@ import ItemTypes from './ItemTypes.js'
 const DEFAULT_NODE = 'paragraph'
 
 /**
- * Define a schema.
+ * Define a schema for slate editor.
  *
  * @type {Object}
  */
 
 const schema = {
 	nodes: {
+		'paragraph': props => <p {...props.attributes}>{props.children}</p>,
 		'heading-one': props => <h1 {...props.attributes}>{props.children}</h1>,
 		'heading-two': props => <h2 {...props.attributes}>{props.children}</h2>,
 		'heading-three': props => <h3 {...props.attributes}>{props.children}</h3>,
@@ -40,8 +41,8 @@ const schema = {
 		}
 	},
 	marks: {
-		bold: props => <strong>{props.children}</strong>,
-		italic: props => <em>{props.children}</em>,
+		'bold': props => <strong>{props.children}</strong>,
+		'italic': props => <em>{props.children}</em>,
 	}
 }
 
@@ -65,93 +66,125 @@ const BLOCK_TAGS = {
 	a: 'link'
 }
 
+const INLINE_TAGS = {
+	img: 'image',
+	a: 'link'
+}
+
 const MARK_TAGS = {
 	em: 'italic',
 	strong: 'bold',
 }
 
-// const RULES = [
-// 	{
-// 		deserialize(el, next) {
-// 			const block = BLOCK_TAGS[el.tagName]
-// 			if (!block) return
-// 			return {
-// 				kind: 'block',
-// 				type: block,
-// 				nodes: next(el.children)
-// 			}
-// 		}
-// 	},
-// 	{
-// 		deserialize(el, next) {
-// 			const mark = MARK_TAGS[el.tagName]
-// 			if (!mark) return
-// 			return {
-// 				kind: 'mark',
-// 				type: mark,
-// 				nodes: next(el.children)
-// 			}
-// 		}
-// 	},
-// 	{
-// 		// Special case for code blocks, which need to grab the nested children.
-// 		deserialize(el, next) {
-// 			if (el.tagName != 'pre') return
-// 			const code = el.children[0]
-// 			const children = code && code.tagName == 'code'
-// 				? code.children
-// 				: el.children
-
-// 			return {
-// 				kind: 'block',
-// 				type: 'code',
-// 				nodes: next(children)
-// 			}
-// 		}
-// 	},
-// 	{
-// 		// Special case for links, to grab their href.
-// 		deserialize(el, next) {
-// 			if (el.tagName != 'a') return
-// 			return {
-// 				kind: 'inline',
-// 				type: 'link',
-// 				nodes: next(el.children),
-// 				data: {
-// 					href: el.attribs.href
-// 				}
-// 			}
-// 		}
-// 	}
-// ]
-
-
 const rules = [
-	// block rules only
-	// {
-	// 	deserialize(el, next) {
-	// 		const type = BLOCK_TAGS[el.tagName]
-	// 		if(!type) return
-	// 		return {
-	// 			kind: 'block',
-	// 			type: type,
-	// 			// data: el.data ? el.data : [],
-	// 			nodes: next(el.children)
-	// 		}
-	// 	},
-	// },
+	//handle block elements
 	{
 		deserialize(el, next) {
 			const block = BLOCK_TAGS[el.tagName]
 			if (!block) return
-			return {
-				kind: 'block',
-				type: block,
-				nodes: next(el.children)
+			switch(block) {
+			case 'link': {
+				return {
+					kind: 'block',
+					type: block,
+					data: {
+						href: el.attribs.href
+					},
+					nodes: next(el.children)
+				}
+			}
+			default: 
+				return {
+					kind: 'block',
+					type: block,
+					data: el.data ? el.data : [],
+					nodes: next(el.children)
+				}
+			}
+		},
+		serialize(object, children) {
+			if (object.kind != 'block') return
+			switch (object.type) {
+			case 'paragraph': return <p>{children}</p>
+			case 'heading-one': return <h1>{children}</h1>
+			case 'heading-two': return <h2>{children}</h2>
+			case 'heading-three': return <h3>{children}</h3>
+			case 'heading-four': return <h4>{children}</h4>
+			case 'heading-five': return <h5>{children}</h5>
+			case 'heading-six': return <h6>{children}</h6>
+			case 'numbered-list' : return <ol>{children}</ol>
+			case 'bulleted-list': return <ul>{children}</ul>
+			case 'list-item': return <li>{children}</li>
+			case 'table': return <table>{children}</table>
+			case 'table-row': return <tr>{children}</tr>
+			case 'table-cell' : return <td>{children}</td>
+			case 'table-header': return <th>{children}</th>
+			case 'link': {
+				const href = object.data.get('href')
+				return <a href={href}>{children}</a>
+			}
 			}
 		}
 	},
 	{
+		//handle inline elements with attributes like img and a
+		deserialize(el, next) {
+			const inline = INLINE_TAGS[el.tagName]
+			if (!inline) return
+			switch(inline) {
+			case 'a' : {
+				return {
+					kind: 'inline',
+					type: 'link',
+					nodes: next(el.children),
+					data: {
+						href: el.attribs.href
+					}
+				}
+			}
+			case 'img': {
+				return {
+					kind: 'inline',
+					type: 'image',
+					nodes: next(el.children),
+					data: {
+						src: el.attribs.src
+					}
+				}
+			}
+			default: {
+				return {
+					kind: 'inline',
+					type: inline,
+					data: el.data ? el.data : [],
+					nodes: next(el.children)
+				}
+			}
+			}
+		},
+		serialize(object, children) {
+			if(object.kind != 'inline') return
+			switch(object.type) {
+			case 'link': {
+				const href = object.data.get('href')
+				return <a href={href}>{children}</a>
+			}
+			case 'image': {
+				const src = object.data.get('src')
+				return <img src={src} />
+			}
+			}
+		},
+	},
+	// handle marks
+	{
+		serialize(object, children) {
+			if(object.kind != 'mark') return
+			switch(object.type) {
+			case 'bold': return <strong>{children}</strong>
+			case 'italic': return <em>{children}</em>
+			}
+		},
 		deserialize(el, next) {
 			const mark = MARK_TAGS[el.tagName]
 			if (!mark) return
@@ -162,83 +195,6 @@ const rules = [
 			}
 		}
 	},
-	{
-		// Special case for links, to grab their href.
-		deserialize(el, next) {
-			if (el.tagName != 'a') return
-			return {
-				kind: 'inline',
-				type: 'link',
-				nodes: next(el.children),
-				data: {
-					href: el.attribs.href
-				}
-			}
-		}
-	},
-	{
-		serialize(object, children) {
-			if (object.kind != 'block') return
-			switch (object.type) {
-			case 'heading-one': return <h1>{children}</h1>
-			case 'heading-two': return <h2>{children}</h2>
-			case 'heading-three': return <h3>{children}</h3>
-			case 'heading-four': return <h4>{children}</h4>
-			case 'heading-five': return <h5>{children}</h5>
-			case 'heading-six': return <h6>{children}</h6>
-			case 'paragraph': return <p>{children}</p>
-			case 'numbered-list' : return <ol>{children}</ol>
-			case 'bulleted-list': return <ul>{children}</ul>
-			case 'list-item': return <li>{children}</li>
-			case 'table': return <table>{children}</table>
-			case 'table-row': return <tr>{children}</tr>
-			case 'table-cell' : return <td>{children}</td>
-			case 'table-header': return <th>{children}</th>
-			case 'image': props => {
-				const { data } = props.node
-				const src = data.get('src')
-				return <img src={src} />
-			}
-			case 'link': props => {
-				const { data } = props.node
-				const href = data.get('href')
-				return <a href={href} {...props.attributes}>{children}</a>
-			}
-			}
-		}
-	},
-	// {
-	// 	// Special case for links, to grab their href.
-	// 	deserialize(el, next) {
-	// 		if (el.tagName != 'a') return
-	// 		return {
-	// 			kind: 'inline',
-	// 			type: 'link',
-	// 			nodes: next(el.children),
-	// 			data: {
-	// 				href: el.attribs.href
-	// 			}
-	// 		}
-	// 	}
-	// },
-	// {
-	// 	deserialize(el, next) {
-	// 		const type = MARK_TAGS[el.tagName]
-	// 		if (!type) return
-	// 		return {
-	// 			kind: 'mark',
-	// 			type: type,
-	// 			nodes: next(el.children)
-	// 		}
-	// 	},
-	// 	serialize(object, children) {
-	// 		if (object.kind != 'mark') return
-	// 		switch (object.type) {
-	// 		case 'bold': return <strong>{children}</strong>
-	// 		case 'italic': return <em>{children}</em>
-	// 		}
-	// 	}
-	// }
 ]
 
 const defaultEditorSource = {
@@ -278,9 +234,9 @@ class DefaultEditor extends React.Component {
 			'onDocumentChange',
 			'onTitleChange',
 			'onKeyDown',
-			'onClickBlock',
-			'onClickLink',
-			'onClickMark',
+			'onClickBlockButton',
+			'onClickLinkButton',
+			'onClickMarkButton',
 			'renderBlockButton',
 			'hasLinks'
 		)
@@ -375,7 +331,7 @@ class DefaultEditor extends React.Component {
 	 * @param {String} type
 	 */
 
-	onClickMark(e, type) {
+	onClickMarkButton(e, type) {
 		e.preventDefault()
 		let { state } = this.state
 
@@ -394,7 +350,7 @@ class DefaultEditor extends React.Component {
 	 * @param {String} type
 	 */
 
-	onClickBlock(e, type) {
+	onClickBlockButton(e, type) {
 		e.preventDefault()
 		let { state } = this.state
 		let transform = state.transform()
@@ -444,7 +400,7 @@ class DefaultEditor extends React.Component {
 		this.setState({ state })
 	}
 
-	onClickLink(e) {
+	onClickLinkButton(e) {
 		e.preventDefault()
 		let { state } = this.state
 		const hasLinks = this.hasLinks()
@@ -502,7 +458,7 @@ class DefaultEditor extends React.Component {
 		if (data.type != 'html') return
 		if (data.isShift) return
 
-		const { document } = serializer.deserialize(data.html)
+		const { document } = html.deserialize(data.html)
 
 		return state
 			.transform()
@@ -530,7 +486,7 @@ class DefaultEditor extends React.Component {
 
 	renderMarkButton(type, icon) {
 		const isActive = this.hasMark(type)
-		const onMouseDown = e => this.onClickMark(e, type)
+		const onMouseDown = e => this.onClickMarkButton(e, type)
 
 		return (
 			<button className="button" onMouseDown={onMouseDown} data-active={isActive}>
@@ -543,7 +499,7 @@ class DefaultEditor extends React.Component {
 		const hasLinks = this.hasLinks()
 
 		return (
-			<span className="button" onMouseDown={this.onClickLink} data-active={hasLinks}>
+			<span className="button" onMouseDown={this.onClickLinkButton} data-active={hasLinks}>
 				<span className="material-icons">{icon}</span>
 			</span>
 		)
@@ -551,7 +507,7 @@ class DefaultEditor extends React.Component {
 
 	renderBlockButton(type, icon) {
 		const isActive = this.hasBlock(type)
-		const onMouseDown = e => this.onClickBlock(e, type)
+		const onMouseDown = e => this.onClickBlockButton(e, type)
 
 		return (
 			<button className="button" onMouseDown={onMouseDown} data-active={isActive}>

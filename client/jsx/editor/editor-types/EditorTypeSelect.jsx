@@ -30,6 +30,7 @@ class EditorTypeSelect extends React.Component {
 	render() {
 		return (
 			<div className="box editor-type-select">
+				<h1>Add a Component</h1>
 				<button className="button" onClick={() => this.addComponentToPage()}>Add</button>
 				<select 
 					multiple

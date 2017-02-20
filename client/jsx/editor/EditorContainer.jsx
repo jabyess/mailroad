@@ -132,15 +132,12 @@ class EditorContainer extends React.Component {
 	}
 
 	getEmailContents(id) {
-		console.log('getEmailContents running')
-		console.log(id)
 		this.pouchDB.getDoc(id, (doc) => {
 			if(doc) {
-				console.log('getEmailContents doc', doc)
 				this.setState(doc)
 			}
 			else {
-				console.log('no doc')
+				console.error('no doc from getEmailContents')
 			}
 		})
 	}
@@ -194,12 +191,8 @@ class EditorContainer extends React.Component {
 	compileHTMLTemplate() {
 		let {content, title, template} = this.state
 		let context = { content, title, template }
-		fetch('/api/compileTemplate', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(context)
+		axios.post('/api/compileTemplate', {
+			context: JSON.stringify(context)
 		})
 		.then((response) => {
 			return response.text()
@@ -239,6 +232,7 @@ class EditorContainer extends React.Component {
 
 	getImageURL(url) {
 		console.log(url)
+		
 	}
 	
 	render() {
@@ -270,6 +264,7 @@ class EditorContainer extends React.Component {
 					toggleEditMode={this.toggleEditMode} 
 					isEditModeActive={this.state.isEditModeActive}
 					saveToDB={this.saveToDB}
+					compileHTMLTemplate={this.compileHTMLTemplate}
 				/>
 				{renderEditorTypeSelect}
 				<div className="editor-editor-container">

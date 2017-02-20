@@ -74,7 +74,8 @@ router.get('/templates', (req, res) => {
 })
 
 router.post('/compileTemplate', jsonParser, (req,res) => {
-	Utils.getCompiledHandlebarsTemplate(req.body, (compiledTemplate) => {
+	console.log(req.body)
+	Utils.getCompiledHandlebarsTemplate(req.body.context, (compiledTemplate) => {
 		const inlinedTemplate = Utils.inlineEmailCSS(compiledTemplate)
 		res.send(inlinedTemplate)
 	})
