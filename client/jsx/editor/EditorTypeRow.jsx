@@ -1,7 +1,7 @@
 import React from 'react'
 import { DropTarget } from 'react-dnd'
 import ItemTypes from './editor-types/ItemTypes.js'
-
+import DynamicEditor from './DynamicEditor.jsx'
 
 const ItemTypesList = () => {
 	let ITArray = []
@@ -12,7 +12,7 @@ const ItemTypesList = () => {
 }
 const ItemTypesArray = ItemTypesList()
 
-const editorTypeDropTarget = {
+const editorTypeRowDropTarget = {
 	drop: (props, monitor) => {
 		if(monitor.didDrop()) {
 			return
@@ -27,47 +27,37 @@ let collect = (connect, monitor) => {
 		connectDropTarget: connect.dropTarget(),
 		isOver: monitor.isOver()
 	}
-
 }
-class EditorTypeRow extends React.Component {
 
+class EditorTypeRow extends React.Component {
 	constructor() {
 		super()
-
-		this.removeEditor = this.removeEditor.bind(this)
-	}
-
-	removeEditor() {
-		if(this.props.removeEditorFromContainer) {
-			this.props.removeEditorFromContainer(this.props.index)
-		}
 	}
 
 	render() {
-		let { connectDropTarget, isOver } = this.props
+		const { isOver, connectDropTarget } = this.props
 		let isOverCSS = isOver ? {border: '2px solid #a9c873' } : {}
-		let isEditModeActive = this.props.isEditModeActive
 
 		return connectDropTarget(
-		<div className="editor-type-row" style={isOverCSS}>
-		{isEditModeActive ? 
-			<button className="button" onClick={this.removeEditor}>X</button>
-			: ''
-		}
-		{this.props.children}
-		</div>
+			<div style={isOverCSS}>
+				<DynamicEditor
+					index={this.props.index}
+					isEditModeActive={this.props.isEditModeActive}
+					content={this.props.content}
+					componentTitle={this.props.componentTitle}
+					editorType={this.props.editorType}
+					updateComponentTitle={this.props.updateComponentTitle}
+					updateContentValue={this.props.updateContentValue}
+					removeEditorFromContainer={this.props.removeEditorFromContainer}
+				/>
+			</div>
 		)
 
 	}
 }
 
 EditorTypeRow.propTypes = {
-	children: React.PropTypes.element,
-	isEditModeActive: React.PropTypes.bool,
-	removeEditorFromContainer: React.PropTypes.func,
-	index: React.PropTypes.number,
-	connectDropTarget: React.PropTypes.func,
-	isOver: React.PropTypes.bool
+
 }
 
-export default DropTarget(ItemTypesArray, editorTypeDropTarget, collect)(EditorTypeRow)
+export default DropTarget(ItemTypesArray, editorTypeRowDropTarget, collect)(EditorTypeRow)

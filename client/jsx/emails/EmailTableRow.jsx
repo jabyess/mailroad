@@ -38,8 +38,9 @@ class EmailTableRow extends React.Component {
 	render() {
 		return (
 			<tr className="email-table__row">
-				<td className="email-table__row__select">
+				<td className="control email-table__row__select">
 					<input
+						className="checkbox"
 						type="checkbox"
 						id={'checkbox-' + this.props.rowValues.id}
 						value={this.props.rowValues.id}

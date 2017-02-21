@@ -2,8 +2,6 @@ import React from 'react'
 import { Editor, Html } from 'slate'
 import autoBind from 'react-autobind'
 import { debounce } from '../../../lib/utils.js'
-import { DragSource } from 'react-dnd'
-import ItemTypes from './ItemTypes.js'
 
 const DEFAULT_NODE = 'paragraph'
 
@@ -196,31 +194,6 @@ const rules = [
 		}
 	},
 ]
-
-const defaultEditorSource = {
-	beginDrag(props) {
-		return {
-			text: props.text,
-			index: props.index
-		}
-	},
-	endDrag(props) {
-		return {
-			text: props.text,
-			index: props.index
-		}
-	},
-	canDrag(props) {
-		return props.isEditModeActive
-	}
-}
-
-function collect(connect, monitor) {
-	return {
-		connectDragSource : connect.dragSource(),
-		isDragging: monitor.isDragging()
-	}
-}
 
 let html = new Html({ rules })
 
@@ -477,7 +450,6 @@ class DefaultEditor extends React.Component {
 
 	onTitleChange(event) {
 		event.persist()
-		this.setState({title: event.target.value})
 		let title = event.target.value
 		if(this.props.updateComponentTitle) {
 			this.props.updateComponentTitle(title, this.props.index)
@@ -558,8 +530,9 @@ class DefaultEditor extends React.Component {
 	}
 
 	render() {
-		const { connectDragSource } = this.props
-		return connectDragSource(
+		// const { connectDragSource } = this.props
+		// return connectDragSource(
+		return (
 			<div className="box slate-editor">
 				<div className="slate-editor__title">
 					<label>Section Title</label>
@@ -581,4 +554,5 @@ DefaultEditor.propTypes = {
 	updateContentValue: React.PropTypes.func
 }
 
-export default DragSource(ItemTypes.DEFAULTEDITOR, defaultEditorSource, collect)(DefaultEditor)
+// export default DragSource(ItemTypes.DEFAULTEDITOR, defaultEditorSource, collect)(DefaultEditor)
+export default DefaultEditor

@@ -2,7 +2,7 @@ import React from 'react'
 import autoBind from 'react-autobind'
 import EditorMetaContainer from './EditorMetaContainer.jsx'
 import EditorTypeSelect from './editor-types/EditorTypeSelect.jsx'
-import EditorTypeRow from './EditorTypeRow.jsx'
+import EditorTypeWrapper from './EditorTypeWrapper.jsx'
 import ImagePromptModal from '../modals/ImagePromptModal.jsx'
 import ImageGalleryModal from '../modals/ImageGalleryModal.jsx'
 import LinkModal from '../modals/LinkModal.jsx'
@@ -12,13 +12,6 @@ import PDB from '../../lib/pouchdb.js'
 import axios from 'axios'
 import { DragDropContext } from 'react-dnd'
 import { debounce } from '../../lib/utils.js'
-import { DefaultEditor, DatePicker, DatesPicker } from './editor-types/EditorTypes.js'
-
-const dynamicEditorTypeList = {
-	DefaultEditor,
-	DatePicker,
-	DatesPicker
-}
 
 class EditorContainer extends React.Component {
 	constructor() {
@@ -50,13 +43,13 @@ class EditorContainer extends React.Component {
 			template: '',
 			templates: [],
 			content: [],
-			isEditorTypeSelectVisible: false,
-			isEditModeActive: false,
-			isGalleryModalVisible: false,
-			isSaveButtonVisible: false,
-			isExternalImageModalVisible: false,
-			isImagePromptModalVisible: false,
-			isLinkModalVisible: false
+			// isEditorTypeSelectVisible: false,
+			// isEditModeActive: false,
+			// isGalleryModalVisible: false,
+			// isSaveButtonVisible: false,
+			// isExternalImageModalVisible: false,
+			// isImagePromptModalVisible: false,
+			// isLinkModalVisible: false
 		}
 	}
 
@@ -109,19 +102,19 @@ class EditorContainer extends React.Component {
 	handleTitleChange(value) {
 		this.setState({title: value})
 	}
+
 	handleTemplateChange(value) {
 		this.setState({template: value})
 	}
 
 	updateContentValue(content, index) {
-		console.log(content)
-		this.setState(() => {
-			this.state.content[index].content = content
+		this.setState((state) => {
+			state.content[index].content = content
 		})
 	}
 
 	updateComponentTitle(title, index) {
-		this.setState(() => { this.state.content[index].componentTitle = title })
+		this.setState((state) => { state.content[index].componentTitle = title })
 	}
 
 	getEditorType(editorList, eventDetail) {
@@ -143,12 +136,9 @@ class EditorContainer extends React.Component {
 	}
 
 	getTemplates() {
-		fetch('/api/templates')
-			.then((response) => {
-				return response.json()
-			})
-			.then((json) => {
-				this.setState({ templates: json })
+		axios.get('/api/templates')
+			.then((templates) => {
+				this.setState({ templates: templates.data })
 			})
 			.catch((err) => {
 				console.log('there was an error: ', err)
@@ -167,21 +157,9 @@ class EditorContainer extends React.Component {
 			content: content,
 			title: title
 		}).then((jsonResponse) => {
-			// let url = '/api/email/' + json.data.id
-			console.log('createEmail json', jsonResponse)
-			if(jsonResponse.data) {
-				this.setState(jsonResponse.data)
-			}
-			// axios.get(url)
-			// .then((contents) => {
-			// 	console.log(contents)
-			// 	this.setState(contents.data)
-			// })
-			// .catch((err) => {
-			// 	console.log('error after createEmail, on response:', err)
-			// })
+			this.setState(jsonResponse.data)
 		}, (rejected) => {
-			console.log('error in createEmail post', rejected)
+			console.error('error in createEmail post', rejected)
 		})
 		.catch((err) => {
 			console.log('error during createEmail:', err)
@@ -219,10 +197,10 @@ class EditorContainer extends React.Component {
 	}
 
 	reorderEditorIndexes(oldIndex, newIndex) {
-		this.setState(() => {
-			let removed = this.state.content.splice(oldIndex, 1)
-			this.state.content.splice(newIndex, 0, removed[0])
-			return this.state.content
+		this.setState((state) => {
+			const removed = state.content.splice(oldIndex, 1)
+			state.content.splice(newIndex, 0, removed[0])
+			return {content: state.content}
 		})
 	}
 
@@ -261,35 +239,21 @@ class EditorContainer extends React.Component {
 					handleTemplateChange={this.handleTemplateChange}
 				/>
 				<EditorControlsContainer 
-					toggleEditMode={this.toggleEditMode} 
+					toggleEditMode={this.toggleEditMode}
 					isEditModeActive={this.state.isEditModeActive}
 					saveToDB={this.saveToDB}
 					compileHTMLTemplate={this.compileHTMLTemplate}
 				/>
 				{renderEditorTypeSelect}
-				<div className="editor-editor-container">
-					{this.state.content.map((content, i) => {
-						let DynamicEditorType = dynamicEditorTypeList[content.editorType]
-						return (
-							<EditorTypeRow 
-								key={i}
-								index={i}
-								reorderEditorIndexes={this.reorderEditorIndexes}
-								isEditModeActive={this.state.isEditModeActive}
-								removeEditorFromContainer={this.removeEditorFromContainer} >
-								<DynamicEditorType
-									content={content.content}
-									key={i}
-									index={i}
-									componentTitle={content.componentTitle}
-									updateComponentTitle={this.updateComponentTitle}
-									updateContentValue={this.updateContentValue}
-									isEditModeActive={this.state.isEditModeActive}
-									editorType={content.editorType}
-								/>
-							</EditorTypeRow>
-						)
-					})}
+				<div className="editor-container__editors">
+					<EditorTypeWrapper
+						content={this.state.content}
+						isEditModeActive={this.state.isEditModeActive}
+						removeEditorFromContainer={this.removeEditorFromContainer}
+						updateComponentTitle={this.updateComponentTitle}
+						updateContentValue={this.updateContentValue}
+						reorderEditorIndexes={this.reorderEditorIndexes}
+					/>
 				</div>
 
 			</div>

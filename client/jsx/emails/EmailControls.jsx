@@ -62,16 +62,16 @@ class EmailControls extends React.Component {
 
 	render() {
 		this.copyClassNames = classNames({
-			'email-controls__item': true,
-			'disabled': Object.keys(this.props.selectedCheckboxes).length > 1 ? true : false
+			'button': true,
+			'is-disabled': Object.keys(this.props.selectedCheckboxes).length > 1 ? true : false
 		})
 
 		return (
-			<div className="email-controls">
-				<div className="email-controls__item" onClick={this.handleDelete}>Delete</div>
+			<div className="box control">
+				<div className="button" onClick={this.handleDelete}>Delete</div>
 				<div className={this.copyClassNames} onClick={this.handleCopy}>Copy</div>
-				<input type="text" placeholder="Doesn't work yet" value={this.state.searchValue} onChange={this.handleSearchChange}/>
-				<div className="email-controls__item" onClick={this.handleSearch}>Search</div>
+				<input className="input" type="text" placeholder="Doesn't work yet" value={this.state.searchValue} onChange={this.handleSearchChange}/>
+				<div className="button" onClick={this.handleSearch}>Search</div>
 			</div>
 		)
 	}

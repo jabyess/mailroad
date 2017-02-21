@@ -52,6 +52,7 @@
     "react-sortable": "^1.2.0",
     "react-tap-event-plugin": "^1.0.0",
     "sharp": "^0.17.1",
+    "shortid": "^2.2.6",
     "slate": "^0.16.4",
     "webpack-dotenv-plugin": "^2.0.0",
     "whatwg-fetch": "^1.0.0"

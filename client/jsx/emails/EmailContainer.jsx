@@ -75,7 +75,6 @@ export default class EmailContainer extends React.Component {
 		.catch((err) => {
 			console.log('error searching:',err)
 		})
-
 	}
 
 	componentDidMount() {

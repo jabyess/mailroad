@@ -22,6 +22,7 @@ class EditorMetaContainer extends React.Component {
 
 	handleTitleChange(event) {
 		if(this.props.handleTitleChange) {
+			event.persist()
 			this.props.handleTitleChange(event.target.value)
 		}
 	}

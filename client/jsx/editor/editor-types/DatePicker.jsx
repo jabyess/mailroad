@@ -12,6 +12,7 @@ class DatePicker extends React.Component {
 		}
 
 		this.onDateChange = this.onDateChange.bind(this)
+		this.onTitleChange = this.onTitleChange.bind(this)
 	}
 
 	onDateChange(date) {
@@ -24,11 +25,19 @@ class DatePicker extends React.Component {
 			this.props.updateContentValue(date, this.props.index)
 		}
 	}
+	
+	onTitleChange(event) {
+		event.persist()
+		let title = event.target.value
+		if(this.props.updateComponentTitle) {
+			this.props.updateComponentTitle(title, this.props.index)
+		}
+	}
 
 	componentWillReceiveProps (nextProps) {
-		let newDate = moment(nextProps.content)
 		if(nextProps.content) {
-			this.setState({date: newDate})
+			let date = moment(nextProps.content)
+			this.setState({ date })
 		}
 		else {
 			this.setState({date: null})
@@ -38,9 +47,9 @@ class DatePicker extends React.Component {
 
 	render() {
 		return (
-			<div className="date-picker">
+			<div className="date-picker box">
 				<div className="component-title">
-					<label>DatesPicker Title</label>
+					<label>DatePicker Title</label>
 					<input type="text" value={this.props.componentTitle} onChange={this.onTitleChange} />
 				</div>
 				<SingleDatePicker

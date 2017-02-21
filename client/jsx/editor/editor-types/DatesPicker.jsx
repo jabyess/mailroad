@@ -45,7 +45,7 @@ class DatesPicker extends React.Component {
 	onTitleChange(event) {
 		event.persist()
 		let title = event.target.value
-		this.setState({ title })
+		// this.setState({ title })
 		if(this.props.updateComponentTitle) {
 			this.props.updateComponentTitle(title, this.props.index)
 		}
@@ -56,8 +56,10 @@ class DatesPicker extends React.Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		let dates = this.convertDatesToMoment(nextProps.content.startDate, nextProps.content.endDate)
-		this.setState({startDate: dates.startDate, endDate: dates.endDate})
+		if(nextProps.content) {
+			let dates = this.convertDatesToMoment(nextProps.content.startDate, nextProps.content.endDate)
+			this.setState({startDate: dates.startDate, endDate: dates.endDate})
+		}
 	}
 
 	render() {
