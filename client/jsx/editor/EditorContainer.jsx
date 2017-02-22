@@ -32,7 +32,7 @@ class EditorContainer extends React.Component {
 			'removeEditorFromContainer',
 			'toggleImageGalleryModal',
 			'toggleVisible',
-			'getImageURL',
+			'setImageURL',
 			'setImageIndex'
 		)
 
@@ -71,7 +71,6 @@ class EditorContainer extends React.Component {
 	}
 
 	componentWillUnmount () {
-		window.removeEventListener('toggleExternalImageModal', this.toggleExternalImageModal)
 		window.removeEventListener('toggleVisible', this.toggleVisible)
 	}
 
@@ -209,12 +208,12 @@ class EditorContainer extends React.Component {
 		this.setState({isGalleryModalVisible: !this.state.isGalleryModalVisible})
 	}
 
-	getImageURL(url) {
-		this.setState({imageURL: url})
+	setImageURL(imageURL) {
+		this.setState({ imageURL })
 	}
 
 	setImageIndex(imageIndex) {
-		this.setState({imageIndex})
+		this.setState({ imageIndex })
 	}
 	
 	render() {
@@ -222,7 +221,7 @@ class EditorContainer extends React.Component {
 		<ImageGalleryModal
 			toggleImageGalleryModal={this.toggleImageGalleryModal}
 			isGalleryModalVisible={this.state.isGalleryModalVisible}
-			getImageURL={this.getImageURL}
+			setImageURL={this.setImageURL}
 		/> : null
 		const renderImagePromptModal = this.state.isImagePromptModalVisible ? <ImagePromptModal /> : null
 		const renderEditorTypeSelect = this.state.isEditModeActive ? <EditorTypeSelect

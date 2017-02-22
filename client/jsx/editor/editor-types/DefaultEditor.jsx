@@ -228,8 +228,8 @@ class DefaultEditor extends React.Component {
 
 	//class methods
 	componentWillReceiveProps(nextProps) {
-		if(nextProps.imageURL !== this.props.imageURL) {
-			this.insertImage()
+		if(nextProps.imageURL) {
+			this.insertImage(nextProps.imageURL)
 		}
 		let content = html.deserialize(nextProps.content)
 		this.setState(() => {
@@ -424,19 +424,15 @@ class DefaultEditor extends React.Component {
 	}
 
 	onClickImageButton() {
-		// popup modal that says insert image from: gallery, external source
-		// if gallery, render gallery
-		// if external, enter url
-		// dispatch event to render modal
 		this.props.setImageIndex(this.props.index)
-		let toggleImagePromptModal = new CustomEvent('toggleVisible', {
+		const toggleImagePromptModal = new CustomEvent('toggleVisible', {
 			detail: 'isImagePromptModalVisible'
 		})
 		window.dispatchEvent(toggleImagePromptModal)
 	}
 
-	insertImage() {
-		const src = this.props.imageURL
+	insertImage(imageURL) {
+		const src = imageURL
 		if(this.props.imageIndex === this.props.index) {
 			let state = this.state.state
 				.transform()
@@ -449,7 +445,10 @@ class DefaultEditor extends React.Component {
 
 			this.setState({ state })
 		}
-
+		const toggleImageGalleryModal = new CustomEvent('toggleVisible', {
+			detail: 'isGalleryModalVisible'
+		})
+		window.dispatchEvent(toggleImageGalleryModal)
 
 	}
 

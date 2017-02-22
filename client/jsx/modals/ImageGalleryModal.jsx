@@ -13,7 +13,7 @@ class ImageGalleryModal extends React.Component {
 			'loadMore',
 			'deleteImage',
 			'updateMediaList',
-			'getImageURL'
+			'setImageURL'
 		)
 
 		this.state = {
@@ -71,11 +71,11 @@ class ImageGalleryModal extends React.Component {
 		})
 	}
 
-	getImageURL(e) {
+	setImageURL(e) {
 		e.persist()
 		const index = e.target.dataset.index
 		const url = this.state.images[index].url
-		this.props.getImageURL(url)
+		this.props.setImageURL(url)
 	}
 
 	updateMediaList() {
@@ -107,7 +107,7 @@ class ImageGalleryModal extends React.Component {
 								style={bgImage}
 								data-index={index}
 								key={index}
-								onClick={this.getImageURL}
+								onClick={this.setImageURL}
 							>
 								<button
 									className="button imagesContainer--delete"
@@ -129,7 +129,7 @@ class ImageGalleryModal extends React.Component {
 
 ImageGalleryModal.propTypes = {
 	isGalleryModalVisible: React.PropTypes.bool,
-	getImageURL: React.PropTypes.func,
+	setImageURL: React.PropTypes.func,
 	toggleImageGalleryModal: React.PropTypes.func,
 }
 
