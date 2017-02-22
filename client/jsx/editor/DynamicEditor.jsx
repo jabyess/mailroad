@@ -66,7 +66,10 @@ class DynamicEditor extends React.Component {
 				: '' }
 				<DynamicEditorType
 					index={this.props.index}
+					imageIndex={this.props.imageIndex}
 					content={this.props.content}
+					setImageIndex={this.props.setImageIndex}
+					imageURL={this.props.imageURL}
 					componentTitle={this.props.componentTitle}
 					editorType={this.props.editorType}
 					updateComponentTitle={this.props.updateComponentTitle}

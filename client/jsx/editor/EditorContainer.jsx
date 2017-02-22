@@ -32,7 +32,8 @@ class EditorContainer extends React.Component {
 			'removeEditorFromContainer',
 			'toggleImageGalleryModal',
 			'toggleVisible',
-			'getImageURL'
+			'getImageURL',
+			'setImageIndex'
 		)
 
 		this.pouchDB = new PDB('emailbuilder')
@@ -209,8 +210,11 @@ class EditorContainer extends React.Component {
 	}
 
 	getImageURL(url) {
-		console.log(url)
-		
+		this.setState({imageURL: url})
+	}
+
+	setImageIndex(imageIndex) {
+		this.setState({imageIndex})
 	}
 	
 	render() {
@@ -220,11 +224,8 @@ class EditorContainer extends React.Component {
 			isGalleryModalVisible={this.state.isGalleryModalVisible}
 			getImageURL={this.getImageURL}
 		/> : null
-
 		const renderImagePromptModal = this.state.isImagePromptModalVisible ? <ImagePromptModal /> : null
-
-		const renderEditorTypeSelect = this.state.isEditModeActive ? <EditorTypeSelect 
-
+		const renderEditorTypeSelect = this.state.isEditModeActive ? <EditorTypeSelect
 			addEditorToContainer={this.addEditorToContainer}
 			/> : null
 		const renderLinkModal = this.state.isLinkModalVisible ? <LinkModal /> : null
@@ -234,11 +235,11 @@ class EditorContainer extends React.Component {
 				{renderImagePromptModal}
 				{renderImageGalleryModal}
 				{renderLinkModal}
-				<EditorMetaContainer {...this.state} 
+				<EditorMetaContainer {...this.state}
 					handleTitleChange={this.handleTitleChange}
 					handleTemplateChange={this.handleTemplateChange}
 				/>
-				<EditorControlsContainer 
+				<EditorControlsContainer
 					toggleEditMode={this.toggleEditMode}
 					isEditModeActive={this.state.isEditModeActive}
 					saveToDB={this.saveToDB}
@@ -248,6 +249,9 @@ class EditorContainer extends React.Component {
 				<div className="editor-container__editors">
 					<EditorTypeWrapper
 						content={this.state.content}
+						imageURL={this.state.imageURL}
+						imageIndex={this.state.imageIndex}
+						setImageIndex={this.setImageIndex}
 						isEditModeActive={this.state.isEditModeActive}
 						removeEditorFromContainer={this.removeEditorFromContainer}
 						updateComponentTitle={this.updateComponentTitle}

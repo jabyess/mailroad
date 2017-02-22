@@ -39,10 +39,10 @@ export default class ImagePromptModal extends React.Component {
 				<div className="modal-background"></div>
 				<div className="modal-card">
 					<header className="modal-card-head">
-						<p className="modal-card-title"></p>
+						<p className="modal-card-title">Insert image from:</p>
 					</header>
 					<section className="modal-card-body">
-						<button className="button"onClick={this.handleGalleryClick}>Gallery</button>
+						<button className="button" onClick={this.handleGalleryClick}>Gallery</button>
 						<button className="button" onClick={this.handleExternalClick}>External URL</button>
 					</section>
 				</div>

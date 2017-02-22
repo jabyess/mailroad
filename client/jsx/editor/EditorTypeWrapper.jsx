@@ -30,7 +30,10 @@ class EditorTypeWrapper extends React.Component {
 					return (
 						<EditorTypeRow
 							key={this.keys[i]}
+							imageURL={this.props.imageURL}
+							setImageIndex={this.props.setImageIndex}
 							index={i}
+							imageIndex={this.props.imageIndex}
 							content={content.content}
 							componentTitle={content.componentTitle}
 							editorType={content.editorType}

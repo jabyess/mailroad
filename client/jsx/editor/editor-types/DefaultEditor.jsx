@@ -29,7 +29,7 @@ const schema = {
 			const src = node.data.get('src')
 			const className = isFocused ? 'active' : null
 			return (
-				<img sxc={src} className={className} {...props.attributes} />
+				<img src={src} className={className} {...props.attributes} />
 			)
 		},
 		'link': props => {
@@ -121,6 +121,10 @@ const rules = [
 				const href = object.data.get('href')
 				return <a href={href}>{children}</a>
 			}
+			case 'image' : {
+				const src = object.data.get('src')
+				return <img src={src} />
+			}
 			}
 		}
 	},
@@ -211,7 +215,8 @@ class DefaultEditor extends React.Component {
 			'onClickLinkButton',
 			'onClickMarkButton',
 			'renderBlockButton',
-			'hasLinks'
+			'hasLinks',
+			'insertImage'
 		)
 
 		this.debounceDocChange = debounce(this.onDocumentChange, 500)
@@ -223,6 +228,9 @@ class DefaultEditor extends React.Component {
 
 	//class methods
 	componentWillReceiveProps(nextProps) {
+		if(nextProps.imageURL !== this.props.imageURL) {
+			this.insertImage()
+		}
 		let content = html.deserialize(nextProps.content)
 		this.setState(() => {
 			this.state.state = content 
@@ -420,12 +428,30 @@ class DefaultEditor extends React.Component {
 		// if gallery, render gallery
 		// if external, enter url
 		// dispatch event to render modal
+		this.props.setImageIndex(this.props.index)
 		let toggleImagePromptModal = new CustomEvent('toggleVisible', {
 			detail: 'isImagePromptModalVisible'
 		})
 		window.dispatchEvent(toggleImagePromptModal)
 	}
-	
+
+	insertImage() {
+		const src = this.props.imageURL
+		if(this.props.imageIndex === this.props.index) {
+			let state = this.state.state
+				.transform()
+				.insertBlock({
+					type: 'image',
+					isVoid: true,
+					data: { src }
+				})
+				.apply()
+
+			this.setState({ state })
+		}
+
+
+	}
 
 	onPaste(e, data, state) {
 		if (data.type != 'html') return

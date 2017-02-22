@@ -42,6 +42,9 @@ class EditorTypeRow extends React.Component {
 			<div style={isOverCSS}>
 				<DynamicEditor
 					index={this.props.index}
+					imageURL={this.props.imageURL}
+					imageIndex={this.props.imageIndex}
+					setImageIndex={this.props.setImageIndex}
 					isEditModeActive={this.props.isEditModeActive}
 					content={this.props.content}
 					componentTitle={this.props.componentTitle}

@@ -1,11 +1,11 @@
 {
   "name": "emailbuilder",
-  "version": "0.0.1",
-  "description": "Uses litmus and react to build nice email templates easily.",
+  "version": "0.1.0",
+  "description": "React, slate, mjml to make drafting emails better.",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jabyess/email-template-composer.git"
+    "url": "https://github.com/jabyess/mailroad.git"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
