@@ -2,54 +2,78 @@ import React from 'react'
 import autoBind from 'react-autobind'
 import EmailTable from './EmailTable.jsx'
 import EmailControls from './EmailControls.jsx'
+import EmailPagination from './EmailPagination.jsx'
 import axios from 'axios'
 import PDB from '../../lib/pouchdb.js'
+
+
+const EMAILS_PER_PAGE = 10
 
 export default class EmailContainer extends React.Component {
 	constructor() {
 		super()
 
 		autoBind(this, 
-			'listEmails', 
 			'updateSelectedCheckboxes',
 			'refreshEmailList',
-			'listEmails'
+			'displayEmails',
+			'pageNext',
+			'pagePrev'
 		)
 
 		this.pouchDB = new PDB()
 		
 		this.state = {
 			emailItems: [],
-			selectedCheckboxes: {}
+			selectedCheckboxes: {},
+			page: 1
 		}
 	}
 
-	listEmails() {
-		axios('/api/email/list')
-			.then((results) => {
-				let values = results.data.rows.map((val) => {
-					let newValues = {
-						id: val.id,
-						createdAt: val.value.createdAt,
-						updatedAt: val.value.updatedAt,
-						title: val.value.title,
-						template: val.value.template
-					}
-					return newValues
+	mapEmailResults(emails) {
+		let values = emails.map((val) => {
+			let newValues = {
+				id: val.id,
+				createdAt: val.value.createdAt,
+				updatedAt: val.value.updatedAt,
+				title: val.value.title,
+				template: val.value.template
+			}
+			return newValues
+		})
+		return values
+
+	}
+
+	displayEmails(paginatedEmails, direction) {
+		if(!paginatedEmails) {
+			axios('/api/email/list')
+				.then((results) => {
+					console.log(results)
+					let values = this.mapEmailResults(results.data.rows)
+					this.setState({
+						emailItems: values,
+						totalRows: results.data.total_rows
+					})
 				})
-				this.setState({ emailItems: values })
+				.catch((ex) => {
+					console.log('listEmails exception: ', ex)
+				})
+		}
+		else {
+			let emailItems = this.mapEmailResults(paginatedEmails)
+			const page = direction === 'next' ? this.state.page + 1 : this.state.page - 1
+			this.setState({
+				emailItems: emailItems,
+				page: page
 			})
-			.catch((ex) => {
-				console.log('listEmails exception: ', ex)
-			})
+		}
 	}
 
 	refreshEmailList() {
-		console.log('refreshing email list')
-		
 		this.setState(() => {
 			return this.state.selectedCheckboxes = {}
-		}, this.listEmails)
+		}, this.displayEmails)
 	}
 
 	updateSelectedCheckboxes(value) {
@@ -81,10 +105,29 @@ export default class EmailContainer extends React.Component {
 	componentDidMount() {
 		this.pouchDB.syncEverything((syncComplete) => {
 			if(syncComplete) {
-				this.listEmails()
+				this.displayEmails()
 			}
 		})
+	}
 
+	pagePrev() {
+		axios.get('/api/email/list/', {
+			params: {
+				skip: this.state.page * EMAILS_PER_PAGE
+			}
+		}).then((response) => {
+			this.displayEmails(response.data.rows, 'prev')
+		})
+	}
+
+	pageNext() {
+		axios.get('/api/email/list/', {
+			params: {
+				skip: this.state.page * EMAILS_PER_PAGE
+			}
+		}).then((response) => {
+			this.displayEmails(response.data.rows, 'next')
+		})
 	}
 
 	render() {
@@ -94,6 +137,14 @@ export default class EmailContainer extends React.Component {
 					selectedCheckboxes={this.state.selectedCheckboxes}
 					refreshEmailList={this.refreshEmailList}
 					triggerSearch={this.triggerSearch}
+				/>
+				<EmailPagination 
+					emailItems={this.state.emailItems}
+					pageNext={this.pageNext}
+					pagePrev={this.pagePrev}
+					totalRows={this.state.totalRows}
+					emailsPerPage={EMAILS_PER_PAGE}
+					page={this.state.page}
 				/>
 				<EmailTable 
 					emailItems={this.state.emailItems}

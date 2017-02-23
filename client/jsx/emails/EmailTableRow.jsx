@@ -38,7 +38,7 @@ class EmailTableRow extends React.Component {
 	render() {
 		return (
 			<tr className="email-table__row">
-				<td className="control email-table__row__select">
+				<td className="control email-table__row email-table__row__select">
 					<input
 						className="checkbox"
 						type="checkbox"
@@ -47,10 +47,10 @@ class EmailTableRow extends React.Component {
 						onChange={this.handleCheckboxChange}
 					/>
 				</td>
-				<td className="email-table__row__title"><Link to={`/editor/${this.props.rowValues.id}`}>{this.props.rowValues.title}</Link></td>
-				<td className="email-table__row__template">{this.props.rowValues.template}</td>
-				<td className="email-table__row__created-date">{this.formatDate(this.props.rowValues.createdAt)}</td>
-				<td className="email-table__row__updated-date">{this.formatDate(this.props.rowValues.updatedAt)}</td>
+				<td className="email-table__row email-table__row__title"><Link to={`/editor/${this.props.rowValues.id}`}>{this.props.rowValues.title}</Link></td>
+				<td className="email-table__row email-table__row__template">{this.props.rowValues.template}</td>
+				<td className="email-table__row email-table__row__created-date">{this.formatDate(this.props.rowValues.createdAt)}</td>
+				<td className="email-table__row email-table__row__updated-date">{this.formatDate(this.props.rowValues.updatedAt)}</td>
 			</tr>
 		)
 	}
