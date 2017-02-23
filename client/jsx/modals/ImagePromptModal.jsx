@@ -20,8 +20,8 @@ export default class ImagePromptModal extends React.Component {
 	}
 	
 	handleGalleryClick() {
-		window.dispatchEvent(this.toggleImageGalleryModal)
 		window.dispatchEvent(this.toggleImagePromptModal)
+		window.dispatchEvent(this.toggleImageGalleryModal)
 	}
 
 	handleExternalClick() {

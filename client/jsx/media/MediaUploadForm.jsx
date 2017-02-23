@@ -90,9 +90,10 @@ class MediaUploadForm extends React.Component {
 	}
 
 	showGalleryModal() {
-		if(this.props.displayImageGalleryModal) {
-			this.props.displayImageGalleryModal()
-		}
+		const isImageGalleryModalVisible = new CustomEvent('toggleVisible', {
+			detail: 'isImageGalleryModalVisible'
+		})
+		window.dispatchEvent(isImageGalleryModalVisible)
 	}
 
 	handleHeightChange(height, imageIndex, sizeIndex) {
@@ -128,7 +129,7 @@ class MediaUploadForm extends React.Component {
 
 		return (
 			<div className="mediaUploadForm">
-				<button className="button" onClick={this.props.toggleImageGalleryModal}>View Gallery</button>
+				<button className="button" onClick={this.showGalleryModal}>View Gallery</button>
 				<Dropzone 
 					className="mediaUploadForm__dropzone"
 					onDrop={this.onDrop}

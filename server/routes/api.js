@@ -187,7 +187,7 @@ router.post('/email/search', jsonParser, (req, res) => {
 router.get('/s3/list/:grouping', (req, res) => {
 	if(req.params && req.params.grouping) {
 		axios.post(COUCH_IMAGES_FIND, {
-			selector: { 
+			selector: {
 				grouping: req.params.grouping
 			}
 		})

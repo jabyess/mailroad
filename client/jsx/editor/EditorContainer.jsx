@@ -31,7 +31,6 @@ class EditorContainer extends React.Component {
 			'updateContentValue',
 			'updateComponentTitle',
 			'removeEditorFromContainer',
-			'toggleImageGalleryModal',
 			'toggleVisible',
 			'setImageSizes',
 			'setImageURL',
@@ -210,11 +209,6 @@ class EditorContainer extends React.Component {
 		})
 	}
 
-	// toggleImageGalleryModal() {
-	// 	this.setState({isGalleryModalVisible: !this.state.isGalleryModalVisible})
-	// }
-
-
 	setImageURL(imageURL) {
 		this.setState({ imageURL })
 	}
@@ -242,9 +236,8 @@ class EditorContainer extends React.Component {
 	}
 	
 	render() {
-		const renderImageGalleryModal = this.state.isGalleryModalVisible ? 
+		const renderImageGalleryModal = this.state.isImageGalleryModalVisible ? 
 		<ImageGalleryModal
-			isImageGalleryModalVisible={this.state.isImageGalleryModalVisible}
 			setImageSizes={this.setImageSizes}
 		/> : null
 		const renderImagePromptModal = this.state.isImagePromptModalVisible ? <ImagePromptModal /> : null

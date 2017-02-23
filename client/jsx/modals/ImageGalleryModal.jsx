@@ -73,24 +73,26 @@ class ImageGalleryModal extends React.Component {
 
 	setImageURL(e) {
 		e.persist()
-		const index = e.target.dataset.index
-		const grouping = this.state.images[index].grouping
-		const url = '/api/s3/list/' + grouping
+		if(this.props.setImageSizes) {
+			const index = e.target.dataset.index
+			const grouping = this.state.images[index].grouping
+			const url = '/api/s3/list/' + grouping
 
-		axios.get(url).then((response) => {
+			axios.get(url).then((response) => {
 
-			const imageSizes = response.data.docs.map(image => {
-				return {
-					size: image.size,
-					url: image.url
-				}
+				const imageSizes = response.data.docs.map(image => {
+					return {
+						size: image.size,
+						url: image.url
+					}
+				})
+
+				this.props.setImageSizes(imageSizes)
 			})
-
-			this.props.setImageSizes(imageSizes)
-		})
-		.catch((err) => {
-			console.log('error in imagesize getting', err)
-		})
+			.catch((err) => {
+				console.log('error in imagesize getting', err)
+			})
+		}
 	}
 
 	updateMediaList() {
@@ -108,16 +110,15 @@ class ImageGalleryModal extends React.Component {
 
 	toggleVisible() {
 		const isImageGalleryModalVisible = new CustomEvent('toggleVisible', {
-			detail: isImageGalleryModalVisible
+			detail: 'isImageGalleryModalVisible'
 		})
 
 		window.dispatchEvent(isImageGalleryModalVisible)
 	}
 
 	render() {
-		const isGalleryModalVisible = this.props.isImageGalleryModalVisible ? 
-		(
-			<div className="modal imagesContainer">
+		return (
+			<div className="modal is-active imagesContainer">
 				<div className="modal-background"></div>
 				<div className="modal-content imagesContainer--content">
 					{this.state.images.map((image, index) => {
@@ -144,16 +145,13 @@ class ImageGalleryModal extends React.Component {
 				</div>
 				<button className="modal-close" onClick={this.toggleVisible}></button>
 			</div>
-		) : null
-
-		return (<div>{isGalleryModalVisible}</div>)
+		) 
 	}
 }
 
 ImageGalleryModal.propTypes = {
-	isImageGalleryModalVisible: React.PropTypes.bool,
 	setImageURL: React.PropTypes.func,
-	toggleImageGalleryModal: React.PropTypes.func,
+	setImageSizes: React.PropTypes.func
 }
 
 export default ImageGalleryModal

@@ -1,6 +1,7 @@
 import React from 'react'
-import ImageGalleryModal from '../modals/ImageGalleryModal.jsx'
+import autoBind from 'react-autobind'
 import MediaUploadForm from './MediaUploadForm.jsx'
+import ImageGalleryModal from '../modals/ImageGalleryModal.jsx'
 
 
 class MediaContainer extends React.Component {
@@ -9,28 +10,49 @@ class MediaContainer extends React.Component {
 		super()
 
 		this.state = {
-			displayImageGalleryModal: false
+
 		}
 
-		this.toggleImageGalleryModal = this.toggleImageGalleryModal.bind(this)
+		autoBind(this,
+			'toggleImageGalleryModal',
+			'toggleVisible'
+		)
 	}
 
 	toggleImageGalleryModal() {
-		this.setState({displayImageGalleryModal: !this.state.displayImageGalleryModal})
+		const isImageGalleryModalVisible = new CustomEvent('toggleVisible', {
+			detail: 'isImageGalleryModalVisible'
+		})
+		window.dispatchEvent(isImageGalleryModalVisible)
 	}
 
+	toggleVisible(event) {
+		let visibleKey = event.detail.toString()
+		console.log(visibleKey)
+		this.setState(() => {
+			let visibleObj = {}
+			visibleObj[visibleKey] = !this.state[visibleKey]
+			return visibleObj
+		})
+	}
+
+	componentDidMount () {
+		window.addEventListener('toggleVisible', this.toggleVisible)
+	}
+	
+	componentWillUnmount () {
+		window.removeEventListener('toggleVisible', this.toggleVisible)
+	}
+	
+
 	render() {
+		const renderImageGalleryModal = this.state.isImageGalleryModalVisible ? <ImageGalleryModal /> : null
 		return (
 			<div className="media-container">
 				<div className="columns">
-					<div className="column is-10 is-offset-1">
-						<MediaUploadForm 
-							toggleImageGalleryModal={this.toggleImageGalleryModal}
-						/>
-						<ImageGalleryModal
-							toggleImageGalleryModal={this.toggleImageGalleryModal}
-							displayImageGalleryModal={this.state.displayImageGalleryModal}
-						/>
+					<div className="column">
+						{renderImageGalleryModal}
+						<MediaUploadForm />
 					</div>
 				</div>
 			</div>
