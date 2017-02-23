@@ -5,8 +5,8 @@ class EmailTable extends React.Component {
 	
 	render() {
 		return (
-			<table className="table email-table">
-				<thead>
+			<table className="table is-striped is-narrow email-table">
+				<thead className="email-table__header">
 					<tr>
 						<th>Select</th>
 						<th>Title</th>

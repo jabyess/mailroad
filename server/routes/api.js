@@ -38,12 +38,14 @@ const s3Params = {
 
 let S3 = new AWS(s3Config)
 
-router.get('/email/list', jsonParser, (req, res) => {
+router.get('/email/list/:skip?', jsonParser, (req, res) => {
 	const designUrl = COUCH_EMAILS + '_design/EmailsByUpdatedDate/_view/EmailsByUpdatedDate'
+	const skip = req.query && req.query.skip ? req.query.skip : null
 	axios.get(designUrl, {
 		params: {
 			limit: 10,
-			descending: true
+			descending: true,
+			skip: skip
 		}
 	})
 	.then((emails) => {
