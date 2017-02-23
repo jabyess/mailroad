@@ -12,7 +12,8 @@ export default class EmailContainer extends React.Component {
 		autoBind(this, 
 			'listEmails', 
 			'updateSelectedCheckboxes',
-			'refreshEmailList'
+			'refreshEmailList',
+			'listEmails'
 		)
 
 		this.pouchDB = new PDB()
@@ -46,8 +47,8 @@ export default class EmailContainer extends React.Component {
 	refreshEmailList() {
 		console.log('refreshing email list')
 		
-		this.setState((state) => {
-			return state.selectedCheckboxes = {}
+		this.setState(() => {
+			return this.state.selectedCheckboxes = {}
 		}, this.listEmails)
 	}
 
@@ -76,7 +77,7 @@ export default class EmailContainer extends React.Component {
 			console.log('error searching:',err)
 		})
 	}
-
+	
 	componentDidMount() {
 		this.pouchDB.syncEverything((syncComplete) => {
 			if(syncComplete) {

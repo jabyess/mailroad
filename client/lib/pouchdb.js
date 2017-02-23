@@ -38,7 +38,9 @@ export default class PDB {
 
 	updateDoc(doc) {
 		this.emailDB.get(doc._id).catch((error) => {
-			console.error('error in updateDoc get', error)
+			if(error.name !== 'not_found') {
+				console.error('error in updateDoc get', error)
+			}
 
 			if(error.name === 'not_found') {
 

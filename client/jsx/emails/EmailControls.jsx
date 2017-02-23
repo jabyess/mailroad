@@ -10,7 +10,8 @@ class EmailControls extends React.Component {
 		'handleDelete',
 		'handleCopy',
 		'handleSearch',
-		'handleSearchChange'
+		'handleSearchChange',
+		'clearSearch'
 		)
 
 		this.state = {
@@ -60,6 +61,11 @@ class EmailControls extends React.Component {
 		this.props.triggerSearch(searchText)
 	}
 
+	clearSearch() {
+		this.setState({searchValue: ''})
+		this.props.refreshEmailList()
+	}
+
 	render() {
 		this.copyClassNames = classNames({
 			'button': true,
@@ -68,10 +74,12 @@ class EmailControls extends React.Component {
 
 		return (
 			<div className="box control">
-				<div className="button" onClick={this.handleDelete}>Delete</div>
-				<div className={this.copyClassNames} onClick={this.handleCopy}>Copy</div>
-				<input className="input" type="text" placeholder="Doesn't work yet" value={this.state.searchValue} onChange={this.handleSearchChange}/>
-				<div className="button" onClick={this.handleSearch}>Search</div>
+				<button className="button" onClick={this.handleDelete}>Delete</button>
+				<button className={this.copyClassNames} onClick={this.handleCopy}>Copy</button>
+				<input className="input" type="text" placeholder="Doesn't work yet" value={this.state.searchValue} onChange={this.handleSearchChange} />
+				<button className="button" onClick={this.handleSearch}>Search</button>
+				<button className="button" onClick={this.clearSearch}>Clear</button>
+				
 			</div>
 		)
 	}

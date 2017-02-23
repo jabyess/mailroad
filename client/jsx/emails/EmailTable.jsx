@@ -16,9 +16,14 @@ class EmailTable extends React.Component {
 					</tr>
 				</thead>
 				<tbody>
-					{this.props.emailItems.map((cv, i) => {
+					{this.props.emailItems.map((cv) => {
 						return (
-							<EmailTableRow rowValues={cv} key={i} checked={this.props.selectedCheckboxes[cv.id]} updateSelectedCheckboxes={this.props.updateSelectedCheckboxes} />
+							<EmailTableRow 
+								rowValues={cv}
+								key={cv.id}
+								checked={this.props.selectedCheckboxes[cv.id]}
+								updateSelectedCheckboxes={this.props.updateSelectedCheckboxes}
+							/>
 						)
 					})}
 				</tbody>

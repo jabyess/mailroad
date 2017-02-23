@@ -17,16 +17,14 @@ let router = express.Router()
 let jsonParser = bodyParser.json()
 const env = process.env
 
-const COUCH_URL = env.COUCHDB_URL
-const COUCH_DB = env.EMAIL_DB
-const COUCH_UUID = COUCH_URL + '_uuids'
-const COUCH_FULL = COUCH_URL + COUCH_DB + '/'
-const COUCH_IMAGES = COUCH_URL + env.IMAGE_DB + '/'
-const COUCH_IMAGES_BULK = COUCH_URL + env.IMAGE_DB + '/_bulk_docs'
-const COUCH_IMAGES_FIND = COUCH_IMAGES + '_find'
-// const COUCH_SEARCH = COUCH_FULL + '_find'
 
-axios.defaults.baseURL = COUCH_FULL
+const COUCH_URL = env.COUCHDB_URL // http://localhost:5984/
+const COUCH_UUID = COUCH_URL + '_uuids' // http://localhost:5984/uuids
+const COUCH_EMAILS = COUCH_URL + env.EMAIL_DB + '/' // http://localhost:5984/emails/
+const COUCH_EMAILS_FIND = COUCH_EMAILS + '_find' // http://localhost:5984/emails/_find
+const COUCH_IMAGES = COUCH_URL + env.IMAGE_DB + '/' // http://localhost:5984/images/
+const COUCH_IMAGES_BULK = COUCH_IMAGES + '_bulk_docs' // http://localhost:5984/images/_bulk_docs
+const COUCH_IMAGES_FIND = COUCH_IMAGES + '_find' // http://localhost:5984/images/_find
 
 const s3Config = {
 	region: env.AWS_REGION,
@@ -41,7 +39,7 @@ const s3Params = {
 let S3 = new AWS(s3Config)
 
 router.get('/email/list', jsonParser, (req, res) => {
-	const designUrl = COUCH_FULL + '_design/EmailsByUpdatedDate/_view/EmailsByUpdatedDate'
+	const designUrl = COUCH_EMAILS + '_design/EmailsByUpdatedDate/_view/EmailsByUpdatedDate'
 	axios.get(designUrl, {
 		params: {
 			limit: 10,
@@ -89,13 +87,11 @@ router.post('/email/create', jsonParser, (req,res) => {
 	
 	axios.get(COUCH_UUID)
 		.then((response) => {
-			console.log('---couch_uuid response---')
-			console.log(response.data)
 			let uuid = response.data.uuids[0]
 			return uuid
 		})
 		.then((uuid) => {
-			let url = COUCH_FULL + uuid
+			let url = COUCH_EMAILS + uuid
 			return axios.put(url, {
 				content,
 				title,
@@ -103,7 +99,7 @@ router.post('/email/create', jsonParser, (req,res) => {
 				updatedAt
 			})
 			.then((putResponse) => {
-				let url = COUCH_FULL + putResponse.data.id
+				let url = COUCH_EMAILS + putResponse.data.id
 				return axios.get(url)
 					.then((getResponse) => {
 						res.send(getResponse.data)
@@ -122,7 +118,7 @@ router.post('/email/create', jsonParser, (req,res) => {
 })
 
 router.get('/email/:id', (req, res) => {
-	let url = COUCH_FULL + req.params.id
+	let url = COUCH_EMAILS + req.params.id
 	axios.get(url)
 		.then((emailData) => {
 			res.send(emailData.data)
@@ -139,7 +135,7 @@ router.delete('/email', jsonParser, (req, res) => {
 		console.log('ids:', ids)
 
 		let idsToDelete = ids.map((id) => {
-			let url = COUCH_FULL + id
+			let url = COUCH_EMAILS + id
 			return axios.get(url).then((result) => {
 				let { _rev } = result.data
 				return { id, _rev }
@@ -152,7 +148,7 @@ router.delete('/email', jsonParser, (req, res) => {
 		Promise.all(idsToDelete).then((deleteObject) => {
 			return deleteObject.map(({id, _rev}) => {
 				console.log(id, _rev)
-				let url = COUCH_FULL + id
+				let url = COUCH_EMAILS + id
 				return axios.delete(url, {
 					params: { rev: _rev }
 				}).then((deleted) => {
@@ -173,11 +169,15 @@ router.delete('/email', jsonParser, (req, res) => {
 router.post('/email/search', jsonParser, (req, res) => {
 	let searchText = req.body.searchText
 	console.log('hit search', searchText)
-	// axios.post(COUCH_SEARCH, {
-	// 	selector: {
-	// 		title: searchText
-	// 	}
-	// })
+	axios.post(COUCH_EMAILS_FIND, {
+		selector: {
+			title: searchText
+		}
+	})
+	.then((response) => {
+		console.log(response)
+		res.send(response)
+	})
 })
 
 // router.post('/copyEmail', jsonParser, (req, res) => {
