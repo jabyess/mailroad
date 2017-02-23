@@ -29,7 +29,7 @@ const schema = {
 			const src = node.data.get('src')
 			const className = isFocused ? 'active' : null
 			return (
-				<img src={src} className={className} {...props.attributes} />
+				<span><img src={src} className={className} {...props.attributes} /></span>
 			)
 		},
 		'link': props => {
@@ -66,7 +66,8 @@ const BLOCK_TAGS = {
 
 const INLINE_TAGS = {
 	img: 'image',
-	a: 'link'
+	a: 'link',
+	span: 'span'
 }
 
 const MARK_TAGS = {
@@ -78,23 +79,34 @@ const rules = [
 	//handle block elements
 	{
 		deserialize(el, next) {
-			const block = BLOCK_TAGS[el.tagName]
-			if (!block) return
-			switch(block) {
+			const blockType = BLOCK_TAGS[el.tagName]
+			if (!blockType) return
+			switch(blockType) {
 			case 'link': {
 				return {
 					kind: 'block',
-					type: block,
+					type: blockType,
 					data: {
 						href: el.attribs.href
 					},
 					nodes: next(el.children)
 				}
 			}
+			case 'image': {
+				return {
+					kind: 'block',
+					type: blockType,
+					isVoid: true,
+					nodes: next(el.children),
+					data: {
+						src: el.attribs.src
+					}
+				}
+			}
 			default: 
 				return {
 					kind: 'block',
-					type: block,
+					type: blockType,
 					data: el.data ? el.data : [],
 					nodes: next(el.children)
 				}
@@ -131,23 +143,24 @@ const rules = [
 	{
 		//handle inline elements with attributes like img and a
 		deserialize(el, next) {
-			const inline = INLINE_TAGS[el.tagName]
-			if (!inline) return
-			switch(inline) {
-			case 'a' : {
+			const inlineType = INLINE_TAGS[el.tagName]
+			if (!inlineType) return
+			switch(inlineType) {
+			case 'link' : {
 				return {
 					kind: 'inline',
-					type: 'link',
+					type: inlineType,
 					nodes: next(el.children),
 					data: {
 						href: el.attribs.href
 					}
 				}
 			}
-			case 'img': {
+			case 'image': {
 				return {
 					kind: 'inline',
-					type: 'image',
+					type: inlineType,
+					isVoid: true,
 					nodes: next(el.children),
 					data: {
 						src: el.attribs.src
@@ -157,7 +170,7 @@ const rules = [
 			default: {
 				return {
 					kind: 'inline',
-					type: inline,
+					type: inlineType,
 					data: el.data ? el.data : [],
 					nodes: next(el.children)
 				}
@@ -229,12 +242,13 @@ class DefaultEditor extends React.Component {
 	//class methods
 	componentWillReceiveProps(nextProps) {
 		if(nextProps.imageURL) {
+			console.log(nextProps.imageURL, this.props.imageURL)
 			this.insertImage(nextProps.imageURL)
 		}
 		let content = html.deserialize(nextProps.content)
 		this.setState(() => {
-			this.state.state = content 
-		}) 
+			this.state.state = content
+		})
 	}
 
 	/**
@@ -449,7 +463,8 @@ class DefaultEditor extends React.Component {
 			detail: 'isGalleryModalVisible'
 		})
 		window.dispatchEvent(toggleImageGalleryModal)
-
+		const clearImageIndexURL = new CustomEvent('clearImageIndexURL')
+		window.dispatchEvent(clearImageIndexURL)
 	}
 
 	onPaste(e, data, state) {

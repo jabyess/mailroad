@@ -33,7 +33,8 @@ class EditorContainer extends React.Component {
 			'toggleImageGalleryModal',
 			'toggleVisible',
 			'setImageURL',
-			'setImageIndex'
+			'setImageIndex',
+			'clearImageIndexURL'
 		)
 
 		this.pouchDB = new PDB('emailbuilder')
@@ -56,6 +57,7 @@ class EditorContainer extends React.Component {
 
 	componentDidMount() {
 		window.addEventListener('toggleVisible', this.toggleVisible)
+		window.addEventListener('clearImageIndexURL', this.clearImageIndexURL)
 
 		this.getTemplates()
 
@@ -108,6 +110,7 @@ class EditorContainer extends React.Component {
 	}
 
 	updateContentValue(content, index) {
+		console.log(content)
 		this.setState((state) => {
 			state.content[index].content = content
 		})
@@ -188,7 +191,6 @@ class EditorContainer extends React.Component {
 
 	toggleVisible(event) {
 		let visibleKey = event.detail.toString()
-		console.log(visibleKey)
 		this.setState(() => {
 			let returnObj = {}
 			returnObj[visibleKey] = !this.state[visibleKey]
@@ -214,6 +216,10 @@ class EditorContainer extends React.Component {
 
 	setImageIndex(imageIndex) {
 		this.setState({ imageIndex })
+	}
+
+	clearImageIndexURL() {
+		this.setState({ imageIndex: null, imageURL: null})
 	}
 	
 	render() {
