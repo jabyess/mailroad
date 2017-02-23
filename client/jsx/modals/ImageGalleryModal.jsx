@@ -74,8 +74,23 @@ class ImageGalleryModal extends React.Component {
 	setImageURL(e) {
 		e.persist()
 		const index = e.target.dataset.index
-		const url = this.state.images[index].url
-		this.props.setImageURL(url)
+		const grouping = this.state.images[index].grouping
+		const url = '/api/s3/list/' + grouping
+
+		axios.get(url).then((response) => {
+
+			const imageSizes = response.data.docs.map(image => {
+				return {
+					size: image.size,
+					url: image.url
+				}
+			})
+
+			this.props.setImageSizes(imageSizes)
+		})
+		.catch((err) => {
+			console.log('error in imagesize getting', err)
+		})
 	}
 
 	updateMediaList() {
@@ -91,8 +106,16 @@ class ImageGalleryModal extends React.Component {
 		window.removeEventListener('triggerMediaListRefresh', this.updateMediaList)
 	}
 
+	toggleVisible() {
+		const isImageGalleryModalVisible = new CustomEvent('toggleVisible', {
+			detail: isImageGalleryModalVisible
+		})
+
+		window.dispatchEvent(isImageGalleryModalVisible)
+	}
+
 	render() {
-		const isGalleryModalVisible = this.props.isGalleryModalVisible ? 
+		const isGalleryModalVisible = this.props.isImageGalleryModalVisible ? 
 		(
 			<div className="modal imagesContainer">
 				<div className="modal-background"></div>
@@ -119,7 +142,7 @@ class ImageGalleryModal extends React.Component {
 					})}
 					<button className="button imagesContainer--loadMore" onClick={this.loadMore}>Load More</button>
 				</div>
-				<button className="modal-close" onClick={this.props.toggleImageGalleryModal}></button>
+				<button className="modal-close" onClick={this.toggleVisible}></button>
 			</div>
 		) : null
 
@@ -128,7 +151,7 @@ class ImageGalleryModal extends React.Component {
 }
 
 ImageGalleryModal.propTypes = {
-	isGalleryModalVisible: React.PropTypes.bool,
+	isImageGalleryModalVisible: React.PropTypes.bool,
 	setImageURL: React.PropTypes.func,
 	toggleImageGalleryModal: React.PropTypes.func,
 }

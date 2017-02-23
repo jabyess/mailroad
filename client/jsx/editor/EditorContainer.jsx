@@ -5,6 +5,7 @@ import EditorTypeSelect from './editor-types/EditorTypeSelect.jsx'
 import EditorTypeWrapper from './EditorTypeWrapper.jsx'
 import ImagePromptModal from '../modals/ImagePromptModal.jsx'
 import ImageGalleryModal from '../modals/ImageGalleryModal.jsx'
+import ImageSizeModal from '../modals/ImageSizeModal.jsx'
 import LinkModal from '../modals/LinkModal.jsx'
 import HTML5Backend from 'react-dnd-html5-backend'
 import EditorControlsContainer from './EditorControlsContainer.jsx'
@@ -32,6 +33,7 @@ class EditorContainer extends React.Component {
 			'removeEditorFromContainer',
 			'toggleImageGalleryModal',
 			'toggleVisible',
+			'setImageSizes',
 			'setImageURL',
 			'setImageIndex',
 			'clearImageIndexURL'
@@ -76,11 +78,12 @@ class EditorContainer extends React.Component {
 		window.removeEventListener('toggleVisible', this.toggleVisible)
 	}
 
-	componentWillReceiveProps (nextProps) {
+	componentWillReceiveProps(nextProps) {
 		console.log('editorContainer nextprops:', nextProps)
 	}
 
 	componentDidUpdate() {
+
 		this.pouchDB.updateDoc(this.state)
 	}
 
@@ -191,10 +194,11 @@ class EditorContainer extends React.Component {
 
 	toggleVisible(event) {
 		let visibleKey = event.detail.toString()
+		console.log(visibleKey)
 		this.setState(() => {
-			let returnObj = {}
-			returnObj[visibleKey] = !this.state[visibleKey]
-			return returnObj
+			let visibleObj = {}
+			visibleObj[visibleKey] = !this.state[visibleKey]
+			return visibleObj
 		})
 	}
 
@@ -206,12 +210,27 @@ class EditorContainer extends React.Component {
 		})
 	}
 
-	toggleImageGalleryModal() {
-		this.setState({isGalleryModalVisible: !this.state.isGalleryModalVisible})
-	}
+	// toggleImageGalleryModal() {
+	// 	this.setState({isGalleryModalVisible: !this.state.isGalleryModalVisible})
+	// }
+
 
 	setImageURL(imageURL) {
 		this.setState({ imageURL })
+	}
+
+	setImageSizes(imageSizes) {
+		const isImageSizeModalVisible = new CustomEvent('toggleVisible', {
+			detail: 'isImageSizeModalVisible'
+		})
+		const isImageGalleryModalVisible = new CustomEvent('toggleVisible', {
+			detail: 'isImageGalleryModalVisible'
+		})
+
+		this.setState({ imageSizes }, () => {
+			window.dispatchEvent(isImageSizeModalVisible)
+			window.dispatchEvent(isImageGalleryModalVisible)
+		})
 	}
 
 	setImageIndex(imageIndex) {
@@ -225,20 +244,25 @@ class EditorContainer extends React.Component {
 	render() {
 		const renderImageGalleryModal = this.state.isGalleryModalVisible ? 
 		<ImageGalleryModal
-			toggleImageGalleryModal={this.toggleImageGalleryModal}
-			isGalleryModalVisible={this.state.isGalleryModalVisible}
-			setImageURL={this.setImageURL}
+			isImageGalleryModalVisible={this.state.isImageGalleryModalVisible}
+			setImageSizes={this.setImageSizes}
 		/> : null
 		const renderImagePromptModal = this.state.isImagePromptModalVisible ? <ImagePromptModal /> : null
 		const renderEditorTypeSelect = this.state.isEditModeActive ? <EditorTypeSelect
 			addEditorToContainer={this.addEditorToContainer}
 			/> : null
 		const renderLinkModal = this.state.isLinkModalVisible ? <LinkModal /> : null
+		const renderImageSizeModal = this.state.isImageSizeModalVisible ? <ImageSizeModal
+			imageSizes={this.state.imageSizes}
+			isImageSizeModalVisible={this.state.isImageSizeModalVisible}
+			setImageURL={this.setImageURL}
+		/> : null
 		
 		return (
 			<div className="editor-container">
 				{renderImagePromptModal}
 				{renderImageGalleryModal}
+				{renderImageSizeModal}
 				{renderLinkModal}
 				<EditorMetaContainer {...this.state}
 					handleTitleChange={this.handleTitleChange}

@@ -184,6 +184,26 @@ router.post('/email/search', jsonParser, (req, res) => {
 // 	const id = req.body.id[0]
 // })
 
+router.get('/s3/list/:grouping', (req, res) => {
+	if(req.params && req.params.grouping) {
+		axios.post(COUCH_IMAGES_FIND, {
+			selector: { 
+				grouping: req.params.grouping
+			}
+		})
+		.then((results) => {
+			console.log(results.data.docs)
+			res.send(results.data)
+		})
+		.catch((err) => {
+			console.log('error in /s3/list/:grouping', err)
+		})
+	}
+	else {
+		res.status(400).send('Invalid parameters')
+	}
+}) 
+
 router.get('/s3/list/:skip?', (req, res) => {
 	const skip = req.query && req.query.skip ? req.query.skip : null
 	const url = COUCH_IMAGES + '_design/ImagesByDate/_view/ImagesByDate'
@@ -202,8 +222,9 @@ router.get('/s3/list/:skip?', (req, res) => {
 				return {
 					url: image.value.url,
 					size: image.value.size,
+					grouping: image.value.grouping,
 					date: image.key,
-					id: image.id
+					id: image.id,
 				}
 			})
 		}
