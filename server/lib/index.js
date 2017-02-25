@@ -1,23 +1,28 @@
 import dotenv from 'dotenv'
 import path from 'path'
 import express from 'express'
-import hbs from 'express-handlebars'
+import session from 'express-session'
+import { passportjs } from '../routes/auth.js'
 import { API } from '../routes/api.js'
+import { S3 } from '../routes/s3.js'
+import { auth } from '../routes/auth.js'
 import axios from 'axios'
-import fs from 'fs'
 
 dotenv.config()
+
 const { COUCHDB_URL, EMAIL_DB, IMAGE_DB, USER_DB } = process.env
-const EMAILDB_URL = COUCHDB_URL + EMAIL_DB
-const UUID_URL = COUCHDB_URL + '_uuids'
 
 let app = express()
 
-app.engine('handlebars', hbs({ defaultLayout: 'main' }))
-app.set('view engine', 'handlebars')
-// app.use('/scripts', express.static(path.join(__dirname, 'dist')))
-app.use('/api', API)
-
+app.use(session({
+	secret: 'dumbsecret',
+	resave: false, 
+	saveUninitialized: false
+}))
+passportjs.init(app)
+app.use('/api/email', API)
+app.use('/api/s3', S3)
+// app.use('/api/auth/', auth)
 
 app.get('/editor/*', (req, res) => {
 	res.redirect('/')
