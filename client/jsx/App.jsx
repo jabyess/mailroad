@@ -6,12 +6,17 @@ class App extends React.Component {
 		super()
 	}
 
+
+	componentWillReceiveProps (nextProps) {
+		console.log('app cwr', nextProps)
+	}
+	
 	render() {
 		return (
 			<div>
 				<div className="app-nav columns">
 					<div className="column">
-						<NavBar />
+						<NavBar loggedIn={this.props.route.loggedIn} />
 					</div>
 				</div>
 				<div className="app-content columns">
@@ -23,6 +28,7 @@ class App extends React.Component {
 		)
 	}
 }
+
 App.propTypes = {
 	children: React.PropTypes.element
 }

@@ -1,25 +1,9 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
-import EditorContainer from './editor/EditorContainer.jsx'
-import EmailContainer from './emails/EmailContainer.jsx'
-import AdminContainer from './AdminContainer.jsx'
-import MediaContainer from './media/MediaContainer.jsx'
-import LoginContainer from './login/LoginContainer.jsx'
-import App from './App.jsx'
-import { Router, Route, IndexRoute, browserHistory } from 'react-router'
+import { render } from 'react-dom'
+import MailRoadRouter from './MailRoadRouter.jsx'
 import '../sass/main.sass'
 
-ReactDOM.render(
-	<Router history={browserHistory}>
-		<Route path="/" component={App}>
-			<IndexRoute component={EmailContainer} />
-			<Route path="/editor" component={EditorContainer}>
-				<Route path="/editor/:id" component={EditorContainer}/>
-			</Route>
-			<Route path="/admin" component={AdminContainer}></Route>
-			<Route path="/media" component={MediaContainer}></Route>
-		</Route>
-		<Route path="/login" component={LoginContainer}></Route>
-	</Router>,
-		document.getElementById('emailbuilder-root')
+render(
+	<MailRoadRouter />,
+	document.getElementById('emailbuilder-root')
 )

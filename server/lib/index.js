@@ -3,10 +3,11 @@ import path from 'path'
 import express from 'express'
 import session from 'express-session'
 import { passportjs } from '../routes/auth.js'
+import { auth } from '../routes/auth.js'
 import { API } from '../routes/api.js'
 import { S3 } from '../routes/s3.js'
-import { auth } from '../routes/auth.js'
 import axios from 'axios'
+
 
 dotenv.config()
 
