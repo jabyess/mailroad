@@ -1,5 +1,3 @@
-import Promise from 'bluebird'
-
 /**
 	 * Wraps a function and fires it based on the delay specified.
 	 * @param {function} func - function to debounce

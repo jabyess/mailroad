@@ -141,7 +141,7 @@ class EditorContainer extends React.Component {
 	}
 
 	getTemplates() {
-		axios.get('/api/templates')
+		axios.get('/api/email/templates')
 			.then((templates) => {
 				this.setState({ templates: templates.data })
 			})
@@ -174,11 +174,8 @@ class EditorContainer extends React.Component {
 	compileHTMLTemplate() {
 		let {content, title, template} = this.state
 		let context = { content, title, template }
-		axios.post('/api/compileTemplate', {
+		axios.post('/api/email/compileTemplate', {
 			context: JSON.stringify(context)
-		})
-		.then((response) => {
-			return response.text()
 		})
 		.then((text) => {
 			console.log(text)
