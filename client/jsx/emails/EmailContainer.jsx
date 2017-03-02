@@ -42,14 +42,12 @@ export default class EmailContainer extends React.Component {
 			return newValues
 		})
 		return values
-
 	}
 
 	displayEmails(paginatedEmails, direction) {
 		if(!paginatedEmails) {
 			axios('/api/email/list')
 				.then((results) => {
-					console.log(results)
 					let values = this.mapEmailResults(results.data.rows)
 					this.setState({
 						emailItems: values,

@@ -7,56 +7,64 @@ import AdminContainer from './AdminContainer.jsx'
 import MediaContainer from './media/MediaContainer.jsx'
 import LoginContainer from './login/LoginContainer.jsx'
 import autoBind from 'react-autobind'
+import axios from 'axios'
 
 
 class MailRoadRouter extends React.Component {
 	constructor() {
 		super()
 
-// b6749cddd436d59c1c875ed8
-
 		autoBind(this,
-			'requireAuth',
-			'loggedIn',
-			'setLoggedInState'
+			'requireAuth'
 		)
-
-		this.state = {
-			loggedIn: false
-		}
 	}
 
-	loggedIn() {
-		console.log('loggedIn:', !!this.state.loggedIn)
-		return !!this.state.loggedIn
-	}
+	requireAuth(nextState, replace, callback) {
+		const sessionToken = localStorage.getItem('mailroad-session-token')
 
-	setLoggedInState(loggedIn) {
-		this.setState({ loggedIn })
-	}
-
-	requireAuth(nextState, replace) {
-		console.log(nextState)
-		if(!this.loggedIn()) {
+		// if no localStorage token, redirect to login
+		if(!sessionToken) {
 			replace({
 				pathname: '/login',
 				state: { nextPathname: nextState.location.pathname }
 			})
+			callback()
+		}
+
+		// if localstorage token exists, verify with redis that it's not expired
+		else if(sessionToken) {
+			axios.get(`/api/auth/verify/${sessionToken}`)
+				.then(success => {
+					if(success.status === 200) {
+						callback()
+					}
+					else {
+						replace({
+							pathname: '/',
+							state: { nextPathname: nextState.location.pathname }							
+						})
+						callback()
+					}
+				})
+				.catch(err => {
+					//TODO: system log error
+					console.log(err)
+				})
 		}
 	}
 
 	render() {
 		return (
 			<Router history={browserHistory}>
-				<Route path="/" component={App} onEnter={this.requireAuth} loggedIn={this.state.loggedIn}>
+				<Route path="/" component={App} onEnter={this.requireAuth}>
 					<IndexRoute component={EmailContainer} />
-					<Route path="/editor" component={EditorContainer} onEnter={this.requireAuth} loggedIn={this.state.loggedIn}>
+					<Route path="/editor" component={EditorContainer}>
 						<Route path="/editor/:id" component={EditorContainer}/>
 					</Route>
-					<Route path="/admin" component={AdminContainer} onEnter={this.requireAuth} loggedIn={this.state.loggedIn}></Route>
-					<Route path="/media" component={MediaContainer} onEnter={this.requireAuth} loggedIn={this.state.loggedIn}></Route>
+					<Route path="/admin" component={AdminContainer}></Route>
+					<Route path="/media" component={MediaContainer}></Route>
 				</Route>
-				<Route path="/login" component={LoginContainer} loggedIn={this.state.loggedIn} setLoggedInState={this.setLoggedInState}></Route>
+				<Route path="/login" component={LoginContainer} ></Route>
 			</Router>
 		)
 	}

@@ -26,49 +26,37 @@ export default class LoginForm extends React.Component {
 		this.setState({password: e.target.value})
 	}
 
-// b6749cddd436d59c1c875ed8
-
 	submitLogin(e) {
 		e.preventDefault()
 		const sessionToken = shortid.generate()
-		console.log(sessionToken)
 		const formData = new FormData()
+
 		formData.append('username', this.state.username)
 		formData.append('password', this.state.password)
+
 		axios.post('/api/auth/login', {
 			username: this.state.username,
 			password: this.state.password,
 			sessionToken: sessionToken
-		}).then(success => {
-			console.log('success', success)
-			const redirectRoute = success.data.route
-			this.props.setLoggedInState(true)
-			browserHistory.push(redirectRoute)
+		})
+		.then(() => {
+			//on success, write cookie and redirect
+			localStorage.setItem('mailroad-session-token', sessionToken)
+			browserHistory.replace('/')
 			return false
 		}, fail => {
+			//popup toast message saying fail username/password
 			console.log('fail', fail)
 			return false
-		}).catch(err => {
+		})
+		.catch(err => {
 			console.log('err', err)
+			
 			return false
 		})
 		return false
 	}
 
-	testRedirect(e) {
-		e.preventDefault()
-		axios.post('/api/auth/redirect', {
-			key: 'wat'
-		}).then((wat) => {
-			console.log(wat)
-			console.log(wat.status)
-			console.log(wat.data)
-			return false
-		})
-		return false
-	}
-
-// <button className="button" onClick={this.testRedirect}>Redirect</button>
 	render() {
 		return (
 			<div className="login-form box">
@@ -79,7 +67,6 @@ export default class LoginForm extends React.Component {
 					<input className="input is-large" id="password" onChange={this.onPasswordChange} type="password" value={this.state.password}/>
 					<input type="submit" className="input" onClick={this.submitLogin}/>
 				</form>
-				<button className="button" onClick={this.testRedirect}>Redirect</button>
 			</div>
 		)
 	}

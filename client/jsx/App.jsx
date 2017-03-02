@@ -1,14 +1,33 @@
 import React from 'react'
+import { browserHistory } from 'react-router'
 import NavBar from './NavBar.jsx'
+import axios from 'axios'
+
 
 class App extends React.Component {
 	constructor() {
 		super()
 	}
 
+	doLogout() {
+		const sessionToken = localStorage.getItem('mailroad-session-token')
 
-	componentWillReceiveProps (nextProps) {
-		console.log('app cwr', nextProps)
+		axios.delete(`/api/auth/${sessionToken}`)
+		.then((deleted) => {
+			if(deleted) {
+				browserHistory.push('/login')
+				localStorage.removeItem('mailroad-session-token')
+			}
+		}, () => {
+			browserHistory.push('/login')
+			localStorage.removeItem('mailroad-session-token')
+		})
+		.catch(err => {
+			// TODO: send error log to endpoint
+			console.log('err', err)
+		})
+
+		
 	}
 	
 	render() {
@@ -16,7 +35,7 @@ class App extends React.Component {
 			<div>
 				<div className="app-nav columns">
 					<div className="column">
-						<NavBar loggedIn={this.props.route.loggedIn} />
+						<NavBar doLogout={this.doLogout} />
 					</div>
 				</div>
 				<div className="app-content columns">

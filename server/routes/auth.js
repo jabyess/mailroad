@@ -1,5 +1,4 @@
 const dotenv = require('dotenv')
-const Promise = require('bluebird')
 const bodyParser = require('body-parser')
 const axios = require('axios')
 const passport = require('passport')
@@ -10,20 +9,16 @@ const redis = require('redis')
 dotenv.config()
 
 const AUTH_URL = process.env.AUTH_URL
-const AUTH_VERIFY_URL = process.env.AUTH_VERIFY_URL
-
 const redisClient = redis.createClient()
-let jsonParser = bodyParser.json()
-// let router = express.Router()
-
-let passportjs = {}
+const jsonParser = bodyParser.json()
+const passportjs = {}
 
 passportjs.init = (app) => {
 
 	passport.use(new LocalStrategy({
 		passReqToCallback: true
-	},(req, username, password, done) => {
-		console.log(username, password)
+	},
+	(req, username, password, done) => {
 		return axios.get(AUTH_URL, {
 			auth: {
 				username: username,
@@ -33,15 +28,26 @@ passportjs.init = (app) => {
 			const uid = authenticated.data.user.id
 			const sessionToken = req.body.sessionToken
 
-			redisClient.set(sessionToken, uid, () => {
-				return done(null, sessionToken)
+			redisClient.setex(sessionToken, 86400, uid, (err, success) => {
+				if(err) {
+					// TODO: system log error
+					return false
+				}
+				if(!err) {
+					return done(null, sessionToken)
+				}
+				else {
+					console.log(err)
+				}
 			})
-			// const authObj = {
-			// 	uid, sessionToken
-			// console.log('success', sessionToken)
-			// return done(null, sessionToken)
-		}, failed => {
-			console.log('failed', failed)
+		},
+		failed => {
+			// 401 if user valid, password invalid
+			// 400 if neither is valid
+			// currently no ways to pass value back to client
+			// unless we pass done(null, { failed.data.response })
+			// this breaks passportjs strategy convention though.
+			console.log('failed', failed) 
 			return done(null, false)
 		})
 		.catch((err) => {
@@ -55,16 +61,13 @@ passportjs.init = (app) => {
 	app.use(passport.session())
 
 	passport.serializeUser((token, done) => {
-		console.log('serializing', token)
 		done(null, token)
 	})
 
 	passport.deserializeUser((token, done) => {
-		console.log('deserializing', token)
-		redisClient.get(token, (err, uuid) => {
+		redisClient.get(token, (err, uid) => {
 			if(!err) {
-				console.log('got it', uuid)
-				done(null, uuid)
+				done(null, uid)
 			}
 		})
 	})
@@ -72,8 +75,8 @@ passportjs.init = (app) => {
 	app.post('/api/auth/login', jsonParser, passport.authenticate('local', {
 		session: true
 	}), (req, res) => {
-		console.log(req.body)
-		res.send({route: '/'})
+		//if passport.authenticate validates, send success status
+		res.sendStatus(200)
 	})
 
 	app.post('/api/auth/redirect', jsonParser, (req, res) => {
@@ -82,48 +85,39 @@ passportjs.init = (app) => {
 		console.log(key)
 		redisClient.set('key',key, redis.print)
 		res.send('set key')
-		
+	})
+
+	app.delete('/api/auth/:uid', (req, res) => {
+		const uid = req.params.uid
+		redisClient.del(uid, (err, deletedRecords) => {
+			if(!err && deletedRecords > 0) {
+				res.sendStatus(200)
+			}
+			else if(!err && deletedRecords < 1) {
+				res.sendStatus(404)
+			}
+			else {
+				// TODO: system log error
+				console.log(err)
+				res.status(500).send(err)
+			}
+		})
+	})
+
+	app.get('/api/auth/verify/:uid', (req, res) => {
+		const uid = req.params.uid
+		redisClient.get(uid, (err, data) => {
+			if(err) {
+				//TODO: system log error
+				console.log(err)
+				res.sendStatus(500)
+			}
+			if(!err && data) {
+				res.sendStatus(200)
+			}
+		})
 	})
 
 }
 
-// b6749cddd436d59c1c875ed8
-
-
-// router.post('/redirect', (req, res) => {
-// 	console.log('hit redirect')
-// 	res.status(200).send({route: '/'})
-// })
-
-
-
-
-// router.post('/login', bodyParser, (req, res) => {
-// 	console.log(req)
-// 	const { username, password } = req.body.auth
-
-// 	axios.get(AUTH_URL, {
-// 		auth: {
-// 			username: username,
-// 			password: password,
-// 		}
-// 	}).then(authenticated => {
-// 		const user = authenticated.data.user
-// 		console.log('success', user)
-// 		return done(null, user)
-// 	}, failed => {
-// 		console.log('failed', failed)
-// 		return done(null, false)
-// 	})
-// 	.catch((err) => {
-// 		console.log('err', err)
-// 		console.log(err.response.data)
-// 		return done(err)
-// 	})
-// 	res.redirect('/')
-// 	res.send()
-// })
-
-
-// export { router as auth }
 export { passportjs }
