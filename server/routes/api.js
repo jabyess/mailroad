@@ -7,6 +7,7 @@ import Utils from '../lib/utils.js'
 import Promise from 'bluebird'
 import axios from 'axios'
 
+const mjml = require('../lib/mjml.js')
 
 dotenv.config()
 
@@ -40,14 +41,14 @@ router.get('/list/:skip?', jsonParser, (req, res) => {
 })
 
 router.get('/templates', (req, res) => {
-	const templateDir = path.resolve(__dirname, '../templates')
+	const templateDir = path.resolve(__dirname, '../mjml-templates')
 	fs.readdir(templateDir, (err, files) => {
 		if(err) {
 			throw Error('error reading templates: ', err)
 		}
 		else {
 			let fileList = files.map( (f) => {
-				return path.basename(f, '.hbs')
+				return path.basename(f, '.mjml')
 			})
 			res.send(fileList)
 		}
@@ -55,7 +56,22 @@ router.get('/templates', (req, res) => {
 })
 
 router.post('/compileTemplate', jsonParser, (req,res) => {
-	console.log(req.body)
+	// console.log(req.body)
+	const context = JSON.parse(req.body.context)
+	const template = context.template
+	// const compiled = mjml.compileToMJML(context.content[0].content)
+	mjml.parseHandlebars(context, template, (result) => {
+		console.log('result:', result)
+		let compiledHTML = mjml.compileToMJML(result)
+		console.log('compiledHTML:', compiledHTML)
+		if(compiledHTML.errors.length < 1) { 
+			let inlinedHTML = mjml.inlineCSS(compiledHTML.html)
+			console.log('inlinedhtml', inlinedHTML)
+		}
+		
+	})
+	// console.log(compiled)
+
 	res.status(200).send('not ready yet')
 	// Utils.getCompiledHandlebarsTemplate(req.body.context, (compiledTemplate) => {
 	// 	const inlinedTemplate = Utils.inlineEmailCSS(compiledTemplate)
