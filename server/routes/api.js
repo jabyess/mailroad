@@ -56,27 +56,19 @@ router.get('/templates', (req, res) => {
 })
 
 router.post('/compileTemplate', jsonParser, (req,res) => {
-	// console.log(req.body)
+	
 	const context = JSON.parse(req.body.context)
 	const template = context.template
-	// const compiled = mjml.compileToMJML(context.content[0].content)
+
 	mjml.parseHandlebars(context, template, (result) => {
-		console.log('result:', result)
 		let compiledHTML = mjml.compileToMJML(result)
-		console.log('compiledHTML:', compiledHTML)
-		if(compiledHTML.errors.length < 1) { 
+		if(compiledHTML.errors.length < 1) {
 			let inlinedHTML = mjml.inlineCSS(compiledHTML.html)
-			console.log('inlinedhtml', inlinedHTML)
+			console.log(inlinedHTML)
 		}
-		
 	})
-	// console.log(compiled)
 
 	res.status(200).send('not ready yet')
-	// Utils.getCompiledHandlebarsTemplate(req.body.context, (compiledTemplate) => {
-	// 	const inlinedTemplate = Utils.inlineEmailCSS(compiledTemplate)
-	// 	res.send(inlinedTemplate)
-	// })
 })
 
 router.post('/create', jsonParser, (req,res) => {

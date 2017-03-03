@@ -26,8 +26,15 @@ const parseHandlebars = module.exports.parseHandlebars = (content, template, cal
 }
 
 const inlineCSS = module.exports.inlineCSS = (html, opts) => {
+	const defaultOptions = {
+		inlinePseudoElements: false,
+		preserveImportant: true
+	}
+
 	console.log('compiledHTML inside ', html)
-	let options = opts || {}
-	const inlined = juice(html)
+
+	let options = Object.assign({}, opts, defaultOptions)
+	const inlined = juice(html, options)
+
 	return inlined
 }
