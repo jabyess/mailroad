@@ -1,0 +1,28 @@
+<mjml>
+	<mj-body>
+		<mj-container>
+			<mj-section>
+				<mj-column>
+					<mj-text>
+						Morning Consult Header Category
+					</mj-text>
+				</mj-column>
+			</mj-section>
+
+			{{#each content}}
+			<mj-section>
+				<mj-column>
+					<mj-text>
+					</mj-text>
+					<mj-text>
+						{{{this.componentTitle}}}
+						{{{this.content}}}
+					</mj-text>
+
+				</mj-column>
+			</mj-section>
+			{{/each}}
+
+		</mj-container>
+	</mj-body>
+</mjml>
