@@ -570,13 +570,15 @@ class DefaultEditor extends React.Component {
 	}
 
 	render() {
-		// const { connectDragSource } = this.props
-		// return connectDragSource(
 		return (
 			<div className="box slate-editor">
 				<div className="slate-editor__title">
 					<label>Section Title</label>
-					<input className="input" type="text" value={this.props.componentTitle} onChange={this.onTitleChange} />
+					<select className="select" type="select" value={this.props.componentTitle} onChange={this.onTitleChange}>
+						{this.props.componentTitles.map((title, i) => {
+							return <option key={title + i} value={title}>{title}</option>
+						})}
+					</select>
 				</div>
 				{this.renderToolbar()}
 				{this.renderEditor()}
@@ -587,6 +589,7 @@ class DefaultEditor extends React.Component {
 
 DefaultEditor.propTypes = {
 	componentTitle: React.PropTypes.string,
+	componentTitles: React.PropTypes.array,
 	content: React.PropTypes.string,
 	connectDragSource: React.PropTypes.func,
 	index: React.PropTypes.number,

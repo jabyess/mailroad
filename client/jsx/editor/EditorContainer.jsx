@@ -2,7 +2,8 @@ import React from 'react'
 import autoBind from 'react-autobind'
 import EditorMetaContainer from './EditorMetaContainer.jsx'
 import EditorTypeSelect from './editor-types/EditorTypeSelect.jsx'
-import EditorTypeWrapper from './EditorTypeWrapper.jsx'
+import shortid from 'shortid'
+import EditorTypeRow from './EditorTypeRow.jsx'
 import ImagePromptModal from '../modals/ImagePromptModal.jsx'
 import ImageGalleryModal from '../modals/ImageGalleryModal.jsx'
 import ImageSizeModal from '../modals/ImageSizeModal.jsx'
@@ -46,13 +47,7 @@ class EditorContainer extends React.Component {
 			template: '',
 			templates: [],
 			content: [],
-			// isEditorTypeSelectVisible: false,
-			// isEditModeActive: false,
-			// isGalleryModalVisible: false,
-			// isSaveButtonVisible: false,
-			// isExternalImageModalVisible: false,
-			// isImagePromptModalVisible: false,
-			// isLinkModalVisible: false
+			componentTitles: ['Washington', 'Section', 'Energy', 'Tech']
 		}
 	}
 
@@ -77,12 +72,7 @@ class EditorContainer extends React.Component {
 		window.removeEventListener('toggleVisible', this.toggleVisible)
 	}
 
-	componentWillReceiveProps(nextProps) {
-		console.log('editorContainer nextprops:', nextProps)
-	}
-
 	componentDidUpdate() {
-
 		this.pouchDB.updateDoc(this.state)
 	}
 
@@ -91,7 +81,8 @@ class EditorContainer extends React.Component {
 			this.setState({
 				content: this.state.content.concat({
 					content: '<p>New Editor</p>',
-					editorType: currentEditor
+					editorType: currentEditor,
+					id: shortid.generate()
 				})
 			})
 		})
@@ -154,7 +145,8 @@ class EditorContainer extends React.Component {
 		let content = [{
 			content: '<p>Just start typing</p>',
 			editorType: 'DefaultEditor',
-			componentTitle: 'New Component'
+			componentTitle: 'New Component',
+			id: shortid.generate()
 		}]
 		let title = 'New Email'
 
@@ -178,19 +170,20 @@ class EditorContainer extends React.Component {
 			context: JSON.stringify(context)
 		})
 		.then((text) => {
+			// TODO: toast popup success			
 			console.log(text)
 		})
 	}
 
 	saveToDB() {
 		this.pouchDB.syncToDB(this.state, (complete) => {
+			// TODO: toast popup success
 			console.log('complete', complete)
 		})
 	}
 
 	toggleVisible(event) {
 		let visibleKey = event.detail.toString()
-		console.log(visibleKey)
 		this.setState(() => {
 			let visibleObj = {}
 			visibleObj[visibleKey] = !this.state[visibleKey]
@@ -231,7 +224,7 @@ class EditorContainer extends React.Component {
 	clearImageIndexURL() {
 		this.setState({ imageIndex: null, imageURL: null})
 	}
-	
+
 	render() {
 		const renderImageGalleryModal = this.state.isImageGalleryModalVisible ? 
 		<ImageGalleryModal
@@ -266,17 +259,26 @@ class EditorContainer extends React.Component {
 				/>
 				{renderEditorTypeSelect}
 				<div className="editor-container__editors">
-					<EditorTypeWrapper
-						content={this.state.content}
-						imageURL={this.state.imageURL}
-						imageIndex={this.state.imageIndex}
-						setImageIndex={this.setImageIndex}
-						isEditModeActive={this.state.isEditModeActive}
-						removeEditorFromContainer={this.removeEditorFromContainer}
-						updateComponentTitle={this.updateComponentTitle}
-						updateContentValue={this.updateContentValue}
-						reorderEditorIndexes={this.reorderEditorIndexes}
-					/>
+					{this.state.content.map((content, i) => {
+						return (
+							<EditorTypeRow
+								key={content.id}
+								index={i}
+								content={content.content}
+								editorType={content.editorType}
+								componentTitle={content.componentTitle}
+								imageURL={this.state.imageURL}
+								imageIndex={this.state.imageIndex}
+								setImageIndex={this.setImageIndex}
+								isEditModeActive={this.state.isEditModeActive}
+								removeEditorFromContainer={this.removeEditorFromContainer}
+								componentTitles={this.state.componentTitles}
+								updateComponentTitle={this.updateComponentTitle}
+								updateContentValue={this.updateContentValue}
+								reorderEditorIndexes={this.reorderEditorIndexes}
+							/>
+						)
+					})}
 				</div>
 
 			</div>

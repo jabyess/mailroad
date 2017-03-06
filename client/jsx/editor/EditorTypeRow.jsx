@@ -47,6 +47,7 @@ class EditorTypeRow extends React.Component {
 					setImageIndex={this.props.setImageIndex}
 					isEditModeActive={this.props.isEditModeActive}
 					content={this.props.content}
+					componentTitles={this.props.componentTitles}
 					componentTitle={this.props.componentTitle}
 					editorType={this.props.editorType}
 					updateComponentTitle={this.props.updateComponentTitle}
@@ -55,12 +56,24 @@ class EditorTypeRow extends React.Component {
 				/>
 			</div>
 		)
-
 	}
 }
 
 EditorTypeRow.propTypes = {
-
+	index: React.PropTypes.number,
+	imageURL: React.PropTypes.string,
+	imageIndex: React.PropTypes.number,
+	setImageIndex: React.PropTypes.func,
+	isEditModeActive:  React.PropTypes.bool,
+	content:  React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object]),
+	componentTitles:  React.PropTypes.array,
+	componentTitle:  React.PropTypes.string,
+	editorType:  React.PropTypes.string,
+	updateComponentTitle: React.PropTypes.func,
+	updateContentValue: React.PropTypes.func,
+	removeEditorFromContainer: React.PropTypes.func,
+	isOver: React.PropTypes.bool,
+	connectDropTarget: React.PropTypes.func,
 }
 
 export default DropTarget(ItemTypesArray, editorTypeRowDropTarget, collect)(EditorTypeRow)

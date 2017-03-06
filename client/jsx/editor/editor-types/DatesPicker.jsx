@@ -67,7 +67,11 @@ class DatesPicker extends React.Component {
 			<div className="date-range-picker">
 				<div className="component-title">
 					<label>DatesPicker Title</label>
-					<input type="text" value={this.props.componentTitle} onChange={this.onTitleChange} />
+					<select className="select" type="select" value={this.props.componentTitle} onChange={this.onTitleChange}>
+						{this.props.componentTitles.map((title, i) => {
+							return <option key={title + i} value={title}>{title}</option>
+						})}
+					</select>
 				</div>
 				<DateRangePicker
 					startDate={this.state.startDate}
