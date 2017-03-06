@@ -65,7 +65,6 @@ class DynamicEditor extends React.Component {
 					</div>
 				: '' }
 				<DynamicEditorType
-					key={this.props.key}
 					index={this.props.index}
 					imageIndex={this.props.imageIndex}
 					content={this.props.content}
@@ -79,7 +78,6 @@ class DynamicEditor extends React.Component {
 				/>
 			</div>
 		)
-
 	}
 }
 
@@ -89,8 +87,10 @@ DynamicEditor.propTypes = {
 	isEditModeActive: React.PropTypes.bool,
 	index: React.PropTypes.number,
 	imageIndex: React.PropTypes.number,
+	imageURL: React.PropTypes.string,
 	setImageIndex: React.PropTypes.func,
-	content: React.PropTypes.string,
+	removeEditorFromContainer: React.PropTypes.func,
+	content:  React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object]),
 	componentTitle: React.PropTypes.string,
 	componentTitles: React.PropTypes.array,
 	updateComponentTitle: React.PropTypes.func,
