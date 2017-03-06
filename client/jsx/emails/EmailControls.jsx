@@ -41,10 +41,13 @@ class EmailControls extends React.Component {
 	}
 
 	handleCopy() {
-		// handle any undefined behavior with the 'OR' assignment
-		const duplicate_id = Object.keys(this.props.selectedCheckboxes)[0] || ''
+		// guard clause: prevent the duplication of more than one email
+		const selected = Object.keys(this.props.selectedCheckboxes)
+		if (selected.length !== 1) {
+			return null
+		}
 
-		axios.post('/api/email/copy', { id: duplicate_id })
+		axios.post('/api/email/copy', { id: selected[0] })
 			.then(res => {
 				this.props.refreshEmailList()
 				return res.text()

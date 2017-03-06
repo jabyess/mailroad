@@ -172,13 +172,13 @@ router.post('/search', jsonParser, (req, res) => {
 })
 
 router.post('/copy', jsonParser, (req, res) => {
-	console.log('hi')
 	const id = req.body.id
 	const createdAt = Utils.getCurrentTimestampUTC()
 	const updatedAt = Utils.getCurrentTimestampUTC()
 	let copyData
 
-	if (!id) {
+	// guard clause: prevent non-string ID
+	if (!id || typeof id !== 'string') {
 		return res.status(400).json({message: 'Did not pass valid email to duplicate'})
 	}
 
