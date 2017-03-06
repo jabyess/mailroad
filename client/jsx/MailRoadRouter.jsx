@@ -21,7 +21,6 @@ class MailRoadRouter extends React.Component {
 
 	requireAuth(nextState, replace, callback) {
 		const sessionToken = localStorage.getItem('mailroad-session-token')
-
 		// if no localStorage token, redirect to login
 		if(!sessionToken) {
 			replace({
@@ -38,13 +37,13 @@ class MailRoadRouter extends React.Component {
 					if(success.status === 200) {
 						callback()
 					}
-					else {
-						replace({
-							pathname: '/',
-							state: { nextPathname: nextState.location.pathname }							
-						})
-						callback()
-					}
+				}, fail => {
+					console.log('failed auth', fail)
+					replace({
+						pathname: '/login',
+						state: { nextPathname: nextState.location.pathname }
+					})
+					callback()
 				})
 				.catch(err => {
 					//TODO: system log error

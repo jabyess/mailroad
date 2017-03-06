@@ -82,14 +82,19 @@ class DynamicEditor extends React.Component {
 	}
 }
 
-// DynamicEditor.propTypes = {
-// 	editorType: React.PropTypes.string,
-// 	connectDragSource: React.PropTypes.func,
-// 	isEditModeActive: React.PropTypes.bool,
-// 	index: React.PropTypes.number,
-// 	content: React.PropTypes.string,
-// 	componentTitle: React.PropTypes.string
-// }
+DynamicEditor.propTypes = {
+	editorType: React.PropTypes.string,
+	connectDragSource: React.PropTypes.func,
+	isEditModeActive: React.PropTypes.bool,
+	index: React.PropTypes.number,
+	imageIndex: React.PropTypes.number,
+	setImageIndex: React.PropTypes.func,
+	content: React.PropTypes.string,
+	componentTitle: React.PropTypes.string,
+	componentTitles: React.PropTypes.array,
+	updateComponentTitle: React.PropTypes.func,
+	updateContentValue: React.PropTypes.func,
+}
 
 
 export default DragSource('DefaultEditor', dynamicEditorSource, collect)(DynamicEditor)
