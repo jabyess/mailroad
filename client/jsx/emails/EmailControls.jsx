@@ -41,20 +41,15 @@ class EmailControls extends React.Component {
 	}
 
 	handleCopy() {
-		fetch('/api/copyEmail', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				'id':	Object.keys(this.props.selectedCheckboxes)
-			})
-		})
-		.then((response) => {
-			this.props.refreshEmailList()
-			return response.text()
-		})
-	}	
+		// handle any undefined behavior with the 'OR' assignment
+		const duplicate_id = Object.keys(this.props.selectedCheckboxes)[0] || ''
+
+		axios.post('/api/email/copy', { id: duplicate_id })
+			.then(res => {
+				this.props.refreshEmailList()
+				return res.text()
+			}).catch(console.log)
+	}
 
 	handleSearch() {
 		const searchText = this.state.searchValue
@@ -79,7 +74,7 @@ class EmailControls extends React.Component {
 				<input className="input" type="text" placeholder="Doesn't work yet" value={this.state.searchValue} onChange={this.handleSearchChange} />
 				<button className="button" onClick={this.handleSearch}>Search</button>
 				<button className="button" onClick={this.clearSearch}>Clear</button>
-				
+
 			</div>
 		)
 	}
