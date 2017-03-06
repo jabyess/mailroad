@@ -41,6 +41,7 @@ class EditorTypeRow extends React.Component {
 		return connectDropTarget(
 			<div style={isOverCSS}>
 				<DynamicEditor
+					key={this.props.key}
 					index={this.props.index}
 					imageURL={this.props.imageURL}
 					imageIndex={this.props.imageIndex}

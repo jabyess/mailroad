@@ -65,6 +65,7 @@ class DynamicEditor extends React.Component {
 					</div>
 				: '' }
 				<DynamicEditorType
+					key={this.props.key}
 					index={this.props.index}
 					imageIndex={this.props.imageIndex}
 					content={this.props.content}
