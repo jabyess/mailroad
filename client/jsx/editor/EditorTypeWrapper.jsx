@@ -35,6 +35,7 @@ class EditorTypeWrapper extends React.Component {
 							index={i}
 							imageIndex={this.props.imageIndex}
 							content={content.content}
+							componentTitles={this.props.componentTitles}
 							componentTitle={content.componentTitle}
 							editorType={content.editorType}
 							isEditModeActive={isEditModeActive}

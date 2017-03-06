@@ -47,6 +47,7 @@ class EditorTypeRow extends React.Component {
 					setImageIndex={this.props.setImageIndex}
 					isEditModeActive={this.props.isEditModeActive}
 					content={this.props.content}
+					componentTitles={this.props.componentTitles}
 					componentTitle={this.props.componentTitle}
 					editorType={this.props.editorType}
 					updateComponentTitle={this.props.updateComponentTitle}

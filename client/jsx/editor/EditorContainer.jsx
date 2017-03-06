@@ -46,6 +46,7 @@ class EditorContainer extends React.Component {
 			template: '',
 			templates: [],
 			content: [],
+			componentTitles: ['Washington', 'Section', 'Energy', 'Tech']
 			// isEditorTypeSelectVisible: false,
 			// isEditModeActive: false,
 			// isGalleryModalVisible: false,
@@ -273,6 +274,7 @@ class EditorContainer extends React.Component {
 						setImageIndex={this.setImageIndex}
 						isEditModeActive={this.state.isEditModeActive}
 						removeEditorFromContainer={this.removeEditorFromContainer}
+						componentTitles={this.state.componentTitles}
 						updateComponentTitle={this.updateComponentTitle}
 						updateContentValue={this.updateContentValue}
 						reorderEditorIndexes={this.reorderEditorIndexes}
