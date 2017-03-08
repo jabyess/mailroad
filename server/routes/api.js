@@ -72,7 +72,7 @@ router.post('/compileTemplate', jsonParser, (req,res) => {
 })
 
 router.post('/create', jsonParser, (req,res) => {
-	const { content, title } = req.body
+	const { contents, title } = req.body
 	const createdAt = Utils.getCurrentTimestampUTC()
 	const updatedAt = Utils.getCurrentTimestampUTC()
 
@@ -84,7 +84,7 @@ router.post('/create', jsonParser, (req,res) => {
 		.then((uuid) => {
 			let url = COUCH_EMAILS + uuid
 			return axios.put(url, {
-				content,
+				contents,
 				title,
 				createdAt,
 				updatedAt
@@ -216,7 +216,7 @@ router.post('/copy', jsonParser, (req, res) => {
 	}).then(result => {
 		const uuid = result.data.uuids[0]
 		return axios.put(COUCH_EMAILS + uuid, {
-			content: copyData.content,
+			contents: copyData.contents,
 			title: copyData.title,
 			template: copyData.template || '',
 			templates: copyData.templates || [],
