@@ -119,17 +119,17 @@ router.get('/:id', (req, res) => {
 		})
 })
 
-router.delete('/email', jsonParser, (req, res) => {
+router.delete('/delete', jsonParser, (req, res) => {
+	console.log(req.query)
 	if(req.query && req.query.id) {
 		const ids = req.query.id
 
 		console.log('ids:', ids)
 
-		let idsToDelete = ids.map((id) => {
-			let url = COUCH_EMAILS + id
-			return axios.get(url).then((result) => {
+		let idsToDelete = ids.map((_id) => {
+			return axios.get(`${COUCH_EMAILS}${_id}`).then((result) => {
 				let { _rev } = result.data
-				return { id, _rev }
+				return { _id, _rev }
 			})
 			.catch((error) => {
 				console.log(error)
@@ -137,22 +137,48 @@ router.delete('/email', jsonParser, (req, res) => {
 		})
 
 		Promise.all(idsToDelete).then((deleteObject) => {
-			return deleteObject.map(({id, _rev}) => {
-				console.log(id, _rev)
-				let url = COUCH_EMAILS + id
-				return axios.delete(url, {
-					params: { rev: _rev }
-				}).then((deleted) => {
-					console.log(deleted.data)
-				}).catch((err) => {
-					console.log('err deleting', err.data)
+			if(deleteObject && deleteObject.length > 1) {
+				let url = COUCH_EMAILS + '_bulk_docs'
+
+				const deleteDocs = deleteObject.map((obj) => {
+					obj._deleted = true
+					return obj
 				})
-			})
-		}, rejected => {
-			console.log('rejected', rejected.data)
-		}).then((returned) => {
-			console.log('returned', returned)
-			res.sendStatus(200)
+
+				axios.post(url, {
+					docs: deleteDocs
+				})
+				.then(() => {
+					res.sendStatus(200)
+				}, failed => {
+					res.status(500).send(failed)
+				})
+				.catch(err => {
+					res.status(500).send(err)
+				})
+			}
+
+			if(deleteObject && deleteObject.length === 1) {
+				const { _id, _rev } = deleteObject[0]
+				const url = COUCH_EMAILS + _id
+
+				axios.delete(url, {
+					params: {
+						rev: _rev
+					}
+				})
+				.then(deleted => {
+					if(deleted.status === 200) {
+						res.sendStatus(200)
+					}
+				})
+				.catch(err => {
+					// TODO: Log error
+					console.log('error happened in delete', err)
+					res.status(500).send(err)
+				})
+
+			}
 		})
 	}
 })

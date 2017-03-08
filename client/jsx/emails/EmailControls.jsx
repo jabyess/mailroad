@@ -21,10 +21,7 @@ class EmailControls extends React.Component {
 
 	handleDelete() {
 		const ids = Object.keys(this.props.selectedCheckboxes)
-		axios.delete('/api/email', {
-			headers: {
-				'Content-Type': 'application/json'
-			},
+		axios.delete('/api/email/delete', {
 			params: {
 				id : [...ids]
 			}
