@@ -46,7 +46,7 @@ class EditorContainer extends React.Component {
 		this.state = {
 			template: '',
 			templates: [],
-			content: [],
+			contents: [],
 			componentTitles: ['Washington', 'Section', 'Energy', 'Tech']
 		}
 	}
@@ -79,7 +79,7 @@ class EditorContainer extends React.Component {
 	addEditorToContainer(editorName) {
 		editorName.forEach((currentEditor) => {
 			this.setState({
-				content: this.state.content.concat({
+				contents: this.state.contents.concat({
 					content: '<p>New Editor</p>',
 					editorType: currentEditor,
 					id: shortid.generate()
@@ -90,7 +90,7 @@ class EditorContainer extends React.Component {
 
 	removeEditorFromContainer(index) {
 		this.setState(() => {
-			this.state.content.splice(index, 1)
+			this.state.contents.splice(index, 1)
 		})
 	}
 
@@ -105,12 +105,12 @@ class EditorContainer extends React.Component {
 	updateContentValue(content, index) {
 		console.log(content)
 		this.setState((state) => {
-			state.content[index].content = content
+			state.contents[index].content = content
 		})
 	}
 
 	updateComponentTitle(title, index) {
-		this.setState((state) => { state.content[index].componentTitle = title })
+		this.setState((state) => { state.contents[index].componentTitle = title })
 	}
 
 	getEditorType(editorList, eventDetail) {
@@ -142,7 +142,7 @@ class EditorContainer extends React.Component {
 	}
 
 	createEmail() {
-		let content = [{
+		let contents = [{
 			content: '<p>Just start typing</p>',
 			editorType: 'DefaultEditor',
 			componentTitle: 'New Component',
@@ -151,26 +151,28 @@ class EditorContainer extends React.Component {
 		let title = 'New Email'
 
 		axios.post('/api/email/create', {
-			content: content,
-			title: title
-		}).then((jsonResponse) => {
-			this.setState(jsonResponse.data)
-		}, (rejected) => {
+			contents, title
+		})
+		.then(jsonResponse => {
+			console.log(jsonResponse.data)
+			this.setState(jsonResponse.data, this.pouchDB.updateDoc(jsonResponse.data))
+		},
+		rejected => {
 			console.error('error in createEmail post', rejected)
 		})
-		.catch((err) => {
+		.catch(err => {
 			console.log('error during createEmail:', err)
 		})
 	}
 
 	compileHTMLTemplate() {
-		let {content, title, template} = this.state
-		let context = { content, title, template }
+		let {contents, title, template} = this.state
+		let context = { contents, title, template }
 		axios.post('/api/email/compileTemplate', {
 			context: JSON.stringify(context)
 		})
-		.then((text) => {
-			// TODO: toast popup success			
+		.then(text => {
+			// TODO: toast popup success
 			console.log(text)
 		})
 	}
@@ -193,9 +195,9 @@ class EditorContainer extends React.Component {
 
 	reorderEditorIndexes(oldIndex, newIndex) {
 		this.setState((state) => {
-			const removed = state.content.splice(oldIndex, 1)
-			state.content.splice(newIndex, 0, removed[0])
-			return {content: state.content}
+			const removed = state.contents.splice(oldIndex, 1)
+			state.contents.splice(newIndex, 0, removed[0])
+			return {contents: state.contents}
 		})
 	}
 
@@ -259,7 +261,7 @@ class EditorContainer extends React.Component {
 				/>
 				{renderEditorTypeSelect}
 				<div className="editor-container__editors">
-					{this.state.content.map((content, i) => {
+					{this.state.contents.map((content, i) => {
 						return (
 							<EditorTypeRow
 								key={content.id}

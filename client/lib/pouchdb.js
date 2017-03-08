@@ -26,7 +26,7 @@ export default class PDB {
 	}
 
 	syncToDB(doc, saveCompleteCallback) {
-		this.emailDB.get(doc._id).then((newDoc) => {
+		this.emailDB.get(doc._id).then(() => {
 			PouchDB.replicate(this.emailDBName, this.pouchDBURL + this.emailDBName, {
 				doc_ids: [ doc._id ]
 			})
@@ -44,7 +44,7 @@ export default class PDB {
 
 			if(error.name === 'not_found') {
 
-				PouchDB.replicate(this.pouchDBURL + this.emailDBName, this.emailDBName)
+				PouchDB.replicate(`${this.pouchDBURL}${this.emailDBName}`, this.emailDBName)
 				.on('complete', () => {
 
 					return this.emailDB.get(doc._id).then((newDoc) => {
