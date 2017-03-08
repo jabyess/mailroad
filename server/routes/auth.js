@@ -107,7 +107,6 @@ passportjs.init = (app) => {
 	app.get('/api/auth/verify/:uid', (req, res) => {
 		const uid = req.params.uid
 		redisClient.get(uid, (err, data) => {
-			console.log(data)
 			if(err) {
 				//TODO: system log error
 				console.log(err)
