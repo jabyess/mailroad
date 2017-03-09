@@ -5,6 +5,7 @@ import session from 'express-session'
 import { passportjs } from '../routes/auth.js'
 import { API } from '../routes/api.js'
 import { S3 } from '../routes/s3.js'
+import { meta } from '../routes/meta.js'
 import axios from 'axios'
 
 
@@ -22,6 +23,7 @@ app.use(session({
 passportjs.init(app)
 app.use('/api/email', API)
 app.use('/api/s3', S3)
+app.use('/api/meta', meta)
 app.get('/editor/*', (req, res) => {
 	res.redirect('/')
 })

@@ -1,0 +1,140 @@
+/*
+Contains seed data for meta database. These are just Morning Consult categories.
+*/
+
+[
+	{
+		"category" : {
+			"name": "Washington",
+			"componentTitles": [
+				{
+					"title" : "Washington Brief"
+				},
+				{
+					"title": "Chart Review"
+				},
+				{
+					"title" : "Events Calendar"
+				},
+				{
+					"title": "General"
+				}
+			]
+		}
+	},
+	{
+		"category" : {
+			"name": "Finance",
+			"componentTitles": [
+				{
+					"title" : "Washington Brief"
+				},
+				{
+					"title": "Chart Review"
+				},
+				{
+					"title" : "Events Calendar"
+				},
+				{
+					"title": "General"
+				}
+			]
+		}
+	},
+	{
+		"category" : {
+			"name": "Tech",
+			"componentTitles": [
+				{
+					"title" : "Washington Brief"
+				},
+				{
+					"title": "Chart Review"
+				},
+				{
+					"title" : "Events Calendar"
+				},
+				{
+					"title": "General"
+				}
+			]
+		}
+	},	
+	{
+		"category" : {
+			"name": "Health",
+			"componentTitles": [
+				{
+					"title" : "Washington Brief"
+				},
+				{
+					"title": "Chart Review"
+				},
+				{
+					"title" : "Events Calendar"
+				},
+				{
+					"title": "General"
+				}
+			]
+		}
+	},
+	{
+		"category" : {
+			"name": "Tech",
+			"componentTitles": [
+				{
+					"title" : "Washington Brief"
+				},
+				{
+					"title": "Chart Review"
+				},
+				{
+					"title" : "Events Calendar"
+				},
+				{
+					"title": "General"
+				}
+			]
+		}
+	},
+
+	{
+		"category" : {
+			"name": "Brands",
+			"componentTitles": [
+				{
+					"title" : "Washington Brief"
+				},
+				{
+					"title": "Chart Review"
+				},
+				{
+					"title" : "Events Calendar"
+				},
+				{
+					"title": "General"
+				}
+			]
+		}
+	},
+	{
+		"category" : {
+			"name": "Energy",
+			"componentTitles": [
+				{
+					"title" : "Washington Brief"
+				},
+				{
+					"title": "Chart Review"
+				},
+				{
+					"title" : "Events Calendar"
+				},
+				{
+					"title": "General"
+				}
+			]
+		}
+	}
+]
