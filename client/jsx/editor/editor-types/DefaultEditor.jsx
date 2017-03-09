@@ -242,7 +242,6 @@ class DefaultEditor extends React.Component {
 	//class methods
 	componentWillReceiveProps(nextProps) {
 		if(nextProps.imageURL) {
-			console.log(nextProps.imageURL, this.props.imageURL)
 			this.insertImage(nextProps.imageURL)
 		}
 		let content = html.deserialize(nextProps.content)
@@ -462,8 +461,9 @@ class DefaultEditor extends React.Component {
 		const toggleImageGalleryModal = new CustomEvent('toggleVisible', {
 			detail: 'isGalleryModalVisible'
 		})
-		window.dispatchEvent(toggleImageGalleryModal)
 		const clearImageIndexURL = new CustomEvent('clearImageIndexURL')
+		
+		window.dispatchEvent(toggleImageGalleryModal)
 		window.dispatchEvent(clearImageIndexURL)
 	}
 

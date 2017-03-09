@@ -21,10 +21,7 @@ class EmailControls extends React.Component {
 
 	handleDelete() {
 		const ids = Object.keys(this.props.selectedCheckboxes)
-		axios.delete('/api/email', {
-			headers: {
-				'Content-Type': 'application/json'
-			},
+		axios.delete('/api/email/delete', {
 			params: {
 				id : [...ids]
 			}
@@ -41,20 +38,18 @@ class EmailControls extends React.Component {
 	}
 
 	handleCopy() {
-		fetch('/api/copyEmail', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				'id':	Object.keys(this.props.selectedCheckboxes)
-			})
-		})
-		.then((response) => {
-			this.props.refreshEmailList()
-			return response.text()
-		})
-	}	
+		// guard clause: prevent the duplication of more than one email
+		const selected = Object.keys(this.props.selectedCheckboxes)
+		if (selected.length !== 1) {
+			return null
+		}
+
+		axios.post('/api/email/copy', { id: selected[0] })
+			.then(res => {
+				this.props.refreshEmailList()
+				return res.text()
+			}).catch(console.log)
+	}
 
 	handleSearch() {
 		const searchText = this.state.searchValue
@@ -79,7 +74,7 @@ class EmailControls extends React.Component {
 				<input className="input" type="text" placeholder="Doesn't work yet" value={this.state.searchValue} onChange={this.handleSearchChange} />
 				<button className="button" onClick={this.handleSearch}>Search</button>
 				<button className="button" onClick={this.clearSearch}>Clear</button>
-				
+
 			</div>
 		)
 	}
