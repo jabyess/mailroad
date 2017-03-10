@@ -25,6 +25,9 @@ class EditorContainer extends React.Component {
 			'getEmailContents',
 			'addEditorToContainer',
 			'getEditorType',
+			'getCategories',
+			'updateCategory',
+			'filterComponentTitles',
 			'reorderEditorIndexes',
 			'compileHTMLTemplate',
 			'handleTitleChange',
@@ -47,7 +50,8 @@ class EditorContainer extends React.Component {
 			template: '',
 			templates: [],
 			contents: [],
-			componentTitles: ['Washington', 'Section', 'Energy', 'Tech']
+			categories: [],
+			category: '',
 		}
 	}
 
@@ -56,6 +60,7 @@ class EditorContainer extends React.Component {
 		window.addEventListener('clearImageIndexURL', this.clearImageIndexURL)
 
 		this.getTemplates()
+		this.getCategories()
 
 		//if we have an ID from react-router, make db call to get data
 		if(this.props.params.id) {
@@ -86,6 +91,25 @@ class EditorContainer extends React.Component {
 				})
 			})
 		})
+	}
+
+	getCategories() {
+		axios.get('/api/meta/loadConfig', {
+			params: {
+				config: 'categories'
+			}
+		})
+		.then((response) => {
+			console.log(response.data)
+			this.setState({categories: response.data.categories})
+		})
+		.catch(err => {
+			console.log('error getting categories', err)
+		})
+	}
+
+	updateCategory(category) {
+		this.setState({ category })
 	}
 
 	removeEditorFromContainer(index) {
@@ -145,7 +169,7 @@ class EditorContainer extends React.Component {
 		let contents = [{
 			content: '<p>Just start typing</p>',
 			editorType: 'DefaultEditor',
-			componentTitle: 'New Component',
+			componentTitle: '',
 			id: shortid.generate()
 		}]
 		let title = 'New Email'
@@ -227,21 +251,43 @@ class EditorContainer extends React.Component {
 		this.setState({ imageIndex: null, imageURL: null})
 	}
 
+	filterComponentTitles() {
+		if(this.state.categories && this.state.category && this.state.categories.length > 0) {
+			const categories = this.state.categories.filter((cat) => {
+				return cat.name === this.state.category
+			})
+			const titles = categories.map((title) => {
+				return title.componentTitles
+			})
+			return titles[0]
+		}
+	}
+
 	render() {
 		const renderImageGalleryModal = this.state.isImageGalleryModalVisible ? 
 		<ImageGalleryModal
 			setImageSizes={this.setImageSizes}
 		/> : null
-		const renderImagePromptModal = this.state.isImagePromptModalVisible ? <ImagePromptModal /> : null
-		const renderEditorTypeSelect = this.state.isEditModeActive ? <EditorTypeSelect
+
+		const renderImagePromptModal = this.state.isImagePromptModalVisible ? 
+		<ImagePromptModal /> : null
+
+		const renderEditorTypeSelect = this.state.isEditModeActive ? 
+		<EditorTypeSelect
 			addEditorToContainer={this.addEditorToContainer}
 			/> : null
-		const renderLinkModal = this.state.isLinkModalVisible ? <LinkModal /> : null
-		const renderImageSizeModal = this.state.isImageSizeModalVisible ? <ImageSizeModal
+
+		const renderLinkModal = this.state.isLinkModalVisible ? 
+		<LinkModal /> : null
+
+		const renderImageSizeModal = this.state.isImageSizeModalVisible ? 
+		<ImageSizeModal
 			imageSizes={this.state.imageSizes}
 			isImageSizeModalVisible={this.state.isImageSizeModalVisible}
 			setImageURL={this.setImageURL}
 		/> : null
+
+		const componentTitles = this.filterComponentTitles()
 		
 		return (
 			<div className="editor-container">
@@ -252,6 +298,7 @@ class EditorContainer extends React.Component {
 				<EditorMetaContainer {...this.state}
 					handleTitleChange={this.handleTitleChange}
 					handleTemplateChange={this.handleTemplateChange}
+					updateCategory={this.updateCategory}
 				/>
 				<EditorControlsContainer
 					toggleEditMode={this.toggleEditMode}
@@ -269,12 +316,12 @@ class EditorContainer extends React.Component {
 								content={content.content}
 								editorType={content.editorType}
 								componentTitle={content.componentTitle}
+								componentTitles={componentTitles}
 								imageURL={this.state.imageURL}
 								imageIndex={this.state.imageIndex}
 								setImageIndex={this.setImageIndex}
 								isEditModeActive={this.state.isEditModeActive}
 								removeEditorFromContainer={this.removeEditorFromContainer}
-								componentTitles={this.state.componentTitles}
 								updateComponentTitle={this.updateComponentTitle}
 								updateContentValue={this.updateContentValue}
 								reorderEditorIndexes={this.reorderEditorIndexes}
@@ -282,7 +329,6 @@ class EditorContainer extends React.Component {
 						)
 					})}
 				</div>
-
 			</div>
 		)	
 	}

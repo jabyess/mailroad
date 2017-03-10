@@ -574,9 +574,14 @@ class DefaultEditor extends React.Component {
 			<div className="box slate-editor">
 				<div className="slate-editor__title">
 					<label>Section Title</label>
-					<select className="select" type="select" value={this.props.componentTitle} onChange={this.onTitleChange}>
+					<select 
+						className="select" 
+						type="select" 
+						value={this.props.componentTitle}
+						onChange={this.onTitleChange}
+					>
 						{this.props.componentTitles.map((title, i) => {
-							return <option key={title + i} value={title}>{title}</option>
+							return <option key={i} value={title.title}>{title.title}</option>
 						})}
 					</select>
 				</div>

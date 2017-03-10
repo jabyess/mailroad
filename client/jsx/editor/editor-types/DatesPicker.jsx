@@ -8,9 +8,9 @@ class DatesPicker extends React.Component {
 		super()
 
 		autoBind(this,
-		'onDatesChange',
-		'onFocusChange',
-		'onTitleChange'
+			'onDatesChange',
+			'onFocusChange',
+			'onTitleChange'
 		)
 
 		this.state = {
@@ -22,8 +22,6 @@ class DatesPicker extends React.Component {
 
 	onDatesChange({ startDate, endDate }) {
 		this.setState({ startDate, endDate })
-
-		console.log(startDate, endDate)
 
 		let dates = this.convertDatesToString(startDate, endDate)
 		this.props.updateContentValue(dates, this.props.index)
@@ -45,7 +43,7 @@ class DatesPicker extends React.Component {
 	onTitleChange(event) {
 		event.persist()
 		let title = event.target.value
-		// this.setState({ title })
+		
 		if(this.props.updateComponentTitle) {
 			this.props.updateComponentTitle(title, this.props.index)
 		}
@@ -69,7 +67,7 @@ class DatesPicker extends React.Component {
 					<label>DatesPicker Title</label>
 					<select className="select" type="select" value={this.props.componentTitle} onChange={this.onTitleChange}>
 						{this.props.componentTitles.map((title, i) => {
-							return <option key={title + i} value={title}>{title}</option>
+							return <option key={i} value={title.title}>{title.title}</option>
 						})}
 					</select>
 				</div>
@@ -91,6 +89,7 @@ DatesPicker.propTypes = {
 	updateContentValue: React.PropTypes.func,
 	updateComponentTitle: React.PropTypes.func,
 	componentTitle: React.PropTypes.string,
+	componentTitles: React.PropTypes.array,
 	index: React.PropTypes.number,
 	startDate: React.PropTypes.string,
 	endDate: React.PropTypes.string

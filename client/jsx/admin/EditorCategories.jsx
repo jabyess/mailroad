@@ -22,15 +22,13 @@ class EditorCategories extends React.Component {
 						data-index={i}
 						type="text"
 						className="input is-large"
-						value={category.category.name}
+						value={category.name}
 						onChange={this.onChange}
 						/>
 					<EditorCategory 
-						updateComponentTitle={this.props.updateComponentTitle}
-						componentTitles={category.category.componentTitles}
-						addComponentTitle={this.props.addComponentTitle}
-						removeComponentTitle={this.props.removeComponentTitle}
+						componentTitles={category.componentTitles}
 						parentIndex={i}
+						{...this.props}
 					/>
 				</div>
 			)

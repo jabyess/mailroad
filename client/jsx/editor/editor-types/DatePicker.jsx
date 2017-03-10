@@ -52,7 +52,7 @@ class DatePicker extends React.Component {
 					<label>DatePicker Title</label>
 					<select className="select" type="select" value={this.props.componentTitle} onChange={this.onTitleChange}>
 						{this.props.componentTitles.map((title, i) => {
-							return <option key={title + i} value={title}>{title}</option>
+							return <option key={i} value={title.title}>{title.title}</option>
 						})}
 					</select>
 				</div>
@@ -75,7 +75,9 @@ class DatePicker extends React.Component {
 DatePicker.propTypes = {
 	updateContentValue: React.PropTypes.func,
 	index: React.PropTypes.number,
-	componentTitle: React.PropTypes.string
+	componentTitle: React.PropTypes.string,
+	componentTitles: React.PropTypes.array,
+	updateComponentTitle: React.PropTypes.func
 }
 
 export default DatePicker

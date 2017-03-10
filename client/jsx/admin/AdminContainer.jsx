@@ -39,23 +39,21 @@ export default class AdminContainer extends React.Component {
 
 	updateComponentTitle(parentIndex, index, value) {
 		this.setState((state) => {
-			return state.categories[parentIndex].category.componentTitles[index].title = value
+			return state.categories[parentIndex].componentTitles[index].title = value
 		})
 	}
 
 	updateCategory(index, value) {
 		this.setState((state) => {
-			return state.categories[index].category.name = value
+			return state.categories[index].name = value
 		})
 	}
 
 	addCategory() {
 		this.setState((state) => {
 			return state.categories.push({
-				'category': {
-					name: '',
-					componentTitles: [{title: ''}]
-				}
+				name: '',
+				componentTitles: [{title: ''}]
 			})
 
 		})
@@ -69,13 +67,13 @@ export default class AdminContainer extends React.Component {
 
 	addComponentTitle(parentIndex) {
 		this.setState((state) => {
-			return state.categories[parentIndex].category.componentTitles.push({title: ''})
+			return state.categories[parentIndex].componentTitles.push({title: ''})
 		})	
 	}
 	
 	removeComponentTitle(parentIndex) {
 		this.setState((state) => {
-			return state.categories[parentIndex].category.componentTitles.pop()
+			return state.categories[parentIndex].componentTitles.pop()
 		})	
 
 	}
