@@ -1,29 +1,38 @@
 var path = require('path')
+const webpack = require('webpack')
 const DotenvPlugin = require('webpack-dotenv-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 const PATHS = {
 	app: path.join(__dirname, 'client'),
 	build: path.join(__dirname, 'dist'),
+	jsx: path.join(__dirname, 'client/jsx'),
 	sass: path.join(__dirname, 'client/sass'),
 	css: path.join(__dirname, 'dist/base.css'),
-	bulma: path.resolve(__dirname, 'node_modules/bulma')
+	static: 'http://localhost:3000/static/'
 }
 
-module.exports = {
+const config = {
 	context: PATHS.app,
 	entry : {
-		main: [path.join(__dirname, 'client/jsx/react-main.jsx')],
+		main: [
+			'react-hot-loader/patch',
+			'webpack-dev-server/client?http://localhost:8888',
+			'webpack/hot/only-dev-server',
+			path.join(__dirname, 'client/jsx/react-main.jsx'),
+		]
 	},
 	output: {
 		path: PATHS.build,
-		publicPath: 'http://localhost:3000/scripts/',
+		publicPath: PATHS.static,
 		filename: 'react-[name].js'
 	},
 	devServer: {
+		hot: true,
 		port: 8888,
 		proxy: {
-			'/': 'http://localhost:3000'
+			'/': 'http://localhost:3000',
+			'/static': 'http://localhost:3000/static/'
 		}
 	},
 	module: {
@@ -36,12 +45,13 @@ module.exports = {
 			},
 			{
 				test: /\.jsx?$/,
-				exclude: /node_modules/,
+				include: PATHS.jsx,
+				exclude: [/node_modules/, /couchdb-views/],
 				use: [
 					{
 						loader: 'babel-loader',
 						options: {
-							presets: [ ['es2015', { modules: false } ], 'react' ],
+							presets: [ ['es2015', { 'modules': false } ], 'react' ],
 						}
 					}
 				]
@@ -68,6 +78,8 @@ module.exports = {
 	},
 	plugins: [
 		new ExtractTextPlugin(PATHS.css),
+		new webpack.HotModuleReplacementPlugin(),
+		new webpack.NamedModulesPlugin(),
 		// new webpack.DefinePlugin({
 		// 	'process.env': {
 		// 		'NODE_ENV': 'development'
@@ -82,3 +94,5 @@ module.exports = {
 		ignored: /node_modules/	
 	}
 }
+
+module.exports = config

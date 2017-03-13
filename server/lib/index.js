@@ -1,12 +1,12 @@
-import dotenv from 'dotenv'
-import path from 'path'
-import express from 'express'
-import session from 'express-session'
-import { passportjs } from '../routes/auth.js'
-import { API } from '../routes/api.js'
-import { S3 } from '../routes/s3.js'
-import { meta } from '../routes/meta.js'
-import axios from 'axios'
+const dotenv = require('dotenv')
+const path = require('path')
+const express = require('express')
+const session = require('express-session')
+const passportjs = require('../routes/auth.js')
+const API = require('../routes/api.js')
+const S3 = require('../routes/s3.js')
+const meta = require('../routes/meta.js')
+const axios = require('axios')
 
 
 dotenv.config()
@@ -21,6 +21,29 @@ app.use(session({
 	saveUninitialized: false
 }))
 passportjs.init(app)
+
+app.use('/static', ((req, res) => {
+	console.log('got static req')
+	res.set({
+		'Access-Control-Allow-Origin': '*',
+		'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
+	})
+	console.log('got static res', res._headers)
+}))
+
+// app.use('/static', ((req, res, next) => {
+// 	console.log('got static req')
+// 	res.set({
+// 		'Access-Control-Allow-Origin': '*',
+// 		'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
+// 	})
+// 	console.log('got static res', res._headers)
+// 	// res.set()
+// 	next()
+// }), express.static(path.join(__dirname, '../'), {
+// 	index: false,
+// }))
+
 app.use('/api/email', API)
 app.use('/api/s3', S3)
 app.use('/api/meta', meta)
@@ -28,8 +51,11 @@ app.get('/editor/*', (req, res) => {
 	res.redirect('/')
 })
 
-app.get('*', (req, res) => {
-	res.sendFile(path.resolve(__dirname, '../../index.html'), {}, (err) => {
+app.get('/', (req, res) => {
+	console.log('caught req on /', req.headers.host, req.params)
+	res.sendFile('index.html', {
+		root: __dirname
+	}, (err) => {
 		if(err) {
 			console.log('err sendFile ', err)
 		}

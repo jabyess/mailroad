@@ -1,7 +1,7 @@
-import dotenv from 'dotenv'
-import express from 'express'
-import bodyParser from 'body-parser'
-import axios from 'axios'
+const dotenv = require('dotenv')
+const express = require('express')
+const bodyParser = require('body-parser')
+const axios = require('axios')
 
 dotenv.config()
 
@@ -60,4 +60,4 @@ router.get('/loadConfig', (req, res) => {
 })
 
 
-export { router as meta }
+module.exports = router

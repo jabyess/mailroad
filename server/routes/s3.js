@@ -1,12 +1,12 @@
-import dotenv from 'dotenv'
-import Promise from 'bluebird'
-import express from 'express'
-import bodyParser from 'body-parser'
-import AWS from 'aws-sdk/clients/s3'
-import sharp from 'sharp'
-import multer from 'multer'
-import axios from 'axios'
-import Utils from '../lib/utils.js'
+const dotenv= require('dotenv')
+const Promise= require('bluebird')
+const express= require('express')
+const bodyParser= require('body-parser')
+const AWS= require('aws-sdk/clients/s3')
+const sharp= require('sharp')
+const multer= require('multer')
+const axios= require('axios')
+const Utils= require('../lib/utils.js')
 
 dotenv.config()
 
@@ -259,4 +259,4 @@ router.post('/create', multerImageUpload, (req, res) => {
 	
 })
 
-export { router as S3 } 
+module.exports = router

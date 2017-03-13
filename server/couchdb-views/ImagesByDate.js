@@ -1,4 +1,4 @@
-function (doc) {
+(function (doc) {
 	if(doc.size === '150x150') {
 		var properties = {
 			size: doc.size,
@@ -7,4 +7,4 @@ function (doc) {
 		emit(doc.date, properties);
 	}
 	
-}
+})()

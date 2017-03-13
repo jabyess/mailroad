@@ -125,4 +125,4 @@ passportjs.init = (app) => {
 
 }
 
-export { passportjs }
+module.exports = passportjs

@@ -1,11 +1,11 @@
-import dotenv from 'dotenv'
-import fs from 'fs'
-import path from 'path'
-import express from 'express'
-import bodyParser from 'body-parser'
-import Utils from '../lib/utils.js'
-import Promise from 'bluebird'
-import axios from 'axios'
+const dotenv = require('dotenv')
+const fs = require('fs')
+const path = require('path')
+const express = require('express')
+const bodyParser = require('body-parser')
+const Utils = require('../lib/utils.js')
+const Promise = require('bluebird')
+const axios = require('axios')
 
 const mjml = require('../lib/mjml.js')
 
@@ -230,4 +230,4 @@ router.post('/copy', jsonParser, (req, res) => {
 	}).catch(err => res.status(500).json({message: err.message}))
 })
 
-export { router as API }
+module.exports = router
