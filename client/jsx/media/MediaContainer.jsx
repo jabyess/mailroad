@@ -9,9 +9,7 @@ class MediaContainer extends React.Component {
 	constructor() {
 		super()
 
-		this.state = {
-
-		}
+		this.state = {}
 
 		autoBind(this,
 			'toggleImageGalleryModal',
@@ -28,7 +26,6 @@ class MediaContainer extends React.Component {
 
 	toggleVisible(event) {
 		let visibleKey = event.detail.toString()
-		console.log(visibleKey)
 		this.setState(() => {
 			let visibleObj = {}
 			visibleObj[visibleKey] = !this.state[visibleKey]
