@@ -2,7 +2,7 @@ import React from 'react'
 import autoBind from 'react-autobind'
 import axios from 'axios'
 
-const IMAGES_PER_PAGE = 10
+const IMAGES_PER_PAGE = 20
 
 class ImageGalleryModal extends React.Component {
 	constructor(props) {
@@ -118,32 +118,39 @@ class ImageGalleryModal extends React.Component {
 
 	render() {
 		return (
-			<div className="modal is-active imagesContainer">
+			<div className="modal is-active imageGalleryModal">
 				<div className="modal-background"></div>
-				<div className="modal-content imagesContainer--content">
-					{this.state.images.map((image, index) => {
-						const bgImage = {
-							backgroundImage: 'url(' + image.url + ')'
-						}
-						return (
-							<div 
-								className="imagesContainer--image" 
-								style={bgImage}
-								data-index={index}
-								key={index}
-								onClick={this.setImageURL}
-							>
-								<button
-									className="button imagesContainer--delete"
-									onClick={this.deleteImage}
+				<div className="modal-card">
+					<header className="modal-card-head">
+						<p className="modal-card-title">Image Gallery</p>
+						<button className="modal-close" onClick={this.toggleVisible}></button>
+					</header>
+					<section className="modal-card-body imageGalleryModal__content">
+						{this.state.images.map((image, index) => {
+							const bgImage = {
+								backgroundImage: 'url(' + image.url + ')'
+							}
+							return (
+								<div
+									className="imageGalleryModal__image" 
+									style={bgImage}
 									data-index={index}
-								>X</button>
-							</div>
-						)
-					})}
-					<button className="button imagesContainer--loadMore" onClick={this.loadMore}>Load More</button>
+									key={index}
+									onClick={this.setImageURL}
+								>
+									<button
+										className="button imageGalleryModal__delete"
+										onClick={this.deleteImage}
+										data-index={index}
+									>X</button>
+								</div>
+							)
+						})}
+					</section>
+					<footer className="modal-card-foot">
+						<button className="button imageGalleryModal__loadMore" onClick={this.loadMore}>Load More</button>
+					</footer>
 				</div>
-				<button className="modal-close" onClick={this.toggleVisible}></button>
 			</div>
 		) 
 	}

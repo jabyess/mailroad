@@ -1,5 +1,5 @@
 import React from 'react'
-import ImageSizes from './ImageSizes.jsx'
+import ImageSizeInputs from './ImageSizeInputs.jsx'
 import autoBind from 'react-autobind'
 import axios from 'axios'
 import Dropzone from 'react-dropzone'
@@ -43,12 +43,13 @@ class MediaUploadForm extends React.Component {
 				}
 			})
 		})
-
+		
+		// TODO: animate progress event
+		// pass config into axios post
 		// const config = {
 		// 	onUploadProgress: (progressEvent) => {
-		// 		console.log(Math.round((progressEvent.loaded * 100) / progressEvent.total))
-		// 		this.setState({percentCompleted: Math.round((progressEvent.loaded * 100) / progressEvent.total)})
-		// 	}
+		// 		this.props.setProgress( Math.round((progressEvent.loaded * 100) / progressEvent.total))
+		// 	},
 		// }
 
 		if(this.state.droppedFiles) {
@@ -59,6 +60,7 @@ class MediaUploadForm extends React.Component {
 			imageData.append('sizes', JSON.stringify(validatedSizes))
 
 			axios.post('/api/s3/create', imageData).then((res) => {
+				//TODO: success popup
 				console.log(res)
 				if(res.status === 200) {
 					let triggerMediaListRefresh = new CustomEvent('triggerMediaListRefresh')
@@ -80,7 +82,6 @@ class MediaUploadForm extends React.Component {
 				}
 			})
 		}).then((sizeInputs) => {
-			// console.log(sizeInputs)
 			this.setState({droppedFiles, sizeInputs})
 		})
 
@@ -117,8 +118,10 @@ class MediaUploadForm extends React.Component {
 	}
 
 	render() {
-		const imageSizes = this.state.sizeInputs && this.state.sizeInputs.length > 0 ?
-		<ImageSizes
+		const imageSizeInputs = this.state.sizeInputs && this.state.sizeInputs.length > 0 ?
+		<ImageSizeInputs
+			droppedFiles={this.state.droppedFiles}
+			startUpload={this.startUpload}
 			sizeInputs={this.state.sizeInputs}
 			handleHeightChange={this.handleHeightChange}
 			handleWidthChange={this.handleWidthChange}
@@ -128,22 +131,22 @@ class MediaUploadForm extends React.Component {
 		/> : null
 
 		return (
-			<div className="mediaUploadForm">
-				<button className="button" onClick={this.showGalleryModal}>View Gallery</button>
-				<Dropzone 
-					className="mediaUploadForm__dropzone"
-					onDrop={this.onDrop}
-					multiple
-					maxSize={2000000}
-					accept={allowedFileTypes.join()}
-				>
-					<div>Drop your images here</div>
-				</Dropzone>
-				<div>{this.state.droppedFiles.map((file, i) => 
-					<img key={i} src={file.preview} className="mediaUploadForm__img" />)}
+			<div className="mediaUploadForm columns">
+				<div className="column">
+					<button className="button is-info is-medium" onClick={this.showGalleryModal}>View Gallery</button>
+					<Dropzone 
+						className="mediaUploadForm__dropzone"
+						onDrop={this.onDrop}
+						multiple
+						maxSize={2000000}
+						accept={allowedFileTypes.join()}
+					>
+						<div>Click here or drag & drop your images</div>
+					</Dropzone>
 				</div>
-				{imageSizes}
-				<input className="input" type="submit" onClick={this.startUpload} />
+				<div className="mediaUploadForm__inputs column">
+					{imageSizeInputs}
+				</div>
 			</div>
 		)
 	}

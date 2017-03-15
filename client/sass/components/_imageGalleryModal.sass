@@ -1,26 +1,32 @@
-.imagesContainer
+.imageGalleryModal__content
+	min-width: 300px
 	display: flex
 	flex-wrap: wrap
+	background-color: #FFF
+	border-radius: 5px
+	padding: 0px
 
-	.imagesContainer--content
-		max-width: 1200px 
-		min-width: 300px
-		display: flex
-		flex-wrap: wrap
+.imageGalleryModal__image
+	background-size: cover
+	width: 150px
+	height: 150px
+	margin: 3px
+	position: relative
+	&:hover
+		opacity: 0.8
 
-	.imagesContainer--image
-		background-size: cover
-		width: 150px
-		height: 150px
-		margin-top: 10px
-		margin-bottom: 10px
-		position: relative
-		&:hover
-			opacity: 0.8
 
-	.imagesContainer--delete
-		position: absolute
-		right: 0
-		bottom: 0
-		
+.imageGalleryModal__delete
+	position: absolute
+	right: 0
+	bottom: 0
+	border-bottom-right-radius: 0
+	&:hover 
+		background-color: $red
+		border-color: $red
+	
 
+.imageGalleryModal__loadMore
+	display: block
+	width: 100%
+	text-align: center
