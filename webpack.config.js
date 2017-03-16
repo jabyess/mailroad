@@ -12,6 +12,9 @@ const PATHS = {
 
 module.exports = {
 	context: PATHS.app,
+	resolve: {
+		extensions: ['.js', '.jsx']
+	},
 	entry : {
 		main: [path.join(__dirname, 'client/jsx/react-main.jsx')],
 	},
@@ -68,11 +71,6 @@ module.exports = {
 	},
 	plugins: [
 		new ExtractTextPlugin(PATHS.css),
-		// new webpack.DefinePlugin({
-		// 	'process.env': {
-		// 		'NODE_ENV': 'development'
-		// 	}
-		// })
 		new DotenvPlugin({
 			sample: './.env.sample',
 			path: './.env'

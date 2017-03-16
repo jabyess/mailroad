@@ -1,7 +1,7 @@
 import React from 'react'
 import autoBind from 'react-autobind'
-import MediaUploadForm from './MediaUploadForm.jsx'
-import ImageGalleryModal from '../modals/ImageGalleryModal.jsx'
+import MediaUploadForm from './MediaUploadForm'
+import ImageGalleryModal from '../modals/ImageGalleryModal'
 
 
 class MediaContainer extends React.Component {

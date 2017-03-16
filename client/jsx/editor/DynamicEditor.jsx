@@ -1,10 +1,10 @@
 import React from 'react'
-import { DefaultEditor, DatePicker, DatesPicker } from './editor-types/EditorTypes.js'
+import { DefaultEditor, EventsCalendar } from './editor-types/EditorTypes.js'
 import ItemTypes from './editor-types/ItemTypes.js'
 import { DragSource } from 'react-dnd'
 
 const dynamicEditorTypes = {
-	DefaultEditor, DatePicker, DatesPicker
+	DefaultEditor, EventsCalendar
 }
 
 const dynamicEditorSource = {
@@ -81,7 +81,7 @@ DynamicEditor.propTypes = {
 	imageURL: React.PropTypes.string,
 	setImageIndex: React.PropTypes.func,
 	removeEditorFromContainer: React.PropTypes.func,
-	content:  React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object]),
+	content:  React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object, React.PropTypes.array]),
 	componentTitle: React.PropTypes.string,
 	componentTitles: React.PropTypes.array,
 	updateComponentTitle: React.PropTypes.func,

@@ -1,5 +1,5 @@
 import React from 'react'
-import * as EditorTypes from './EditorTypes.js'
+import * as EditorTypes from './EditorTypes'
 
 class EditorTypeSelect extends React.Component {
 	constructor() {
@@ -19,12 +19,12 @@ class EditorTypeSelect extends React.Component {
 	}
 
 	handleChange(e) {
-		let valArray = []
+		let value = []
 		for(let i = 0; i < e.target.length; i++) {
 			let option = e.target[i]
-			if(option.selected) { valArray.push(option.value) }
+			if(option.selected) { value.push(option.value) }
 		}
-		this.setState({value: valArray})
+		this.setState({ value })
 	}
 
 	render() {
