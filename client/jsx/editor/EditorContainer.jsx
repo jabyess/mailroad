@@ -34,6 +34,8 @@ class EditorContainer extends React.Component {
 			'handleTemplateChange',
 			'updateContentValue',
 			'updateComponentTitle',
+			'updateEventDate',
+			'updateEventTitle',
 			'removeEditorFromContainer',
 			'toggleVisible',
 			'setImageSizes',
@@ -81,15 +83,30 @@ class EditorContainer extends React.Component {
 		this.pouchDB.updateDoc(this.state)
 	}
 
-	addEditorToContainer(editorName) {
-		editorName.forEach((currentEditor) => {
+	addEditorToContainer(editorNames) {
+		// set default values for different component types when adding to editorContainer
+		const insertHTMLString = ['DefaultEditor']
+		const insertArray = ['EventsCalendar']
+		let content
+
+		editorNames.forEach(currentEditor => {
+			if(insertHTMLString.some(editorName => currentEditor === editorName)) {
+				content = '<p>You have inserted a new editor.</p>'
+			}
+			else if(insertArray.some(editorName => currentEditor === editorName)) {
+				content = [{}]
+			}
+			else {
+				content = ''
+			}
 			this.setState({
 				contents: this.state.contents.concat({
-					content: '<p>New Editor</p>',
+					content: content,
 					editorType: currentEditor,
 					id: shortid.generate()
 				})
 			})
+		
 		})
 	}
 
@@ -124,6 +141,18 @@ class EditorContainer extends React.Component {
 
 	handleTemplateChange(value) {
 		this.setState({template: value})
+	}
+
+	updateEventDate(date, index, eventIndex) {
+		this.setState((state) => {
+			state.contents[index].content[eventIndex].date = date
+		})
+	}
+
+	updateEventTitle(name, index, eventIndex) {
+		this.setState((state) => {
+			state.contents[index].content[eventIndex].name = name
+		})
 	}
 
 	updateContentValue(content, index) {
@@ -325,6 +354,8 @@ class EditorContainer extends React.Component {
 								updateComponentTitle={this.updateComponentTitle}
 								updateContentValue={this.updateContentValue}
 								reorderEditorIndexes={this.reorderEditorIndexes}
+								updateEventDate={this.updateEventDate}
+								updateEventTitle={this.updateEventTitle}
 							/>
 						)
 					})}

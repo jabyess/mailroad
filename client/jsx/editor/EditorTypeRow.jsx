@@ -59,7 +59,7 @@ EditorTypeRow.propTypes = {
 	imageIndex: React.PropTypes.number,
 	setImageIndex: React.PropTypes.func,
 	isEditModeActive:  React.PropTypes.bool,
-	content:  React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object]),
+	content:  React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object, React.PropTypes.array]),
 	componentTitles:  React.PropTypes.array,
 	componentTitle:  React.PropTypes.string,
 	editorType:  React.PropTypes.string,
