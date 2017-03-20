@@ -112,7 +112,9 @@ class ImageGalleryModal extends React.Component {
 		const isImageGalleryModalVisible = new CustomEvent('toggleVisible', {
 			detail: 'isImageGalleryModalVisible'
 		})
+		const clearImageIndexURL = new CustomEvent('clearImageIndexURL')
 
+		window.dispatchEvent(clearImageIndexURL)
 		window.dispatchEvent(isImageGalleryModalVisible)
 	}
 
