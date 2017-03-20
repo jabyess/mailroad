@@ -602,5 +602,4 @@ DefaultEditor.propTypes = {
 	updateContentValue: React.PropTypes.func
 }
 
-// export default DragSource(ItemTypes.DEFAULTEDITOR, defaultEditorSource, collect)(DefaultEditor)
 export default DefaultEditor

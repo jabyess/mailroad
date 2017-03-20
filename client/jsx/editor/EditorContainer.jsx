@@ -19,7 +19,7 @@ class EditorContainer extends React.Component {
 	constructor() {
 		super()
 
-		autoBind(this, 
+		autoBind(this,
 			'createEmail',
 			'saveToDB',
 			'getEmailContents',
@@ -77,6 +77,7 @@ class EditorContainer extends React.Component {
 
 	componentWillUnmount () {
 		window.removeEventListener('toggleVisible', this.toggleVisible)
+		window.removeEventListener('clearImageIndexURL', this.clearImageIndexURL)
 	}
 
 	componentDidUpdate() {
@@ -86,7 +87,7 @@ class EditorContainer extends React.Component {
 	addEditorToContainer(editorNames) {
 		// set default values for different component types when adding to editorContainer
 		const insertHTMLString = ['DefaultEditor']
-		const insertArray = ['EventsCalendar']
+		const insertArray = ['EventsCalendar', 'SingleImage']
 		let content
 
 		editorNames.forEach(currentEditor => {
@@ -117,7 +118,6 @@ class EditorContainer extends React.Component {
 			}
 		})
 		.then((response) => {
-			console.log(response.data)
 			this.setState({categories: response.data.categories})
 		})
 		.catch(err => {
@@ -156,7 +156,6 @@ class EditorContainer extends React.Component {
 	}
 
 	updateContentValue(content, index) {
-		console.log(content)
 		this.setState((state) => {
 			state.contents[index].content = content
 		})
@@ -277,7 +276,7 @@ class EditorContainer extends React.Component {
 	}
 
 	clearImageIndexURL() {
-		this.setState({ imageIndex: null, imageURL: null})
+		this.setState({ imageIndex: null, imageURL: null })
 	}
 
 	filterComponentTitles() {
