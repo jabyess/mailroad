@@ -1,7 +1,7 @@
 import moment from 'moment'
 import PouchDB from 'pouchdb-browser'
 
-export default class PDB {
+class PDB {
 
 	constructor() {
 		this.imageDBName = process.env.IMAGE_DB
@@ -103,3 +103,5 @@ export default class PDB {
 	}
 
 }
+
+export default PDB

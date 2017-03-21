@@ -1,8 +1,8 @@
-import { mjml2html } from 'mjml'
-import path from 'path'
-import Handlebars from 'handlebars'
-import fs from 'fs'
-import juice from 'juice'
+const mjml2html = require('mjml')
+const path = require('path')
+const Handlebars = require('handlebars')
+const fs = require('fs')
+const juice = require('juice')
 
 const compileToMJML = module.exports.compileToMJML = (html) => {
 	const output = mjml2html(html)

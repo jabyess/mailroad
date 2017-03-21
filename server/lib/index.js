@@ -1,13 +1,13 @@
-import dotenv from 'dotenv'
-import path from 'path'
-import express from 'express'
-import session from 'express-session'
-import { passportjs } from '../routes/auth.js'
-import { API } from '../routes/api.js'
-import { S3 } from '../routes/s3.js'
-import { meta } from '../routes/meta.js'
-import axios from 'axios'
-
+const dotenv = require('dotenv')
+const express = require('express')
+const gzipStatic = require('connect-gzip-static')
+const session = require('express-session')
+const passportjs = require('../routes/auth.js')
+const API = require('../routes/api.js')
+const S3 = require('../routes/s3.js')
+const meta = require('../routes/meta.js')
+const axios = require('axios')
+const paths = require('../../config/paths')
 
 dotenv.config()
 
@@ -21,6 +21,8 @@ app.use(session({
 	saveUninitialized: false
 }))
 passportjs.init(app)
+
+app.use('/public', gzipStatic(paths.build))
 app.use('/api/email', API)
 app.use('/api/s3', S3)
 app.use('/api/meta', meta)
@@ -29,7 +31,9 @@ app.get('/editor/*', (req, res) => {
 })
 
 app.get('*', (req, res) => {
-	res.sendFile(path.resolve(__dirname, '../../index.html'), {}, (err) => {
+	res.sendFile('index.html', {
+		root: process.env.PWD + '/public'
+	}, (err) => {
 		if(err) {
 			console.log('err sendFile ', err)
 		}

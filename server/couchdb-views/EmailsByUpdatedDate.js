@@ -1,4 +1,5 @@
-function (doc) {
+(
+function(doc) {
   var content = {
     createdAt: doc.createdAt,
     updatedAt: doc.updatedAt,
@@ -6,4 +7,4 @@ function (doc) {
     template: doc.template
   }
   emit(doc.updatedAt, content);
-}
+})()

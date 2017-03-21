@@ -1,8 +1,8 @@
-import handlebars from 'handlebars'
-import fs from 'fs'
-import juice from 'juice'
-import moment from 'moment'
-import path from 'path'
+const handlebars = require('handlebars')
+const fs = require('fs')
+const juice = require('juice')
+const moment = require('moment')
+const path = require('path')
 
 let defaultJuiceOptions = {
 	preserveImportant: true,
@@ -89,4 +89,4 @@ class Utils {
 
 }
 
-export default Utils
+module.exports = Utils

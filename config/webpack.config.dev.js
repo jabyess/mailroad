@@ -1,50 +1,50 @@
-var path = require('path')
+const webpack = require('webpack')
 const DotenvPlugin = require('webpack-dotenv-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const paths = require('./paths')
 
-const PATHS = {
-	app: path.join(__dirname, 'client'),
-	build: path.join(__dirname, 'dist'),
-	sass: path.join(__dirname, 'client/sass'),
-	css: path.join(__dirname, 'dist/base.css'),
-	bulma: path.resolve(__dirname, 'node_modules/bulma')
-}
-
-module.exports = {
-	context: PATHS.app,
+const config = {
 	resolve: {
 		extensions: ['.js', '.jsx']
 	},
 	entry : {
-		main: [path.join(__dirname, 'client/jsx/react-main.jsx')],
+		main: [
+			paths.appMainJSX
+		]
 	},
 	output: {
-		path: PATHS.build,
-		publicPath: 'http://localhost:3000/scripts/',
+		path: paths.build,
+		publicPath: '/public/',
 		filename: 'react-[name].js'
 	},
 	devServer: {
 		port: 8888,
+		contentBase: paths.build,
+		publicPath: '/public/',
 		proxy: {
-			'/': 'http://localhost:3000'
+			'/': 'http://localhost:3000',
 		}
 	},
+	devtool: 'inline-source-map',
 	module: {
 		rules: [
 			{
 				test : /(\.scss|\.sass)/,
-				include: PATHS.sass,
+				include: paths.sass,
 				enforce: 'pre',
 				use: [ 'style-loader', 'css-loader', 'sass-loader' ],
 			},
 			{
-				test: /\.jsx?$/,
-				exclude: /node_modules/,
+				test: /(\.jsx|\.js)/,
+				include: paths.jsx,
+				exclude: [/node_modules/, /couchdb-views/],
 				use: [
 					{
 						loader: 'babel-loader',
 						options: {
-							presets: [ ['es2015', { modules: false } ], 'react' ],
+							cacheDirectory: true,
+							presets: [['es2015', { 'modules': false } ], 'react' ],
+							plugins: ['react-hot-loader/babel']
 						}
 					}
 				]
@@ -70,7 +70,8 @@ module.exports = {
 		]
 	},
 	plugins: [
-		new ExtractTextPlugin(PATHS.css),
+		// new ExtractTextPlugin(paths.css),
+		// new webpack.NamedModulesPlugin(),
 		new DotenvPlugin({
 			sample: './.env.sample',
 			path: './.env'
@@ -80,3 +81,5 @@ module.exports = {
 		ignored: /node_modules/	
 	}
 }
+
+module.exports = config
