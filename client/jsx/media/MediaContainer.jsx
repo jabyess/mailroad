@@ -1,7 +1,7 @@
 import React from 'react'
 import autoBind from 'react-autobind'
-import MediaUploadForm from './MediaUploadForm.jsx'
-import ImageGalleryModal from '../modals/ImageGalleryModal.jsx'
+import MediaUploadForm from './MediaUploadForm'
+import ImageGalleryModal from '../modals/ImageGalleryModal'
 
 
 class MediaContainer extends React.Component {
@@ -9,9 +9,7 @@ class MediaContainer extends React.Component {
 	constructor() {
 		super()
 
-		this.state = {
-
-		}
+		this.state = {}
 
 		autoBind(this,
 			'toggleImageGalleryModal',
@@ -28,7 +26,6 @@ class MediaContainer extends React.Component {
 
 	toggleVisible(event) {
 		let visibleKey = event.detail.toString()
-		console.log(visibleKey)
 		this.setState(() => {
 			let visibleObj = {}
 			visibleObj[visibleKey] = !this.state[visibleKey]

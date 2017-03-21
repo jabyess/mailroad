@@ -1,13 +1,13 @@
 const dotenv = require('dotenv')
-const path = require('path')
 const express = require('express')
+const gzipStatic = require('connect-gzip-static')
 const session = require('express-session')
 const passportjs = require('../routes/auth.js')
 const API = require('../routes/api.js')
 const S3 = require('../routes/s3.js')
 const meta = require('../routes/meta.js')
 const axios = require('axios')
-
+const paths = require('../../config/paths')
 
 dotenv.config()
 
@@ -22,28 +22,7 @@ app.use(session({
 }))
 passportjs.init(app)
 
-app.use('/static', ((req, res) => {
-	console.log('got static req')
-	res.set({
-		'Access-Control-Allow-Origin': '*',
-		'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
-	})
-	console.log('got static res', res._headers)
-}))
-
-// app.use('/static', ((req, res, next) => {
-// 	console.log('got static req')
-// 	res.set({
-// 		'Access-Control-Allow-Origin': '*',
-// 		'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
-// 	})
-// 	console.log('got static res', res._headers)
-// 	// res.set()
-// 	next()
-// }), express.static(path.join(__dirname, '../'), {
-// 	index: false,
-// }))
-
+app.use('/public', gzipStatic(paths.build))
 app.use('/api/email', API)
 app.use('/api/s3', S3)
 app.use('/api/meta', meta)
@@ -51,10 +30,9 @@ app.get('/editor/*', (req, res) => {
 	res.redirect('/')
 })
 
-app.get('/', (req, res) => {
-	console.log('caught req on /', req.headers.host, req.params)
+app.get('*', (req, res) => {
 	res.sendFile('index.html', {
-		root: __dirname
+		root: process.env.PWD + '/public'
 	}, (err) => {
 		if(err) {
 			console.log('err sendFile ', err)

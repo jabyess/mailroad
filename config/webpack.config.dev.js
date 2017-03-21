@@ -1,57 +1,50 @@
-var path = require('path')
 const webpack = require('webpack')
 const DotenvPlugin = require('webpack-dotenv-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-
-const PATHS = {
-	app: path.join(__dirname, 'client'),
-	build: path.join(__dirname, 'dist'),
-	jsx: path.join(__dirname, 'client/jsx'),
-	sass: path.join(__dirname, 'client/sass'),
-	css: path.join(__dirname, 'dist/base.css'),
-	static: 'http://localhost:3000/static/'
-}
+const paths = require('./paths')
 
 const config = {
-	context: PATHS.app,
+	resolve: {
+		extensions: ['.js', '.jsx']
+	},
 	entry : {
 		main: [
-			'react-hot-loader/patch',
-			'webpack-dev-server/client?http://localhost:8888',
-			'webpack/hot/only-dev-server',
-			path.join(__dirname, 'client/jsx/react-main.jsx'),
+			paths.appMainJSX
 		]
 	},
 	output: {
-		path: PATHS.build,
-		publicPath: PATHS.static,
+		path: paths.build,
+		publicPath: '/public/',
 		filename: 'react-[name].js'
 	},
 	devServer: {
-		hot: true,
 		port: 8888,
+		contentBase: paths.build,
+		publicPath: '/public/',
 		proxy: {
 			'/': 'http://localhost:3000',
-			'/static': 'http://localhost:3000/static/'
 		}
 	},
+	devtool: 'inline-source-map',
 	module: {
 		rules: [
 			{
 				test : /(\.scss|\.sass)/,
-				include: PATHS.sass,
+				include: paths.sass,
 				enforce: 'pre',
 				use: [ 'style-loader', 'css-loader', 'sass-loader' ],
 			},
 			{
-				test: /\.jsx?$/,
-				include: PATHS.jsx,
+				test: /(\.jsx|\.js)/,
+				include: paths.jsx,
 				exclude: [/node_modules/, /couchdb-views/],
 				use: [
 					{
 						loader: 'babel-loader',
 						options: {
-							presets: [ ['es2015', { 'modules': false } ], 'react' ],
+							cacheDirectory: true,
+							presets: [['es2015', { 'modules': false } ], 'react' ],
+							plugins: ['react-hot-loader/babel']
 						}
 					}
 				]
@@ -77,14 +70,8 @@ const config = {
 		]
 	},
 	plugins: [
-		new ExtractTextPlugin(PATHS.css),
-		new webpack.HotModuleReplacementPlugin(),
-		new webpack.NamedModulesPlugin(),
-		// new webpack.DefinePlugin({
-		// 	'process.env': {
-		// 		'NODE_ENV': 'development'
-		// 	}
-		// })
+		// new ExtractTextPlugin(paths.css),
+		// new webpack.NamedModulesPlugin(),
 		new DotenvPlugin({
 			sample: './.env.sample',
 			path: './.env'

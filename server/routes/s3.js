@@ -59,7 +59,7 @@ router.get('/list/:skip?', (req, res) => {
 	axios.get(url, {
 		params: {
 			descending: true,
-			limit: 10,
+			limit: 20,
 			skip: skip
 		}
 	}).then((imageResults) => {
@@ -176,7 +176,7 @@ const multerImageUpload = upload.fields([
 ])
 
 router.post('/create', multerImageUpload, (req, res) => {
-
+	
 	const sizes = JSON.parse(req.body.sizes)
 	const files = req.files.droppedFiles
 	const fileRandom = files.map(() => {
@@ -248,7 +248,7 @@ router.post('/create', multerImageUpload, (req, res) => {
 		const allPromises = dbUploadPromise.concat([].concat.apply([], s3UploadPromises))
 
 		Promise.all(allPromises).then(() => {
-			res.sendStatus(200)
+			return res.sendStatus(200)
 		})
 
 	})

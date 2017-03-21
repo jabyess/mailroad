@@ -1,9 +1,9 @@
-import DatePicker from './DatePicker.jsx'
-import DatesPicker from './DatesPicker.jsx'
-import DefaultEditor from './DefaultEditor.jsx'
+import DefaultEditor from './DefaultEditor'
+import EventsCalendar from './EventsCalendar'
+import SingleImage from './SingleImage'
 
-export { 
-	DatePicker,
-	DatesPicker,
+export {
 	DefaultEditor,
-} 
+	EventsCalendar,
+	SingleImage
+}
