@@ -5,12 +5,13 @@ class EmailTable extends React.Component {
 	
 	render() {
 		return (
-			<table className="table is-striped is-narrow email-table">
+			<table className="table is-striped email-table">
 				<thead className="email-table__header">
 					<tr>
 						<th>Select</th>
 						<th>Title</th>
 						<th>Template</th>
+						<th>Category</th>
 						<th>Created Date</th>
 						<th>Last Updated Date</th>
 					</tr>
