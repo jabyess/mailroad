@@ -37,7 +37,8 @@ export default class EmailContainer extends React.Component {
 				createdAt: val.value.createdAt,
 				updatedAt: val.value.updatedAt,
 				title: val.value.title,
-				template: val.value.template
+				template: val.value.template,
+				category: val.value.category
 			}
 			return newValues
 		})
