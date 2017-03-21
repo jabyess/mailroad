@@ -38,7 +38,7 @@ class EmailTableRow extends React.Component {
 	render() {
 		return (
 			<tr className="email-table__row">
-				<td className="control email-table__row email-table__row__select">
+				<td className="email-table__row__select">
 					<input
 						className="checkbox"
 						type="checkbox"

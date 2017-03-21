@@ -70,7 +70,6 @@ const config = {
 		new webpack.DefinePlugin({
 			'process.env.NODE_ENV': JSON.stringify('production')
 		}),
-		new ExtractTextPlugin(paths.css),
 		new webpack.NamedModulesPlugin(),
 		new DotenvPlugin({
 			sample: './.env.sample',

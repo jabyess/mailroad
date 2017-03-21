@@ -26,9 +26,6 @@ app.use('/public', gzipStatic(paths.build))
 app.use('/api/email', API)
 app.use('/api/s3', S3)
 app.use('/api/meta', meta)
-app.get('/editor/*', (req, res) => {
-	res.redirect('/')
-})
 
 app.get('*', (req, res) => {
 	res.sendFile('index.html', {
