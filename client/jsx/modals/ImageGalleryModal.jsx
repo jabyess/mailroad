@@ -71,7 +71,7 @@ class ImageGalleryModal extends React.Component {
 		})
 	}
 
-	setImageURL(e) {
+	setImageSizes(e) {
 		e.persist()
 		if(this.props.setImageSizes) {
 			const index = e.target.dataset.index
@@ -138,7 +138,7 @@ class ImageGalleryModal extends React.Component {
 									style={bgImage}
 									data-index={index}
 									key={index}
-									onClick={this.setImageURL}
+									onClick={this.setImageSizes}
 								>
 									<button
 										className="button imageGalleryModal__delete"
@@ -159,7 +159,6 @@ class ImageGalleryModal extends React.Component {
 }
 
 ImageGalleryModal.propTypes = {
-	setImageURL: React.PropTypes.func,
 	setImageSizes: React.PropTypes.func
 }
 
