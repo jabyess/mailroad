@@ -1,19 +1,20 @@
 import React from 'react'
 import autoBind from 'react-autobind'
-import EditorMetaContainer from './EditorMetaContainer.jsx'
-import EditorTypeSelect from './editor-types/EditorTypeSelect.jsx'
+import EditorMetaContainer from './EditorMetaContainer'
+import EditorTypeSelect from './editor-types/EditorTypeSelect'
 import shortid from 'shortid'
-import EditorTypeRow from './EditorTypeRow.jsx'
-import ImagePromptModal from '../modals/ImagePromptModal.jsx'
-import ImageGalleryModal from '../modals/ImageGalleryModal.jsx'
-import ImageSizeModal from '../modals/ImageSizeModal.jsx'
-import LinkModal from '../modals/LinkModal.jsx'
+import EditorTypeRow from './EditorTypeRow'
+import ImagePromptModal from '../modals/ImagePromptModal'
+import ImageGalleryModal from '../modals/ImageGalleryModal'
+import ImageSizeModal from '../modals/ImageSizeModal'
+import ExternalImageModal from '../modals/ExternalImageModal'
+import LinkModal from '../modals/LinkModal'
 import HTML5Backend from 'react-dnd-html5-backend'
-import EditorControlsContainer from './EditorControlsContainer.jsx'
-import PDB from '../../lib/pouchdb.js'
+import EditorControlsContainer from './EditorControlsContainer'
+import PDB from '../../lib/pouchdb'
 import axios from 'axios'
 import { DragDropContext } from 'react-dnd'
-import { debounce } from '../../lib/utils.js'
+import { debounce } from '../../lib/utils'
 
 class EditorContainer extends React.Component {
 	constructor() {
@@ -315,6 +316,13 @@ class EditorContainer extends React.Component {
 			setImageURL={this.setImageURL}
 		/> : null
 
+		const renderExternalImageModal = this.state.isExternalImageModalVisible ? 
+			<ExternalImageModal 
+				setImageURL={this.setImageURL}
+				isExternalImageModalVisible={this.state.isExternalImageModalVisible}
+			/>
+		: null
+
 		const componentTitles = this.filterComponentTitles()
 		
 		return (
@@ -323,6 +331,7 @@ class EditorContainer extends React.Component {
 				{renderImageGalleryModal}
 				{renderImageSizeModal}
 				{renderLinkModal}
+				{renderExternalImageModal}
 				<EditorMetaContainer {...this.state}
 					handleTitleChange={this.handleTitleChange}
 					handleTemplateChange={this.handleTemplateChange}
