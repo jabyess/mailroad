@@ -8,6 +8,7 @@ const Promise = require('bluebird')
 const axios = require('axios')
 
 const mjml = require('../lib/mjml.js')
+const MJML = new mjml()
 
 dotenv.config()
 
@@ -55,20 +56,19 @@ router.get('/templates', (req, res) => {
 	})
 })
 
-router.post('/compileTemplate', jsonParser, (req,res) => {
+router.post('/compile', jsonParser, (req,res) => {
 
 	const context = JSON.parse(req.body.context)
 	const template = context.template
 
-	mjml.parseHandlebars(context, template, (result) => {
-		let compiledHTML = mjml.compileToMJML(result)
+	MJML.parseHandlebars(context, template, (result) => {
+		let compiledHTML = MJML.compileToMJML(result)
 		if(compiledHTML.errors.length < 1) {
-			let inlinedHTML = mjml.inlineCSS(compiledHTML.html)
-			console.log(inlinedHTML)
+			let inlinedHTML = MJML.inlineCSS(compiledHTML.html)
+			res.status(200).send(inlinedHTML)
 		}
 	})
-
-	res.status(200).send('not ready yet')
+	
 })
 
 router.post('/create', jsonParser, (req,res) => {

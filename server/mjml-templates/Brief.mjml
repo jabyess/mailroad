@@ -9,18 +9,43 @@
 				</mj-column>
 			</mj-section>
 
-			{{#each content}}
-			<mj-section>
-				<mj-column>
-					<mj-text>
-					</mj-text>
-					<mj-text>
-						{{{this.componentTitle}}}
-						{{{this.content}}}
-					</mj-text>
+			{{#each contents}}
+				{{#ifeq this.componentTitle 'Washington Brief'}}
+					<mj-section>
+						<mj-column>
+							<mj-text>
+								{{{this}}}
+								{{{this.content}}}
+							</mj-text>
+						</mj-column>
+					</mj-section>
+				{{/ifeq}}
+				{{#ifeq this.componentTitle 'General'}}
+					<mj-section>
+						<mj-column>
+							<mj-image src="{{../this.content.imageURL}}"/>
+							<mj-text>
+								{{{../this.content.caption}}}
+							</mj-text>
+						</mj-column>
+					</mj-section>
+				{{/ifeq}}
 
-				</mj-column>
-			</mj-section>
+				{{#ifeq this.componentTitle 'Events Calendar'}}
+					<mj-section>
+						<mj-column>
+							<mj-text>
+								{{#each content}}
+									{{{this}}}
+									{{{this.date}}}
+									{{{this.name}}}
+								{{/each}}
+							</mj-text>
+						</mj-column>
+					</mj-section>
+
+				{{/ifeq}}
+
 			{{/each}}
 
 		</mj-container>
