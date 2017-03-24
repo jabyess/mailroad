@@ -5,6 +5,7 @@ import Column from 'mjml-column'
 import Image from 'mjml-image'
 import Text from 'mjml-text'
 
+@MJMLElement
 class SingleImage extends React.Component {
 	constructor() {
 		super()
@@ -12,6 +13,7 @@ class SingleImage extends React.Component {
 
 	render() {
 		return(
+			<div className="div"></div>
 
 		)
 	}
