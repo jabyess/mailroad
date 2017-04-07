@@ -12,7 +12,8 @@ class SingleImage extends React.Component {
 			'removeCaption',
 			'getImageMeta',
 			'showGallery',
-			'onChangeCaption'
+			'onChangeCaption',
+			'onTitleChange'
 		)
 	}
 
@@ -77,6 +78,11 @@ class SingleImage extends React.Component {
 		})
 		img.src = imageURL
 	}
+	
+	onTitleChange(e) {
+		const componentTitle = e.target.value
+		this.props.updateComponentTitle(componentTitle, this.props.index)
+	}
 
 	render() {
 		const showCaption = this.state.captionVisible ? 
@@ -94,7 +100,7 @@ class SingleImage extends React.Component {
 
 		return(
 			<div className="singleImage box">
-				<select name="componentTitle" className="select" value={this.props.componentTitle}>
+				<select name="componentTitle" className="select" value={this.props.componentTitle} onChange={this.onTitleChange}>
 					{this.props.componentTitles.map((title, i) => {
 						return <option key={i} value={title.title}>{title.title}</option>
 					})}
@@ -115,6 +121,7 @@ SingleImage.propTypes = {
 	componentTitles: React.PropTypes.array,
 	componentTitle: React.PropTypes.string,
 	updateContentValue: React.PropTypes.func,
+	updateComponentTitle: React.PropTypes.func,
 	setImageIndex: React.PropTypes.func,
 	index: React.PropTypes.number,
 	imageIndex: React.PropTypes.number,

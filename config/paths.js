@@ -21,4 +21,5 @@ module.exports = {
 	jsx: resolveApp('client/jsx'),
 	sass: resolveApp('client/sass'),
 	css: resolveApp('dist/base.css'),
+	mjml: resolveApp('server/mjml-templates')
 }

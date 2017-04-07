@@ -34,15 +34,21 @@ class EditorMetaContainer extends React.Component {
 		}
 	}
 
-	// componentWillReceiveProps (nextProps) {
-	// 	this.setState({
-	// 		title: nextProps.title,
-	// 		template: nextProps.template,
-	// 		category: nextProps.category
-	// 	})
-	// }
-		
+	showSourceModal() {
+		const isSourceModalVisible = new CustomEvent('toggleVisible', {
+			detail: 'isSourceModalVisible'
+		})
+
+		window.dispatchEvent(isSourceModalVisible)
+
+	}
+
 	render() {
+		const renderCompiledEmail = this.props.compiledEmail ? 
+			<div className="panel-block">
+				<button className="button" onClick={this.showSourceModal}>View Compiled Source</button>
+			</div>
+			: null
 		return (
 			<div className="panel">
 				<div className="panel-heading">Details</div>
@@ -88,6 +94,7 @@ class EditorMetaContainer extends React.Component {
 						onChange={this.handleTitleChange}
 					/>
 				</div>
+				{renderCompiledEmail}
 			</div> 
 		)
 	}

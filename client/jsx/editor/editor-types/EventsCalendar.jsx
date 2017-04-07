@@ -13,7 +13,8 @@ class EventsCalendar extends React.Component {
 			'addEvent',
 			'removeEvent',
 			'onDateChange',
-			'onEventChange'
+			'onEventChange',
+			'onTitleChange'
 		)
 	}
 
@@ -44,11 +45,16 @@ class EventsCalendar extends React.Component {
 		
 		this.props.updateEventTitle(eventName, this.props.index, dateIndex)
 	}
+	
+	onTitleChange(e) {
+		const componentTitle = e.target.value
+		this.props.updateComponentTitle(componentTitle, this.props.index)
+	}
 
 	render() {
 		return (
 			<div className="eventsCalendar box">
-				<select name="componentTitle" className="select" value={this.props.componentTitle}>
+				<select name="componentTitle" className="select" onChange={this.onTitleChange} value={this.props.componentTitle}>
 					{this.props.componentTitles.map((componentTitle, i) => {
 						return (
 							<option key={i} value={componentTitle.title}>{componentTitle.title}</option>
@@ -101,6 +107,7 @@ EventsCalendar.propTypes = {
 	index: React.PropTypes.number,
 	updateEventDate: React.PropTypes.func,
 	updateEventTitle: React.PropTypes.func,
+	updateComponentTitle: React.PropTypes.func,
 }
 
 export default EventsCalendar

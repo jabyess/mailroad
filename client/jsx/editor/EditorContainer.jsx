@@ -7,6 +7,7 @@ import EditorTypeRow from './EditorTypeRow'
 import ImagePromptModal from '../modals/ImagePromptModal'
 import ImageGalleryModal from '../modals/ImageGalleryModal'
 import ImageSizeModal from '../modals/ImageSizeModal'
+import SourceModal from '../modals/SourceModal'
 import ExternalImageModal from '../modals/ExternalImageModal'
 import LinkModal from '../modals/LinkModal'
 import HTML5Backend from 'react-dnd-html5-backend'
@@ -220,13 +221,17 @@ class EditorContainer extends React.Component {
 
 	compileHTMLTemplate() {
 		let {contents, title, template} = this.state
-		let context = { contents, title, template }
-		axios.post('/api/email/compileTemplate', {
+		const context = { contents, title, template }
+		axios.post('/api/email/compile', {
 			context: JSON.stringify(context)
 		})
 		.then(text => {
 			// TODO: toast popup success
-			console.log(text)
+			console.log('compiled success')
+			this.setState({compiledEmail: text.data})
+		})
+		.catch(err => {
+			console.log('error compiling email', err)
 		})
 	}
 
@@ -323,6 +328,11 @@ class EditorContainer extends React.Component {
 			/>
 		: null
 
+		const renderSourceModal = this.state.isSourceModalVisible ? 
+		<SourceModal 
+			textContent={this.state.compiledEmail}
+		/> : null
+
 		const componentTitles = this.filterComponentTitles()
 		
 		return (
@@ -332,6 +342,7 @@ class EditorContainer extends React.Component {
 				{renderImageSizeModal}
 				{renderLinkModal}
 				{renderExternalImageModal}
+				{renderSourceModal}
 				<EditorMetaContainer {...this.state}
 					handleTitleChange={this.handleTitleChange}
 					handleTemplateChange={this.handleTemplateChange}

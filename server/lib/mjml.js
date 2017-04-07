@@ -1,40 +1,50 @@
-const mjml2html = require('mjml')
-const path = require('path')
+const mjml = require('mjml')
 const Handlebars = require('handlebars')
 const fs = require('fs')
 const juice = require('juice')
+const paths = require('../../config/paths')
 
-const compileToMJML = module.exports.compileToMJML = (html) => {
-	const output = mjml2html(html)
-	return output
-	// return html
-}
 
-const parseHandlebars = module.exports.parseHandlebars = (content, template, callback) => {
-	fs.readFile(path.join(__dirname, `../mjml-templates/${template}.mjml` ), 'utf8', (err, file) => {
-		if(err) {
-			console.log(err)
-			return
-		}
-		if(!err) {
-			// console.log(content)
-			let compiled = Handlebars.compile(file)
-			let result = compiled(content)
-			callback(result)
-		}
-	})
-}
+class MJML {
 
-const inlineCSS = module.exports.inlineCSS = (html, opts) => {
-	const defaultOptions = {
-		inlinePseudoElements: false,
-		preserveImportant: true
+	constructor() {
+		Handlebars.registerHelper('ifeq', (a, b, options) => {
+			if (arguments.length === 2) {
+				options = b
+				b = options.hash.compare
+			}
+			if (a === b) {
+				return options.fn(this)
+			}
+			return options.inverse(this)
+		})
+
 	}
 
-	console.log('compiledHTML inside ', html)
+	compileToMJML(html) {
+		let output = mjml.mjml2html(html)
+		return output
+	}
 
-	let options = Object.assign({}, opts, defaultOptions)
-	const inlined = juice(html, options)
+	parseHandlebars(content, template) {
+		let mjmlFile = fs.readFileSync(`${paths.mjml}/${template}.mjml`, 'utf8')
+		let hbTemplate = Handlebars.compile(mjmlFile)
+		let compiled = hbTemplate(content)
+		
+		return compiled
+	}
 
-	return inlined
+	inlineCSS(html, opts) {
+		const defaultOptions = {
+			inlinePseudoElements: false,
+			preserveImportant: true
+		}
+
+		let options = Object.assign({}, opts, defaultOptions)
+		const inlined = juice(html, options)
+
+		return inlined
+	}
 }
+
+module.exports = MJML
