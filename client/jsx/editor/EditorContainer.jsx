@@ -227,7 +227,11 @@ class EditorContainer extends React.Component {
 		})
 		.then(text => {
 			// TODO: toast popup success
+			console.log('compiled success')
 			this.setState({compiledEmail: text.data})
+		})
+		.catch(err => {
+			console.log('error compiling email', err)
 		})
 	}
 

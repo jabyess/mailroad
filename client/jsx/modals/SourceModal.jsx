@@ -9,20 +9,12 @@ class SourceModal extends React.Component {
 			detail: 'isSourceModalVisible'
 		})
 
-		this.fireClipboard =this.fireClipboard.bind(this)
 		this.toggleVisible = this.toggleVisible.bind(this)
 		
 	}
 
 	toggleVisible() {
 		window.dispatchEvent(this.isSourceModalVisible)
-	}
-
-	fireClipboard(event) {
-		console.log('clicked copy')
-		
-		event.preventDefault()
-		
 	}
 
 	render() {

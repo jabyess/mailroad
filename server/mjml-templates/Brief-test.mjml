@@ -1,16 +1,15 @@
 <mjml>
-	<mj-head>
-	
-	</mj-head>
+	<mj-head></mj-head>
 
 	<mj-body>
 		<mj-container background-color="#f7f5f5">
 			<mj-section>
 				<mj-column>
 					<mj-text>
-						<h1>
+						<h2>
+							Morning Consult Header Category is dumb
 							{{title}}
-						</h1>
+						</h2>
 					</mj-text>
 				</mj-column>
 			</mj-section>
@@ -20,8 +19,8 @@
 					<mj-section>
 						<mj-column>
 							<mj-text>
-								{{log this}}
-								{{{../this.content}}}
+								{{{this}}}
+								{{{this.content}}}
 							</mj-text>
 						</mj-column>
 					</mj-section>
@@ -38,14 +37,13 @@
 				{{#ifeq this.componentTitle 'Events Calendar'}}
 					<mj-section>
 						<mj-column>
-								{{#each ../this.content}}
 							<mj-text>
+								{{#each content}}
+									{{{this}}}
 									{{{this.date}}}
-							</mj-text>
-							<mj-text>
 									{{{this.name}}}
-							</mj-text>
 								{{/each}}
+							</mj-text>
 						</mj-column>
 					</mj-section>
 
@@ -54,7 +52,7 @@
 			{{/each}}
 
 			
-		<mj-include path="server/mjml-templates/partials/footer.mjml" />
+		<mj-include path="./server/mjml-templates/partials/footer" />
 
 		</mj-container>
 	</mj-body>

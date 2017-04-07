@@ -61,13 +61,17 @@ router.post('/compile', jsonParser, (req,res) => {
 	const context = JSON.parse(req.body.context)
 	const template = context.template
 
-	MJML.parseHandlebars(context, template, (result) => {
-		let compiledHTML = MJML.compileToMJML(result)
-		if(compiledHTML.errors.length < 1) {
-			let inlinedHTML = MJML.inlineCSS(compiledHTML.html)
-			res.status(200).send(inlinedHTML)
-		}
-	})
+	const parsedMJML = MJML.parseHandlebars(context, template)
+	const compiledHTML = MJML.compileToMJML(parsedMJML)
+
+	if(compiledHTML.errors.length < 1) {
+		let inlinedHTML = MJML.inlineCSS(compiledHTML.html)
+		res.status(200).send(inlinedHTML)
+	}
+	else {
+		console.log(compiledHTML.errors)
+		res.status(500).send(compiledHTML.errors[0].message)
+	}
 	
 })
 

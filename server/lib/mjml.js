@@ -1,5 +1,4 @@
 const mjml = require('mjml')
-const mjml2html = mjml.mjml2html
 const Handlebars = require('handlebars')
 const fs = require('fs')
 const juice = require('juice')
@@ -23,25 +22,16 @@ class MJML {
 	}
 
 	compileToMJML(html) {
-		const output = mjml2html(html)
+		let output = mjml.mjml2html(html)
 		return output
 	}
 
-	parseHandlebars(content, template, callback) {
-		fs.readFile(`${paths.mjml}/${template}.mjml`, 'utf8', (err, file) => {
-			if(err) {
-				console.log(err)
-				return
-			}
-			else {
-				console.log(content)
-				let compiled = Handlebars.compile(file)
-				console.log(compiled)
-				let result = compiled(content)
-				console.log(result)
-				callback(result)
-			}
-		})
+	parseHandlebars(content, template) {
+		let mjmlFile = fs.readFileSync(`${paths.mjml}/${template}.mjml`, 'utf8')
+		let hbTemplate = Handlebars.compile(mjmlFile)
+		let compiled = hbTemplate(content)
+		
+		return compiled
 	}
 
 	inlineCSS(html, opts) {

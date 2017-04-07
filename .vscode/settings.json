@@ -1,3 +1,7 @@
 // Place your settings in this file to overwrite default and user settings.
 {
+	// Define profile for specified syntax or use your own profile with specific rules.
+	"emmet.syntaxProfiles": {
+		"mjml" : "html"
+	}
 }

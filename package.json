@@ -30,7 +30,7 @@
     "express-session": "^1.15.1",
     "handlebars": "^4.0.5",
     "juice": "^4.0.2",
-    "mjml": "^3.2.2",
+    "mjml": "^3.3.0",
     "moment": "^2.17.1",
     "multer": "^1.2.1",
     "passport": "^0.3.2",
