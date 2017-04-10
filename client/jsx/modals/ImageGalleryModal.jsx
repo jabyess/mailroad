@@ -13,7 +13,8 @@ class ImageGalleryModal extends React.Component {
 			'loadMore',
 			'deleteImage',
 			'updateMediaList',
-			'setImageURL'
+			'setImageURL',
+			'setParentImageSizes'
 		)
 
 		this.state = {
@@ -71,12 +72,12 @@ class ImageGalleryModal extends React.Component {
 		})
 	}
 
-	setImageSizes(e) {
+	setParentImageSizes(e) {
 		e.persist()
 		if(this.props.setImageSizes) {
 			const index = e.target.dataset.index
 			const grouping = this.state.images[index].grouping
-			const url = '/api/s3/list/' + grouping
+			const url = `/api/s3/list/${grouping}`
 
 			axios.get(url).then((response) => {
 
@@ -138,7 +139,7 @@ class ImageGalleryModal extends React.Component {
 									style={bgImage}
 									data-index={index}
 									key={index}
-									onClick={this.setImageSizes}
+									onClick={this.setParentImageSizes}
 								>
 									<button
 										className="button imageGalleryModal__delete"
