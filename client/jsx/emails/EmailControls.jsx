@@ -57,8 +57,9 @@ class EmailControls extends React.Component {
 	}
 
 	clearSearch() {
-		this.setState({searchValue: ''})
-		this.props.refreshEmailList()
+		
+		// this.setState({searchValue: ''})
+		// this.props.refreshEmailList()
 	}
 
 	render() {

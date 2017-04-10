@@ -11,6 +11,7 @@ class NavBar extends React.Component {
 					<Link className="nav-item is-tab" activeClassName="is-active" to="/admin">Admin</Link>
 					<Link className="nav-item is-tab" activeClassName="is-active" to="/media">Media</Link>
 				</div>
+				<div className="nav-item loading"></div>
 				<div className="nav-right">
 					<a className="nav-item is-tab" onClick={this.props.doLogout}>Logout</a>
 				</div>

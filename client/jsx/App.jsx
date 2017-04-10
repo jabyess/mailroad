@@ -2,11 +2,14 @@ import React from 'react'
 import { browserHistory } from 'react-router'
 import NavBar from './NavBar.jsx'
 import axios from 'axios'
+import NotificationContainer from './NotificationContainer'
 
 
 class App extends React.Component {
 	constructor() {
 		super()
+
+		
 	}
 
 	doLogout() {
@@ -26,21 +29,22 @@ class App extends React.Component {
 			// TODO: send error log to endpoint
 			console.log('err', err)
 		})
-
-		
 	}
 	
 	render() {
 		return (
 			<div>
+				<NotificationContainer />
 				<div className="app-nav">
 					<NavBar doLogout={this.doLogout} />
 				</div>
 				<div className="app-content">
+					
 					<div className="container is-fluid">
 						{this.props.children}
 					</div>
 				</div>
+				
 			</div>
 		)
 	}
