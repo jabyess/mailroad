@@ -18,7 +18,7 @@ export default class EmailContainer extends React.Component {
 			'refreshEmailList',
 			'displayEmails',
 			'pageNext',
-			'pagePrev'
+			'pagePrev',
 		)
 
 		this.pouchDB = new PDB()
@@ -62,10 +62,7 @@ export default class EmailContainer extends React.Component {
 		else {
 			let emailItems = this.mapEmailResults(paginatedEmails)
 			const page = direction === 'next' ? this.state.page + 1 : this.state.page - 1
-			this.setState({
-				emailItems: emailItems,
-				page: page
-			})
+			this.setState({ emailItems, page })
 		}
 	}
 
@@ -110,9 +107,11 @@ export default class EmailContainer extends React.Component {
 	}
 
 	pagePrev() {
+		// let skip = 0
+		let skip = (this.state.page === 2) ? null : (this.state.page - 2) * EMAILS_PER_PAGE
 		axios.get('/api/email/list/', {
 			params: {
-				skip: this.state.page * EMAILS_PER_PAGE
+				skip: skip
 			}
 		}).then((response) => {
 			this.displayEmails(response.data.rows, 'prev')
@@ -138,7 +137,6 @@ export default class EmailContainer extends React.Component {
 					triggerSearch={this.triggerSearch}
 				/>
 				<EmailPagination 
-					emailItems={this.state.emailItems}
 					pageNext={this.pageNext}
 					pagePrev={this.pagePrev}
 					totalRows={this.state.totalRows}
