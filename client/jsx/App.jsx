@@ -33,13 +33,11 @@ class App extends React.Component {
 	render() {
 		return (
 			<div>
-				<div className="app-nav columns">
-					<div className="column">
-						<NavBar doLogout={this.doLogout} />
-					</div>
+				<div className="app-nav">
+					<NavBar doLogout={this.doLogout} />
 				</div>
-				<div className="app-content columns">
-					<div className="column is-12">
+				<div className="app-content">
+					<div className="container is-fluid">
 						{this.props.children}
 					</div>
 				</div>

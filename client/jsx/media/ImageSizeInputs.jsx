@@ -82,11 +82,17 @@ class ImageSizeInputs extends React.Component {
 				</div>
 			)
 		})
+		const buttonLabel = (this.props.droppedFiles.length === 1) ? 'Upload 1 Image' : `Upload ${this.props.droppedFiles.length} Images`
 		return (
-		<div>
-			{imageSizeInputs}
-			<button className="button is-success is-large" type="submit" onClick={this.props.startUpload}>Upload {this.props.droppedFiles.length} Images</button>
-		</div>)
+			<div>
+				{imageSizeInputs}
+				<div className="columns">
+					<div className="column">
+						<button className="button is-success is-large" type="submit" onClick={this.props.startUpload}>{buttonLabel}</button>
+					</div>
+				</div>
+			</div>
+		)
 	}
 }
 

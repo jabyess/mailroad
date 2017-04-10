@@ -19,6 +19,7 @@ export default class EmailContainer extends React.Component {
 			'displayEmails',
 			'pageNext',
 			'pagePrev',
+			'skipToPage'
 		)
 
 		this.pouchDB = new PDB()
@@ -70,6 +71,22 @@ export default class EmailContainer extends React.Component {
 		this.setState(() => {
 			return this.state.selectedCheckboxes = {}
 		}, this.displayEmails)
+	}
+
+	skipToPage(page) {
+		axios('/api/email/list', {
+			params: {
+				skip: (page - 1) * EMAILS_PER_PAGE
+			}
+		})
+		.then((results) => {
+			const emailItems = this.mapEmailResults(results.data.rows)
+			this.setState({emailItems, page})
+			// console.log(emailItems, page)
+		})
+		.catch((err) => {
+			console.log('skipToPage exception: ', err)
+		})
 	}
 
 	updateSelectedCheckboxes(value) {
@@ -137,6 +154,7 @@ export default class EmailContainer extends React.Component {
 					triggerSearch={this.triggerSearch}
 				/>
 				<EmailPagination 
+					skipToPage={this.skipToPage}
 					pageNext={this.pageNext}
 					pagePrev={this.pagePrev}
 					totalRows={this.state.totalRows}

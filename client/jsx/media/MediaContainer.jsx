@@ -46,12 +46,8 @@ class MediaContainer extends React.Component {
 		const renderImageGalleryModal = this.state.isImageGalleryModalVisible ? <ImageGalleryModal /> : null
 		return (
 			<div className="media-container">
-				<div className="columns">
-					<div className="column">
-						{renderImageGalleryModal}
-						<MediaUploadForm />
-					</div>
-				</div>
+				{renderImageGalleryModal}
+				<MediaUploadForm />
 			</div>
 		)
 	}
