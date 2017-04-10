@@ -33,6 +33,9 @@ class PDB {
 			.on('complete', (complete) => {
 				saveCompleteCallback(complete)
 			})
+			.on('error', (err) => {
+				saveCompleteCallback(err)
+			})
 		})
 	}
 

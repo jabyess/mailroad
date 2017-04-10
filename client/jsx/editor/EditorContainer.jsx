@@ -145,6 +145,15 @@ class EditorContainer extends React.Component {
 		this.setState({template: value})
 	}
 
+	fireNotification(type, text) {
+		const newEvent = new CustomEvent('MRNotification', {
+			detail: { 
+				type, text
+			}
+		})
+		window.dispatchEvent(newEvent)
+	}
+
 	updateEventDate(date, index, eventIndex) {
 		this.setState((state) => {
 			state.contents[index].content[eventIndex].date = date
@@ -226,9 +235,8 @@ class EditorContainer extends React.Component {
 			context: JSON.stringify(context)
 		})
 		.then(text => {
-			// TODO: toast popup success
-			console.log('compiled success')
 			this.setState({compiledEmail: text.data})
+			this.fireNotification('success', 'Compiled Successfully')
 		})
 		.catch(err => {
 			console.log('error compiling email', err)
@@ -237,8 +245,12 @@ class EditorContainer extends React.Component {
 
 	saveToDB() {
 		this.pouchDB.syncToDB(this.state, (complete) => {
-			// TODO: toast popup success
-			console.log('complete', complete)
+			if(complete.status === 'complete') {
+				this.fireNotification('success', 'Saved to Database')
+			}
+			else {
+				this.fireNotification('warning', complete.status)
+			}
 		})
 	}
 
