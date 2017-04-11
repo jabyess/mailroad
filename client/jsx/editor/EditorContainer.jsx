@@ -202,7 +202,7 @@ class EditorContainer extends React.Component {
 				this.setState({ templates: templates.data })
 			})
 			.catch((err) => {
-				console.log('there was an error: ', err)
+				this.fireNotification('danger', err)
 			})
 	}
 
