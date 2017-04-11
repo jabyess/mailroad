@@ -1,12 +1,13 @@
-const dotenv= require('dotenv')
-const Promise= require('bluebird')
-const express= require('express')
-const bodyParser= require('body-parser')
-const AWS= require('aws-sdk/clients/s3')
-const sharp= require('sharp')
-const multer= require('multer')
-const axios= require('axios')
-const Utils= require('../lib/utils.js')
+const dotenv = require('dotenv')
+const Promise = require('bluebird')
+const express = require('express')
+const bodyParser = require('body-parser')
+const AWS = require('aws-sdk/clients/s3')
+const sharp = require('sharp')
+const multer = require('multer')
+const axios = require('axios')
+const Utils = require('../lib/utils.js')
+const winston = require('winston')
 
 dotenv.config()
 
@@ -43,8 +44,8 @@ router.get('/list/:grouping', (req, res) => {
 			console.log(results.data.docs)
 			res.send(results.data)
 		})
-		.catch((err) => {
-			console.log('error in /s3/list/:grouping', err)
+		.catch(err => {
+			winston.error(err)
 		})
 	}
 	else {
@@ -62,8 +63,8 @@ router.get('/list/:skip?', (req, res) => {
 			limit: 20,
 			skip: skip
 		}
-	}).then((imageResults) => {
-
+	})
+	.then((imageResults) => {
 		const images = {
 			totalRows: imageResults.data.total_rows,
 			images: imageResults.data.rows.map((image) => {
@@ -78,6 +79,9 @@ router.get('/list/:skip?', (req, res) => {
 		}
 		
 		res.status(200).send(images)
+	})
+	.catch(err => {
+		winston.error(err)
 	})
 
 })
@@ -124,7 +128,7 @@ router.post('/delete', jsonParser, (req, res) => {
 					rev: doc.rev
 				}
 			}).catch(err => {
-				console.log('error deleting image from couchdb', err)
+				winston.error(err)
 				return err
 			})
 		})
@@ -144,8 +148,8 @@ router.post('/delete', jsonParser, (req, res) => {
 			console.log('successfully deleted image', successDelete)
 
 		})
-		.catch((err) => {
-			console.log('error deleting images', err)
+		.catch(err => {
+			winston.error(err)
 			return err
 		})
 	})
@@ -154,7 +158,7 @@ router.post('/delete', jsonParser, (req, res) => {
 		return allResolved
 	})
 	.catch(err => {
-		console.log('error in /s3/delete', err)
+		winston.error(err)
 		res.status(500).send(err)
 	})
 })
@@ -185,7 +189,6 @@ router.post('/create', multerImageUpload, (req, res) => {
 
 	// //make sure we generate a thumbnail size
 	sizes.forEach((imageSize) => {
-		// console.log('imageSize', imageSize)
 		if(!imageSize.some((size) => size.width === 150 && size.height === 150)) {
 			imageSize.push({ width: 150, height: 150 })
 		}
@@ -207,13 +210,15 @@ router.post('/create', multerImageUpload, (req, res) => {
 			})
 		})
 		.then((sizes) => sizes)
-		.catch(err => Error(err))
+		.catch(err => {
+			winston.error(err)
+		})
 	})
 	.then(s3ImageObjects => {
 		const s3UploadPromises = s3ImageObjects.map(images => {
 			return images.map(size => {
 				return S3.putObject(size).promise().catch(err => {
-					console.log('error uploading to s3', err)
+					winston.error(err)
 					return err
 				})
 			})
@@ -249,12 +254,15 @@ router.post('/create', multerImageUpload, (req, res) => {
 
 		Promise.all(allPromises).then(() => {
 			return res.sendStatus(200)
+		}).catch(err => {
+			winston.error(err)
+			return err
 		})
 
 	})
 	.catch((err) => {
-		console.log('error in /s3/create', err)
-		throw err
+		winston.error(err)
+		return err
 	})
 	
 })
