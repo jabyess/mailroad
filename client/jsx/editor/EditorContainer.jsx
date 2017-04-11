@@ -43,7 +43,8 @@ class EditorContainer extends React.Component {
 			'setImageSizes',
 			'setImageURL',
 			'setImageIndex',
-			'clearImageIndexURL'
+			'clearImageIndexURL',
+			'extractFromState'
 		)
 
 		this.pouchDB = new PDB('emailbuilder')
@@ -83,7 +84,8 @@ class EditorContainer extends React.Component {
 	}
 
 	componentDidUpdate() {
-		this.pouchDB.updateDoc(this.state)
+		let doc = this.extractFromState(this.state)
+		this.pouchDB.updateDoc(doc)
 	}
 
 	addEditorToContainer(editorNames) {
@@ -243,8 +245,17 @@ class EditorContainer extends React.Component {
 		})
 	}
 
+	extractFromState(state) {
+		let { _id, _rev, category, contents, createdAt, updatedAt, template, title } = state
+		let doc = {
+			_id, _rev, category, contents, createdAt, updatedAt, template, title
+		}
+		return doc
+	}
+
 	saveToDB() {
-		this.pouchDB.syncToDB(this.state, (complete) => {
+		let doc = this.extractFromState(this.state)
+		this.pouchDB.syncToDB(doc, (complete) => {
 			if(complete.status === 'complete') {
 				this.fireNotification('success', 'Saved to Database')
 			}
