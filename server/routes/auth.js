@@ -4,6 +4,7 @@ const axios = require('axios')
 const passport = require('passport')
 let LocalStrategy = require('passport-local').Strategy
 const redis = require('redis')
+const winston = require('winston')
 
 
 dotenv.config()
@@ -28,31 +29,35 @@ passportjs.init = (app) => {
 			const uid = authenticated.data.user.id
 			const sessionToken = req.body.sessionToken
 
-			redisClient.setex(sessionToken, 86400, uid, (err, success) => {
-				if(err) {
-					// TODO: system log error
-					return false
-				}
+			redisClient.setex(sessionToken, 86400, uid, (err) => {
 				if(!err) {
 					return done(null, sessionToken)
 				}
 				else {
-					console.log(err)
+					winston.error(err)
+					return false
 				}
 			})
 		},
 		failed => {
 			// 401 if user valid, password invalid
 			// 400 if neither is valid
-			// currently no ways to pass value back to client
-			// unless we pass done(null, { failed.data.response })
+			// currently no ways to pass statuscode back to client
+			// unless we pass done(null, { failed.response.status })
 			// this breaks passportjs strategy convention though.
-			console.log('failed', failed) 
+			if(failed.response.status) {
+				const failObj = {
+					status: failed.response.status,
+					message: 'Error logging in',
+					statusText: failed.response.statusText,
+					responseUrl: failed.response.request._currentUrl
+				}
+				winston.warn(failObj)
+			}
 			return done(null, false)
 		})
 		.catch((err) => {
-			console.log('err', err)
-			console.log(err.response.data)
+			winston.error(err)
 			return done(err)
 		})
 	}))

@@ -6,7 +6,6 @@ import EmailPagination from './EmailPagination.jsx'
 import axios from 'axios'
 import PDB from '../../lib/pouchdb.js'
 
-
 const EMAILS_PER_PAGE = 10
 
 export default class EmailContainer extends React.Component {

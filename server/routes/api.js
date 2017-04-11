@@ -6,6 +6,7 @@ const bodyParser = require('body-parser')
 const Utils = require('../lib/utils.js')
 const Promise = require('bluebird')
 const axios = require('axios')
+const winston = require('winston')
 
 const mjml = require('../lib/mjml.js')
 const MJML = new mjml()
@@ -35,8 +36,7 @@ router.get('/list/:skip?', jsonParser, (req, res) => {
 		let data = emails.data
 		res.send(data)
 	}).catch((err) => {
-		console.log(err)
-		throw err
+		winston.error(err)
 	})
 
 })
@@ -53,7 +53,7 @@ router.get('/templates', (req, res) => {
 			res.send(fileList)
 		}
 		else {
-			console.log(err)
+			winston.error(err)
 			res.send(err)
 		}
 	})
@@ -109,8 +109,7 @@ router.post('/create', jsonParser, (req,res) => {
 			})
 		})
 		.catch((err) => {
-			console.log('---error in /email/create---')
-			console.log(err)
+			winston.error(err)
 		})
 
 })
@@ -122,7 +121,7 @@ router.get('/:id', (req, res) => {
 			res.send(emailData.data)
 		})
 		.catch((err) => {
-			console.log(err)
+			winston.error(err)
 		})
 })
 
@@ -138,8 +137,8 @@ router.delete('/delete', jsonParser, (req, res) => {
 				let { _rev } = result.data
 				return { _id, _rev }
 			})
-			.catch((error) => {
-				console.log(error)
+			.catch(err => {
+				winston.error(err)
 			})
 		})
 
@@ -161,6 +160,7 @@ router.delete('/delete', jsonParser, (req, res) => {
 					res.status(500).send(failed)
 				})
 				.catch(err => {
+					winston.error(err)
 					res.status(500).send(err)
 				})
 			}
@@ -180,8 +180,7 @@ router.delete('/delete', jsonParser, (req, res) => {
 					}
 				})
 				.catch(err => {
-					// TODO: Log error
-					console.log('error happened in delete', err)
+					winston.error(err)
 					res.status(500).send(err)
 				})
 
@@ -199,8 +198,10 @@ router.post('/search', jsonParser, (req, res) => {
 		}
 	})
 	.then((response) => {
-		console.log(response)
 		res.send(response)
+	})
+	.catch(err => {
+		winston.error(err)
 	})
 })
 
@@ -234,7 +235,10 @@ router.post('/copy', jsonParser, (req, res) => {
 		return axios.get(COUCH_EMAILS + result.data.id)
 	}).then(final => {
 		return res.send(final.data)
-	}).catch(err => res.status(500).json({message: err.message}))
+	}).catch(err => {
+		winston.error(err)
+		res.status(500).json({message: err.message})
+	})
 })
 
 module.exports = router
