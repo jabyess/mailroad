@@ -44,14 +44,17 @@ router.get('/list/:skip?', jsonParser, (req, res) => {
 router.get('/templates', (req, res) => {
 	const templateDir = path.resolve(__dirname, '../mjml-templates')
 	fs.readdir(templateDir, (err, files) => {
-		if(err) {
-			throw Error('error reading templates: ', err)
-		}
-		else {
-			let fileList = files.map( (f) => {
+		if(!err) {
+			let fileList = files.filter((file) => {
+				return path.extname(file) === '.mjml'
+			}).map( (f) => {
 				return path.basename(f, '.mjml')
 			})
 			res.send(fileList)
+		}
+		else {
+			console.log(err)
+			res.send(err)
 		}
 	})
 })
