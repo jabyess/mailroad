@@ -23,7 +23,7 @@ const COUCH_EMAILS = COUCH_URL + env.EMAIL_DB + '/' // http://localhost:5984/ema
 const COUCH_EMAILS_FIND = COUCH_EMAILS + '_find' // http://localhost:5984/emails/_find
 
 router.get('/list/:skip?', jsonParser, (req, res) => {
-	const designUrl = COUCH_EMAILS + '_design/EmailsByUpdatedDate/_view/EmailsByUpdatedDate'
+	const designUrl = COUCH_EMAILS + '_design/emails/_view/EmailsByUpdatedDate'
 	const skip = req.query && req.query.skip ? req.query.skip : null
 	axios.get(designUrl, {
 		params: {

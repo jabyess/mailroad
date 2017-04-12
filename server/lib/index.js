@@ -1,5 +1,7 @@
 const dotenv = require('dotenv')
 const express = require('express')
+const path = require('path')
+const fs = require('fs')
 const gzipStatic = require('connect-gzip-static')
 const session = require('express-session')
 const passportjs = require('../routes/auth.js')
@@ -10,12 +12,21 @@ const axios = require('axios')
 const paths = require('../../config/paths')
 const bodyParser = require('body-parser')
 const winston = require('winston')
+
 require('winston-loggly-bulk')
 
 dotenv.config()
 
 const jsonParser = bodyParser.json()
-const { COUCHDB_URL, EMAIL_DB, IMAGE_DB, USER_DB } = process.env
+const { 
+	COUCHDB_URL, 
+	COUCHDB_ADMIN_URL,
+	EMAIL_DB,
+	IMAGE_DB,
+	USER_DB,
+	ADMIN_USER,
+	ADMIN_PASS
+ } = process.env
 
 winston.add(winston.transports.Loggly, {
 	token: process.env.WINSTON_API_TOKEN,
@@ -64,12 +75,13 @@ axios.get(COUCHDB_URL)
 			app.listen(3000, () => {
 				console.log('Express listening on port 3000!')
 			})
+			return response
 		}
 		else {
 			throw new Error('Could not connect to couchDB. Please check your config.')
 		}
 	})
-	.catch((err) => {
+	.catch(err => {
 		console.log(err)
 		throw err
 	})

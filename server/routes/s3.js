@@ -55,7 +55,7 @@ router.get('/list/:grouping', (req, res) => {
 
 router.get('/list/:skip?', (req, res) => {
 	const skip = req.query && req.query.skip ? req.query.skip : null
-	const url = COUCH_IMAGES + '_design/ImagesByDate/_view/ImagesByDate'
+	const url = COUCH_IMAGES + '_design/images/_view/ImagesByDate'
 
 	axios.get(url, {
 		params: {
