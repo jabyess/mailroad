@@ -1,3 +1,5 @@
+const moment = require('moment')
+
 /**
 	 * Wraps a function and fires it based on the delay specified.
 	 * @param {function} func - function to debounce
@@ -34,4 +36,8 @@ export function debounceCallback(func, wait, immediate, callback) {
 		timeout = setTimeout(later, wait)
 		if (callNow) func.apply(context, args)
 	}
+}
+
+export function formatTimestamp(timestamp) {
+	return moment(timestamp).format('YYYY-MM-DD hh:mm A')
 }

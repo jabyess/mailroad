@@ -39,7 +39,7 @@ class EditorTypeRow extends React.Component {
 		let isOverCSS = isOver ? {border: '2px solid #a9c873' } : {}
 
 		return connectDropTarget(
-			<div style={isOverCSS}>
+			<div className="editor-container__editor" style={isOverCSS}>
 				<DynamicEditor
 					{...this.props}
 				/>

@@ -15,7 +15,7 @@ import EditorControlsContainer from './EditorControlsContainer'
 import PDB from '../../lib/pouchdb'
 import axios from 'axios'
 import { DragDropContext } from 'react-dnd'
-import { debounce } from '../../lib/utils'
+import { debounce, formatTimestamp } from '../../lib/utils'
 
 class EditorContainer extends React.Component {
 	constructor() {
@@ -359,26 +359,14 @@ class EditorContainer extends React.Component {
 		const componentTitles = this.filterComponentTitles()
 		
 		return (
-			<div className="editor-container">
+			<div className="editor-container columns">
 				{renderImagePromptModal}
 				{renderImageGalleryModal}
 				{renderImageSizeModal}
 				{renderLinkModal}
 				{renderExternalImageModal}
 				{renderSourceModal}
-				<EditorMetaContainer {...this.state}
-					handleTitleChange={this.handleTitleChange}
-					handleTemplateChange={this.handleTemplateChange}
-					updateCategory={this.updateCategory}
-				/>
-				<EditorControlsContainer
-					toggleEditMode={this.toggleEditMode}
-					isEditModeActive={this.state.isEditModeActive}
-					saveToDB={this.saveToDB}
-					compileHTMLTemplate={this.compileHTMLTemplate}
-				/>
-				{renderEditorTypeSelect}
-				<div className="editor-container__editors">
+				<div className="editor-container__editors column">
 					{this.state.contents.map((content, i) => {
 						return (
 							<EditorTypeRow
@@ -401,6 +389,23 @@ class EditorContainer extends React.Component {
 							/>
 						)
 					})}
+				</div>
+				<div className="column is-one-third">
+				<EditorMetaContainer 
+					{...this.state}
+					createdAt={formatTimestamp(this.state.createdAt)}
+					updatedAt={formatTimestamp(this.state.updatedAt)}
+					handleTitleChange={this.handleTitleChange}
+					handleTemplateChange={this.handleTemplateChange}
+					updateCategory={this.updateCategory}
+				/>
+				<EditorControlsContainer
+					toggleEditMode={this.toggleEditMode}
+					isEditModeActive={this.state.isEditModeActive}
+					saveToDB={this.saveToDB}
+					compileHTMLTemplate={this.compileHTMLTemplate}
+				/>
+				{renderEditorTypeSelect}
 				</div>
 			</div>
 		)	
