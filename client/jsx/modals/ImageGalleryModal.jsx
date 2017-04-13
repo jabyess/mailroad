@@ -2,6 +2,7 @@ import React from 'react'
 import autoBind from 'react-autobind'
 import axios from 'axios'
 
+
 const IMAGES_PER_PAGE = 20
 
 class ImageGalleryModal extends React.Component {
@@ -13,7 +14,6 @@ class ImageGalleryModal extends React.Component {
 			'loadMore',
 			'deleteImage',
 			'updateMediaList',
-			'setImageURL',
 			'setParentImageSizes'
 		)
 

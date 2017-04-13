@@ -9,7 +9,10 @@ images.views.ImagesByDate = {
 		if(doc.size === '150x150') { 
 			var properties = { 
 				size: doc.size,
-				url: doc.url
+				url: doc.url,
+				id: doc._id,
+				grouping: doc.grouping,
+				fileName: doc.filename
 			} 
 			emit(doc.date, properties);
 		}
