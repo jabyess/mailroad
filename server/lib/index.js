@@ -18,22 +18,26 @@ require('winston-loggly-bulk')
 dotenv.config()
 
 const jsonParser = bodyParser.json()
-const { 
-	COUCHDB_URL, 
-	COUCHDB_ADMIN_URL,
-	EMAIL_DB,
-	IMAGE_DB,
-	USER_DB,
-	ADMIN_USER,
-	ADMIN_PASS
- } = process.env
+const { COUCHDB_URL, NODE_ENV } = process.env
 
-winston.add(winston.transports.Loggly, {
-	token: process.env.WINSTON_API_TOKEN,
-	subdomain: process.env.WINSTON_SUBDOMAIN,
-	tags: [ 'mailroad' ],
-	json: true
-})
+if(NODE_ENV === 'production') {
+	winston.add(winston.transports.Loggly, {
+		token: process.env.WINSTON_API_TOKEN,
+		subdomain: process.env.WINSTON_SUBDOMAIN,
+		tags: [ 'mailroad' ],
+		json: true
+	})
+}
+
+else {
+	const logDir = path.resolve(process.cwd(), 'logs')
+	if(fs.statSync(logDir)) {
+		winston.add(winston.transports.File, {
+			filename: path.join(logDir, 'mclog.log'),
+			json: false
+		})
+	}
+}
 
 let app = express()
 

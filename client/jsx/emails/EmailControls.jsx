@@ -52,14 +52,13 @@ class EmailControls extends React.Component {
 	}
 
 	handleSearch() {
-		const searchText = this.state.searchValue
-		this.props.triggerSearch(searchText)
+		const title = this.state.searchValue
+		this.props.triggerSearch(title)
 	}
 
 	clearSearch() {
-		
-		// this.setState({searchValue: ''})
-		// this.props.refreshEmailList()
+		this.setState({searchValue: ''})
+		this.props.refreshEmailList()
 	}
 
 	render() {

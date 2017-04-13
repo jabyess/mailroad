@@ -2,6 +2,8 @@ node_modules
 dist
 .env
 *.rdb
+logs
+logs/*
 
 npm-debug.log.*
 npm-debug.log

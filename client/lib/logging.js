@@ -2,7 +2,7 @@ import axios from 'axios'
 
 class Logging {
 
-	static logToLoggly(level, data) {
+	static log(level, data) {
 		axios.post('/api/log', {
 			data: {
 				level, data
