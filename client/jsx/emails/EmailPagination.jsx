@@ -30,21 +30,24 @@ class EmailPagination extends React.Component {
 		const totalPages = this.makeTotalPages( Math.floor(this.props.totalRows / this.props.emailsPerPage) + 1 )
 		const showNumbers = (
 			<ul className="pagination-list">
+				<span className="pagination-ellipsis">{this.props.totalRows} Emails </span>
 				{totalPages.map((page) => {
 					if(page === this.props.page) {
 						return (<li 
-						className="pagination-link is-current" 
 						key={page} 
 						onClick={this.skipToPage}
-						data-page={page}>{page}</li>
+						data-page={page}>
+							<a className="pagination-link is-current">{page}</a>
+						</li>
 						)
 					}
 					else return (
 						<li 
-						className="pagination-link" 
 						key={page} 
 						onClick={this.skipToPage}
-						data-page={page}>{page}</li>
+						data-page={page}>
+							<a className="pagination-link">{page}</a>
+						</li>
 					)
 				})}
 			</ul>
