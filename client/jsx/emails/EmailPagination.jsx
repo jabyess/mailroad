@@ -33,20 +33,23 @@ class EmailPagination extends React.Component {
 				<span className="pagination-ellipsis">{this.props.totalRows} Emails </span>
 				{totalPages.map((page) => {
 					if(page === this.props.page) {
-						return (<li 
-						key={page} 
-						onClick={this.skipToPage}
-						data-page={page}>
-							<a className="pagination-link is-current">{page}</a>
-						</li>
+						return (
+							<li key={page}>
+								<a 
+									onClick={this.skipToPage}
+									data-page={page}
+									className="pagination-link is-current">{page}
+								</a>
+							</li>
 						)
 					}
 					else return (
-						<li 
-						key={page} 
-						onClick={this.skipToPage}
-						data-page={page}>
-							<a className="pagination-link">{page}</a>
+						<li key={page}>
+							<a 
+								onClick={this.skipToPage}
+								data-page={page}
+								className="pagination-link">{page}
+							</a>
 						</li>
 					)
 				})}
