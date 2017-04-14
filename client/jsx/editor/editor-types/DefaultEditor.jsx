@@ -573,6 +573,9 @@ class DefaultEditor extends React.Component {
 		return (
 			<div className="box slate-editor">
 				<div className="slate-editor__title">
+					<h1 className="title">Text Editor</h1>
+				</div>
+				<div>
 					<label>Section Title</label>
 					<select 
 						className="select" 

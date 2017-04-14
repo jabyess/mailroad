@@ -19,7 +19,7 @@ class SingleImage extends React.Component {
 
 	componentWillReceiveProps (nextProps) {
 		//sets the image url and state from gallery, for new images
-		if(nextProps.imageURL && this.props.imageIndex === this.props.index) {
+		if(nextProps.imageURL !== this.props.imageURL && this.props.imageIndex === this.props.index) {
 			this.getImageMeta(nextProps.imageURL)
 			this.props.updateContentValue({imageURL: nextProps.imageURL}, this.props.index)
 		}
@@ -100,6 +100,9 @@ class SingleImage extends React.Component {
 
 		return(
 			<div className="singleImage box">
+				<div className="singleImage__title">
+					<h1 className="title">Single Image</h1>
+				</div>
 				<select name="componentTitle" className="select" value={this.props.componentTitle} onChange={this.onTitleChange}>
 					{this.props.componentTitles.map((title, i) => {
 						return <option key={i} value={title.title}>{title.title}</option>
