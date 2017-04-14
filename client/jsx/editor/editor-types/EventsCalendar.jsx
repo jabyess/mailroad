@@ -54,6 +54,9 @@ class EventsCalendar extends React.Component {
 	render() {
 		return (
 			<div className="eventsCalendar box">
+				<div className="eventsCalendar__title">
+					<h1 className="title">Events Calendar</h1>
+				</div>
 				<select name="componentTitle" className="select" onChange={this.onTitleChange} value={this.props.componentTitle}>
 					{this.props.componentTitles.map((componentTitle, i) => {
 						return (

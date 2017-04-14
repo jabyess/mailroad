@@ -91,7 +91,8 @@ class EditorContainer extends React.Component {
 	addEditorToContainer(editorNames) {
 		// set default values for different component types when adding to editorContainer
 		const insertHTMLString = ['DefaultEditor']
-		const insertArray = ['EventsCalendar', 'SingleImage']
+		const insertArray = ['FlexibleImage']
+		const insertObj = ['EventsCalendar', 'SingleImage']
 		let content
 
 		editorNames.forEach(currentEditor => {
@@ -99,6 +100,9 @@ class EditorContainer extends React.Component {
 				content = '<p>You have inserted a new editor.</p>'
 			}
 			else if(insertArray.some(editorName => currentEditor === editorName)) {
+				content = []
+			}
+			else if(insertObj.some(editorName => currentEditor === editorName)) {
 				content = [{}]
 			}
 			else {
@@ -332,6 +336,7 @@ class EditorContainer extends React.Component {
 		const renderEditorTypeSelect = this.state.isEditModeActive ? 
 		<EditorTypeSelect
 			addEditorToContainer={this.addEditorToContainer}
+			fireNotification={this.fireNotification}
 			/> : null
 
 		const renderLinkModal = this.state.isLinkModalVisible ? 

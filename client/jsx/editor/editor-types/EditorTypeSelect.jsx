@@ -13,9 +13,8 @@ class EditorTypeSelect extends React.Component {
 	}
 	
 	addComponentToPage() {
-		if(this.props.addEditorToContainer) {
-			this.props.addEditorToContainer(this.state.value)
-		}
+		this.props.addEditorToContainer(this.state.value)
+		this.props.fireNotification('success', 'Added ' + this.state.value)
 	}
 
 	handleChange(e) {
@@ -49,7 +48,8 @@ class EditorTypeSelect extends React.Component {
 }
 
 EditorTypeSelect.propTypes = {
-	addEditorToContainer: React.PropTypes.func
+	addEditorToContainer: React.PropTypes.func,
+	fireNotification: React.PropTypes.func
 }
 
 export default EditorTypeSelect

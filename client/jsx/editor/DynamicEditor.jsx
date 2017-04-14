@@ -1,13 +1,7 @@
 import React from 'react'
-import { DefaultEditor, EventsCalendar, SingleImage } from './editor-types/EditorTypes'
+import * as dynamicEditorTypes from './editor-types/EditorTypes'
 import ItemTypes from './editor-types/ItemTypes'
 import { DragSource } from 'react-dnd'
-
-const dynamicEditorTypes = {
-	DefaultEditor,
-	EventsCalendar,
-	SingleImage
-}
 
 const dynamicEditorSource = {
 	beginDrag(props) {
