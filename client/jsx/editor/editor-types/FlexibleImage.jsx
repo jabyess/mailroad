@@ -15,15 +15,11 @@ class FlexibleImage extends React.Component {
 	componentWillReceiveProps(nextProps) {
 		if(this.props.imageURL !== nextProps.imageURL && this.props.imageIndex === this.props.index) {
 			const content = this.props.content
-			
 			this.getImageMeta(nextProps.imageURL, (height, width) => {
 				content.push({imageURL: nextProps.imageURL, height, width})
 				this.props.updateContentValue(content, this.props.index)
 			})
-			
-			
 		}
-		console.log(nextProps)
 	}
 
 	getImageMeta(imageURL, cb) {

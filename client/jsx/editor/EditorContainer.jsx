@@ -3,7 +3,7 @@ import autoBind from 'react-autobind'
 import EditorMetaContainer from './EditorMetaContainer'
 import EditorTypeSelect from './editor-types/EditorTypeSelect'
 import shortid from 'shortid'
-import EditorTypeRow from './EditorTypeRow'
+import EditorTypeContainer from './EditorTypeContainer'
 import ImagePromptModal from '../modals/ImagePromptModal'
 import ImageGalleryModal from '../modals/ImageGalleryModal'
 import ImageSizeModal from '../modals/ImageSizeModal'
@@ -371,30 +371,20 @@ class EditorContainer extends React.Component {
 				{renderLinkModal}
 				{renderExternalImageModal}
 				{renderSourceModal}
-				<div className="editor-container__editors column">
-					{this.state.contents.map((content, i) => {
-						return (
-							<EditorTypeRow
-								key={content.id}
-								index={i}
-								content={content.content}
-								editorType={content.editorType}
-								componentTitle={content.componentTitle}
-								componentTitles={componentTitles}
-								imageURL={this.state.imageURL}
-								imageIndex={this.state.imageIndex}
-								setImageIndex={this.setImageIndex}
-								isEditModeActive={this.state.isEditModeActive}
-								removeEditorFromContainer={this.removeEditorFromContainer}
-								updateComponentTitle={this.updateComponentTitle}
-								updateContentValue={this.updateContentValue}
-								reorderEditorIndexes={this.reorderEditorIndexes}
-								updateEventDate={this.updateEventDate}
-								updateEventTitle={this.updateEventTitle}
-							/>
-						)
-					})}
-				</div>
+				<EditorTypeContainer 
+					contents={this.state.contents}
+					componentTitles={componentTitles}
+					imageURL={this.state.imageURL}
+					imageIndex={this.state.imageIndex}
+					setImageIndex={this.setImageIndex}
+					isEditModeActive={this.state.isEditModeActive}
+					removeEditorFromContainer={this.removeEditorFromContainer}
+					updateComponentTitle={this.updateComponentTitle}
+					updateContentValue={this.updateContentValue}
+					reorderEditorIndexes={this.reorderEditorIndexes}
+					updateEventDate={this.updateEventDate}
+					updateEventTitle={this.updateEventTitle}
+				/>
 				<div className="column is-one-third">
 				<EditorMetaContainer 
 					{...this.state}
