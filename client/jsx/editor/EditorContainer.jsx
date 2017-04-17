@@ -1,4 +1,5 @@
 import React from 'react'
+import { browserHistory } from 'react-router'
 import autoBind from 'react-autobind'
 import EditorMetaContainer from './EditorMetaContainer'
 import EditorTypeSelect from './editor-types/EditorTypeSelect'
@@ -259,6 +260,11 @@ class EditorContainer extends React.Component {
 
 	saveToDB() {
 		let doc = this.extractFromState(this.state)
+		
+		if(window.location.pathname.indexOf(doc._id) < 0) {
+			browserHistory.push(window.location.pathname + '/' + doc._id)
+		}
+
 		this.pouchDB.syncToDB(doc, (complete) => {
 			if(complete.status === 'complete') {
 				this.fireNotification('success', 'Saved to Database')
