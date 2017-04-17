@@ -11,56 +11,54 @@ class SingleImage extends React.Component {
 			'addCaption',
 			'removeCaption',
 			'getImageMeta',
-			'showGallery',
+			'showGalleryModal',
 			'onChangeCaption',
 			'onTitleChange'
 		)
 	}
 
 	componentWillReceiveProps (nextProps) {
-		//sets the image url and state from gallery, for new images
+		// when image url is added/updated
 		if(nextProps.imageURL !== this.props.imageURL && this.props.imageIndex === this.props.index) {
-			this.getImageMeta(nextProps.imageURL)
-			this.props.updateContentValue({imageURL: nextProps.imageURL}, this.props.index)
+			this.getImageMeta(nextProps.imageURL, (height, width) => {
+				let newContent = Object.assign({}, this.props.content)
+				newContent.width = width
+				newContent.height = height
+				newContent.imageURL = nextProps.imageURL
+				this.props.updateContentValue(newContent, this.props.index)
+			})
 		}
-		// these checks make sure adding a caption doesnt blow out the image 
-		// by setting null values to top level state
-		// and vice versa
-		if(nextProps.content.imageURL) {
-			this.getImageMeta(nextProps.content.imageURL)
-			this.setState({imageURL: nextProps.content.imageURL})
-		}
-		if(nextProps.content.caption) {
-			this.setState({caption: nextProps.content.caption, captionVisible: true})
+		// for image caption updates
+		else if(nextProps.content && this.props.content) {
+			let currentProps = Object.assign({}, this.props.content)
+			currentProps.caption = nextProps.content.caption
 		}
 	}
 
 	addCaption() {
-		if(!this.state.imageURL) {
+		if(!this.props.content.imageURL) {
 			window.alert('Please add an image first')
 		}
-		else if(this.state.caption && this.state.caption.length > 0) {
-			return false
-		}
 		else {
-			console.log('adding caption')
-			this.setState({captionVisible: true})
-			this.props.updateContentValue({ caption: 'Enter caption', imageURL: this.state.imageURL }, this.props.index)
+			let newContent = Object.assign({}, this.props.content, {caption: '', imageURL: this.props.content.imageURL})
+			this.props.updateContentValue(newContent, this.props.index)
 		}
 	}
 
 	removeCaption() {
-		this.props.updateContentValue({caption: null, imageURL: this.state.imageURL}, this.props.index)
-		this.setState({captionVisible: false, caption: null})
+		let newContent = Object.assign({}, this.props.content)
+		newContent.caption = null
+		this.props.updateContentValue(newContent, this.props.index)
 	}
 
 	onChangeCaption(e) {
 		const caption = e.target.value
-		this.setState({ caption })
-		this.props.updateContentValue({ caption, imageURL: this.state.imageURL}, this.props.index)
+		let newContent = Object.assign({}, this.props.content)
+		newContent.caption = caption
+		this.props.updateContentValue(newContent, this.props.index)
 	}
 
-	showGallery(e) {
+	showGalleryModal(e) {
 		e.preventDefault()
 		this.props.setImageIndex(this.props.index)
 
@@ -70,11 +68,10 @@ class SingleImage extends React.Component {
 		window.dispatchEvent(isImageGalleryModalVisible)
 	}
 	
-	getImageMeta(imageURL) {
-		const img = new Image()
-		let self = this
+	getImageMeta(imageURL, cb) {
+		let img = new Image()
 		img.addEventListener('load', function() {
-			self.setState({height: this.height, width: this.width})
+			cb(this.height, this.width)
 		})
 		img.src = imageURL
 	}
@@ -85,18 +82,23 @@ class SingleImage extends React.Component {
 	}
 
 	render() {
-		const showCaption = this.state.captionVisible ? 
+		const showCaption = this.props.content.imageURL && this.props.content.caption !== null ?
 		<div className="singleImage__caption">
 			<label htmlFor="">Image Caption:</label>
 			<input type="text" value={this.props.content.caption} onChange={this.onChangeCaption} className="input"/>
-		</div>
-		: null
-		const showMeta = this.props.content.imageURL ? 
-		<div className="singleImage__meta">
-			<p>Width: {this.state.width}</p>
-			<p>Height: {this.state.height}</p>
 		</div> : null
-		const showRemoveButton = this.state.captionVisible ? <button className="button" onClick={this.removeCaption}>Remove Caption</button> : null
+
+		const showMeta = this.props.content.width && this.props.content.height ? 
+		<div className="singleImage__meta">
+			<p>Width: {this.props.content.width}</p>
+			<p>Height: {this.props.content.height}</p>
+		</div> : null
+		
+		const showAddButton = this.props.content.caption === null ? 
+		<button className="button" onClick={this.addCaption}>Add Caption</button> : null
+		const showRemoveButton = this.props.content.caption ? 
+		<button className="button" onClick={this.removeCaption}>Remove Caption</button> : null
+
 
 		return(
 			<div className="singleImage box">
@@ -108,8 +110,8 @@ class SingleImage extends React.Component {
 						return <option key={i} value={title.title}>{title.title}</option>
 					})}
 				</select>
-				<button className="button" onClick={this.showGallery}>Choose Image</button>
-				<button className="button" onClick={this.addCaption}>Add Caption</button>
+				<button className="button" onClick={this.showGalleryModal}>Choose Image</button>
+				{showAddButton}
 				{showRemoveButton}
 				<img src={this.props.content.imageURL} className="image singleImage__image" alt=""/>
 				{showMeta}
