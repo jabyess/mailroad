@@ -10,7 +10,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "babel-node": "babel-node --presets=es2015",
-    "start": "nodemon --exec babel-node server/lib/index.js",
+    "start": "nodemon --inspect server/lib/index.js",
     "sync-views": "node server/couchdb-views/views.js sync",
     "build": "webpack --progress --debug --config ./config/webpack.config.prod.js && babel ./server/ -d ./dist",
     "serve": "node dist/lib/index.js",
