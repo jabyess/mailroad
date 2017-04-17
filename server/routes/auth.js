@@ -86,8 +86,6 @@ passportjs.init = (app) => {
 
 	app.post('/api/auth/redirect', jsonParser, (req, res) => {
 		const key = req.body.key
-		console.log(req.body)
-		console.log(key)
 		redisClient.set('key',key, redis.print)
 		res.send('set key')
 	})
@@ -114,7 +112,7 @@ passportjs.init = (app) => {
 		redisClient.get(uid, (err, data) => {
 			if(err) {
 				//TODO: system log error
-				console.log(err)
+				winston.error(err)
 				res.sendStatus(500)
 			}
 			else if(!data) {
@@ -122,7 +120,6 @@ passportjs.init = (app) => {
 				res.sendStatus(404)
 			}
 			else if(data) {
-				console.log(data)
 				res.sendStatus(200)
 			}
 		})
