@@ -93,7 +93,7 @@ class EditorContainer extends React.Component {
 		// set default values for different component types when adding to editorContainer
 		const insertHTMLString = ['DefaultEditor']
 		const insertArray = ['FlexibleImage']
-		const insertObj = ['EventsCalendar', 'SingleImage']
+		const insertObj = ['EventsCalendar', 'SingleImage', 'SingleHeading']
 		let content
 
 		editorNames.forEach(currentEditor => {
@@ -392,21 +392,21 @@ class EditorContainer extends React.Component {
 					updateEventTitle={this.updateEventTitle}
 				/>
 				<div className="column is-one-third">
-				<EditorMetaContainer 
-					{...this.state}
-					createdAt={formatTimestamp(this.state.createdAt)}
-					updatedAt={formatTimestamp(this.state.updatedAt)}
-					handleTitleChange={this.handleTitleChange}
-					handleTemplateChange={this.handleTemplateChange}
-					updateCategory={this.updateCategory}
-				/>
-				<EditorControlsContainer
-					toggleEditMode={this.toggleEditMode}
-					isEditModeActive={this.state.isEditModeActive}
-					saveToDB={this.saveToDB}
-					compileHTMLTemplate={this.compileHTMLTemplate}
-				/>
-				{renderEditorTypeSelect}
+					<EditorMetaContainer 
+						{...this.state}
+						createdAt={formatTimestamp(this.state.createdAt)}
+						updatedAt={formatTimestamp(this.state.updatedAt)}
+						handleTitleChange={this.handleTitleChange}
+						handleTemplateChange={this.handleTemplateChange}
+						updateCategory={this.updateCategory}
+					/>
+					<EditorControlsContainer
+						toggleEditMode={this.toggleEditMode}
+						isEditModeActive={this.state.isEditModeActive}
+						saveToDB={this.saveToDB}
+						compileHTMLTemplate={this.compileHTMLTemplate}
+					/>
+					{renderEditorTypeSelect}
 				</div>
 			</div>
 		)	
