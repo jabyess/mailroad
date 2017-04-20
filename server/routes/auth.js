@@ -6,7 +6,6 @@ let LocalStrategy = require('passport-local').Strategy
 const redis = require('redis')
 const winston = require('winston')
 
-
 dotenv.config()
 
 const AUTH_URL = process.env.AUTH_URL
@@ -26,12 +25,18 @@ passportjs.init = (app) => {
 				password: password,
 			}
 		}).then(authenticated => {
-			const uid = authenticated.data.user.id
 			const sessionToken = req.body.sessionToken
 
-			redisClient.setex(sessionToken, 86400, uid, (err) => {
+			let redisObj = {
+				name: authenticated.data.user.cb,
+				email: authenticated.data.user.uid,
+				uuid: authenticated.data.user.id
+			}
+			let redisString = JSON.stringify(redisObj)
+
+			redisClient.setex(sessionToken, 86400, redisString, (err) => {
 				if(!err) {
-					return done(null, sessionToken)
+					return done(null, redisString)
 				}
 				else {
 					winston.error(err)
@@ -70,9 +75,13 @@ passportjs.init = (app) => {
 	})
 
 	passport.deserializeUser((token, done) => {
-		redisClient.get(token, (err, uid) => {
+		let tokenObj = JSON.parse(token)
+		redisClient.get(tokenObj.uuid, (err, uuid) => {
 			if(!err) {
-				done(null, uid)
+				done(null, uuid)
+			}
+			else {
+				winston.error(err)
 			}
 		})
 	})
@@ -82,12 +91,6 @@ passportjs.init = (app) => {
 	}), (req, res) => {
 		//if passport.authenticate validates, send success status
 		res.sendStatus(200)
-	})
-
-	app.post('/api/auth/redirect', jsonParser, (req, res) => {
-		const key = req.body.key
-		redisClient.set('key',key, redis.print)
-		res.send('set key')
 	})
 
 	app.delete('/api/auth/:uid', (req, res) => {
@@ -111,12 +114,10 @@ passportjs.init = (app) => {
 		const uid = req.params.uid
 		redisClient.get(uid, (err, data) => {
 			if(err) {
-				//TODO: system log error
 				winston.error(err)
 				res.sendStatus(500)
 			}
 			else if(!data) {
-				console.log('nodata')
 				res.sendStatus(404)
 			}
 			else if(data) {

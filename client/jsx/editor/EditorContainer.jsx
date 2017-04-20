@@ -35,6 +35,7 @@ class EditorContainer extends React.Component {
 			'compileHTMLTemplate',
 			'handleTitleChange',
 			'handleTemplateChange',
+			'handleAuthorChange',
 			'updateContentValue',
 			'updateComponentTitle',
 			'updateEventDate',
@@ -130,7 +131,7 @@ class EditorContainer extends React.Component {
 			this.setState({categories: response.data.categories})
 		})
 		.catch(err => {
-			console.log('error getting categories', err)
+			this.fireNotification('danger', `Error getting categories: ${err}`)
 		})
 	}
 
@@ -144,12 +145,16 @@ class EditorContainer extends React.Component {
 		})
 	}
 
-	handleTitleChange(value) {
-		this.setState({title: value})
+	handleAuthorChange(author) {
+		this.setState({ author })
 	}
 
-	handleTemplateChange(value) {
-		this.setState({template: value})
+	handleTitleChange(title) {
+		this.setState({ title })
+	}
+
+	handleTemplateChange(template) {
+		this.setState({ template })
 	}
 
 	fireNotification(type, text) {
@@ -219,19 +224,20 @@ class EditorContainer extends React.Component {
 			id: shortid.generate()
 		}]
 		let title = 'New Email'
+		let token = localStorage.getItem('mailroad-session-token')
 
 		axios.post('/api/email/create', {
-			contents, title
+			contents, title, token
 		})
 		.then(jsonResponse => {
 			console.log(jsonResponse.data)
 			this.setState(jsonResponse.data, this.pouchDB.updateDoc(jsonResponse.data))
 		},
 		rejected => {
-			console.error('error in createEmail post', rejected)
+			this.fireNotification('danger', `Error creating email: ${rejected}`)
 		})
 		.catch(err => {
-			console.log('error during createEmail:', err)
+			this.fireNotification('danger', `Caught error creating email: ${err}`)
 		})
 	}
 
@@ -251,9 +257,9 @@ class EditorContainer extends React.Component {
 	}
 
 	extractFromState(state) {
-		let { _id, _rev, category, contents, createdAt, updatedAt, template, title } = state
+		let { _id, _rev, author, category, contents, createdAt, updatedAt, template, title } = state
 		let doc = {
-			_id, _rev, category, contents, createdAt, updatedAt, template, title
+			_id, _rev, author, category, contents, createdAt, updatedAt, template, title
 		}
 		return doc
 	}
@@ -398,6 +404,7 @@ class EditorContainer extends React.Component {
 						updatedAt={formatTimestamp(this.state.updatedAt)}
 						handleTitleChange={this.handleTitleChange}
 						handleTemplateChange={this.handleTemplateChange}
+						handleAuthorChange={this.handleAuthorChange}
 						updateCategory={this.updateCategory}
 					/>
 					<EditorControlsContainer
