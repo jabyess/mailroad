@@ -230,7 +230,6 @@ class EditorContainer extends React.Component {
 			contents, title, token
 		})
 		.then(jsonResponse => {
-			console.log(jsonResponse.data)
 			this.setState(jsonResponse.data, this.pouchDB.updateDoc(jsonResponse.data))
 		},
 		rejected => {
