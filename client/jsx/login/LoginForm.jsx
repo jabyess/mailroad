@@ -28,7 +28,7 @@ export default class LoginForm extends React.Component {
 
 	submitLogin(e) {
 		e.preventDefault()
-		const sessionToken = shortid.generate()
+		const sessionToken = `sess-${shortid.generate()}`
 		const formData = new FormData()
 
 		formData.append('username', this.state.username)

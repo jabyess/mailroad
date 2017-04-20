@@ -10,10 +10,11 @@ class EmailTable extends React.Component {
 					<tr>
 						<th>Select</th>
 						<th>Title</th>
+						<th>Author</th>
 						<th>Template</th>
 						<th>Category</th>
-						<th>Created Date</th>
-						<th>Last Updated Date</th>
+						<th>Created</th>
+						<th>Updated</th>
 					</tr>
 				</thead>
 				<tbody>

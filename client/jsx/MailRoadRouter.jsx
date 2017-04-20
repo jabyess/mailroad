@@ -21,6 +21,7 @@ class MailRoadRouter extends React.Component {
 
 	requireAuth(nextState, replace, callback) {
 		const sessionToken = localStorage.getItem('mailroad-session-token')
+		console.log('requireAuth')
 		// if no localStorage token, redirect to login
 		if(!sessionToken) {
 			replace({
@@ -46,8 +47,10 @@ class MailRoadRouter extends React.Component {
 					callback()
 				})
 				.catch(err => {
-					//TODO: system log error
-					console.log(err)
+					axios.post('/api/log', {
+						level: 'error',
+						data: err
+					})
 				})
 		}
 	}

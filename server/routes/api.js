@@ -7,15 +7,16 @@ const Utils = require('../lib/utils.js')
 const Promise = require('bluebird')
 const axios = require('axios')
 const winston = require('winston')
-
 const mjml = require('../lib/mjml.js')
 const MJML = new mjml()
+const redis = require('redis')
 
 dotenv.config()
 
 let router = express.Router()
 let jsonParser = bodyParser.json()
 const env = process.env
+const redisClient = redis.createClient()
 
 const COUCH_URL = env.COUCHDB_URL // http://localhost:5984/
 const COUCH_UUID = COUCH_URL + '_uuids' // http://localhost:5984/uuids
@@ -79,31 +80,44 @@ router.post('/compile', jsonParser, (req,res) => {
 })
 
 router.post('/create', jsonParser, (req,res) => {
-	const { contents, title } = req.body
+	const { contents, title, token } = req.body
 	const createdAt = Utils.getCurrentTimestampUTC()
 	const updatedAt = Utils.getCurrentTimestampUTC()
+	let user
+
+	redisClient.get(token, (err, data) => {
+		if(!err) {
+			user = JSON.parse(data)
+		}
+		else {
+			winston.error(err)
+		}
+	})
 
 	axios.get(COUCH_UUID)
 		.then((response) => {
-			let uuid = response.data.uuids[0]
+			const uuid = response.data.uuids[0]
 			return uuid
 		})
 		.then((uuid) => {
-			let url = COUCH_EMAILS + uuid
+			const url = COUCH_EMAILS + uuid
 			return axios.put(url, {
 				contents,
 				title,
 				createdAt,
-				updatedAt
+				updatedAt,
+				author: user.name,
+				email: user.email
 			})
-			.then((putResponse) => {
-				let url = COUCH_EMAILS + putResponse.data.id
+			.then(putResponse => {
+				const url = COUCH_EMAILS + putResponse.data.id
 				return axios.get(url)
-					.then((getResponse) => {
+					.then(getResponse => {
 						res.send(getResponse.data)
 						return getResponse.data
 					})
-			}).catch((rejectError) => {
+			})
+			.catch(rejectError => {
 				res.send(rejectError)
 				return rejectError
 			})

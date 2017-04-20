@@ -12,8 +12,10 @@ emails.views.EmailsByUpdatedDate = {
 			updatedAt: doc.updatedAt,
 			title: doc.title,
 			template: doc.template, 
-			category: doc.category
-		} 
+			category: doc.category,
+			author: doc.author,
+			email: doc.email
+		};
 		emit(doc.updatedAt, content);
 	}
 }

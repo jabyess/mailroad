@@ -38,7 +38,8 @@ export default class EmailContainer extends React.Component {
 				updatedAt: val.value.updatedAt,
 				title: val.value.title,
 				template: val.value.template,
-				category: val.value.category
+				category: val.value.category,
+				author: val.value.author
 			}
 			return newValues
 		})
@@ -49,6 +50,7 @@ export default class EmailContainer extends React.Component {
 		if(!paginatedEmails) {
 			axios('/api/email/list')
 				.then((results) => {
+					console.log(results.data.rows)
 					let values = this.mapEmailResults(results.data.rows)
 					this.setState({
 						emailItems: values,

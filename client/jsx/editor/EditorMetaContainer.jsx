@@ -7,9 +7,10 @@ class EditorMetaContainer extends React.Component {
 		super(props)
 
 		autoBind(this, 
-		'handleTitleChange',
-		'handleTemplateChange',
-		'handleCategoryChange'
+			'handleTitleChange',
+			'handleTemplateChange',
+			'handleCategoryChange',
+			'handleAuthorChange'
 		)
 
 		this.state = {}
@@ -38,8 +39,14 @@ class EditorMetaContainer extends React.Component {
 		const isSourceModalVisible = new CustomEvent('toggleVisible', {
 			detail: 'isSourceModalVisible'
 		})
-
 		window.dispatchEvent(isSourceModalVisible)
+	}
+
+	handleAuthorChange(e) {
+		let author = e.target.value
+		if(this.props.handleAuthorChange) {
+			this.props.handleAuthorChange(author)
+		}
 
 	}
 
@@ -95,6 +102,15 @@ class EditorMetaContainer extends React.Component {
 							onChange={this.handleTitleChange}
 						/>
 					</div>
+					<div className="panel-block">
+						<span>Author:</span>
+						<input 
+							type="text"
+							className="input"
+							value={this.props.author}
+							onChange={this.handleAuthorChange}
+							/>
+					</div>
 					{renderCompiledEmail}
 				</div> 
 			</div>
@@ -104,11 +120,13 @@ class EditorMetaContainer extends React.Component {
 }
 
 EditorMetaContainer.propTypes = {
+	author: React.PropTypes.string,
 	createdAt: React.PropTypes.string,
 	updatedAt: React.PropTypes.string,
 	templates: React.PropTypes.array,
 	template: React.PropTypes.string,
 	title: React.PropTypes.string,
+	handleAuthorChange: React.PropTypes.func,
 	handleTemplateChange: React.PropTypes.func,
 	handleTitleChange: React.PropTypes.func,
 	updateCategory: React.PropTypes.func
