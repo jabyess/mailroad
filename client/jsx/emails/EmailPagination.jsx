@@ -10,7 +10,7 @@ class EmailPagination extends React.Component {
 	}
 
 	makeTotalPages(length) {
-		let arr = []
+		let arr = [] 
 		for(var i = 1; i <= length; i++) {
 			arr.push(i)
 		}
@@ -27,7 +27,7 @@ class EmailPagination extends React.Component {
 	render() {
 		const nextDisabled = (this.props.emailsPerPage * this.props.page) < this.props.totalRows ? false : true
 		const prevDisabled = (this.props.page > 1) ? false : true
-		const totalPages = this.makeTotalPages( Math.floor(this.props.totalRows / this.props.emailsPerPage) + 1 )
+		const totalPages = this.makeTotalPages( Math.ceil(this.props.totalRows / this.props.emailsPerPage) )
 		const showNumbers = (
 			<ul className="pagination-list">
 				<span className="pagination-ellipsis">{this.props.totalRows} Emails </span>
