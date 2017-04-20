@@ -1,13 +1,86 @@
-  <mjml>
-    <mj-body>
-      <mj-container>
-        <mj-section>
-          <mj-column>
-            <mj-text>
-              Hello World!
-            </mj-text>
-          </mj-column>
-        </mj-section>
-      </mj-container>
-    </mj-body>
-  </mjml>
+<mjml>
+	<mj-head>
+    <mj-style>
+      * {
+        font-family: 'Helvetica'
+      }
+    </mj-style>
+	</mj-head>
+
+	<mj-body>
+		<mj-container background-color="#f7f5f5">
+    
+      <mj-section>
+        <mj-column>
+          <mj-image align="center" src="//s3.amazonaws.com/morning-consult-email-images/600x80-20170420173544-5826718586-MC-logo-long-black.png" />
+        </mj-column>
+      </mj-section>
+      
+			<mj-section>
+				<mj-column>
+					<mj-text>
+						<h1>
+							{{title}}
+						</h1>
+            <h2>{{author}}</h2>
+					</mj-text>
+				</mj-column>
+			</mj-section>
+
+			{{#each contents}}
+
+        {{#ifeq this.componentTitle 'Single Heading'}}
+          <mj-section>
+            <mj-column>
+              <mj-text
+              {{#if ../this.content.fontSize}}
+                font-size="{{../this.content.fontSize}}"
+              {{/if}}
+              {{#else}}
+                font-size="24"
+              {{/else}}
+
+              {{#if ../this.content.uppercase}}
+                text-transform="uppercase"
+              {{/if}}
+              >
+                <h1>{{../this.content.headingText}}</h1>
+              </mj-text>
+            </mj-column>
+          </mj-section>
+        {{/ifeq}}
+				{{#ifeq this.componentTitle 'Single Image'}}
+					<mj-section>
+						<mj-column>
+							<mj-image src="{{../this.content.imageURL}}" />
+							<mj-text>{{../this.content.caption}}</mj-text>
+						</mj-column>
+					</mj-section>
+				{{/ifeq}}
+        {{#ifeq this.componentTitle 'General'}}
+          <mj-section>
+            <mj-column>
+              <mj-text>{{{../this.content}}}</mj-text>
+            </mj-column>
+          </mj-section>
+        {{/ifeq}}
+
+        {{#ifeq this.componentTitle 'Flexible Image'}}
+          <mj-section>
+          {{#each ../this.content}}
+            <mj-column>
+              <mj-image src="{{imageURL}}"></mj-image>
+            </mj-column>
+          {{/each}}
+          </mj-section>
+        {{/ifeq}}
+
+
+			{{/each}}
+
+			
+		<mj-include path="server/mjml-templates/partials/footer.mjml" />
+
+		</mj-container>
+	</mj-body>
+</mjml>

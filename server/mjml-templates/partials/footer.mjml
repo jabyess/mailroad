@@ -3,14 +3,22 @@
 		<mj-container>
 		<mj-section>
 			<mj-column>
-			<mj-text>wat social</mj-text>
+			<mj-text></mj-text>
 			<mj-social
-				display="facebook twitter"
+				display="facebook twitter linkedin"
 				facebook-href="https://www.facebook.com/morningconsult"
 				twitter-href="https://twitter.com/morningconsult"
+				linkedin-href="https://linkedin.com/company/the-morning-consult"
 				facebook-icon-color="#424242"
 				twitter-icon-color="#424242"
-			></mj-social>
+				linkedin-icon-color="#424242"
+			>
+			</mj-social>
+			<mj-button
+				href="https://morningconsult.com/subscribe"
+				background-color="#2b2b2b"
+			>Subscribe</mj-button>
+			<mj-image src="https://morningconsult.com/wp-content/themes/morning-consult/img/email/mclogo_v2.png" title="Morning Consult footer logo"/>
 			</mj-column>
 		</mj-section>
 		</mj-container>

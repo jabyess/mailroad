@@ -2,6 +2,7 @@ import React from 'react'
 import { Editor, Html } from 'slate'
 import autoBind from 'react-autobind'
 import { debounce } from '../../../lib/utils.js'
+import classNames from 'classnames'
 
 const DEFAULT_NODE = 'paragraph'
 
@@ -36,7 +37,8 @@ const schema = {
 			const { data } = props.node
 			const href = data.get('href')
 			return <a {...props.attributes} href={href}>{props.children}</a>
-		}
+		},
+		'span': props => <span {...props.attributes}>{props.children}</span>
 	},
 	marks: {
 		'bold': props => <strong>{props.children}</strong>,
@@ -61,7 +63,7 @@ const BLOCK_TAGS = {
 	td: 'table-cell',
 	th: 'table-header',
 	img: 'image',
-	a: 'link'
+	span: 'span'
 }
 
 const INLINE_TAGS = {
@@ -82,16 +84,6 @@ const rules = [
 			const blockType = BLOCK_TAGS[el.tagName]
 			if (!blockType) return
 			switch(blockType) {
-			case 'link': {
-				return {
-					kind: 'block',
-					type: blockType,
-					data: {
-						href: el.attribs.href
-					},
-					nodes: next(el.children)
-				}
-			}
 			case 'image': {
 				return {
 					kind: 'block',
@@ -129,6 +121,7 @@ const rules = [
 			case 'table-row': return <tr>{children}</tr>
 			case 'table-cell' : return <td>{children}</td>
 			case 'table-header': return <th>{children}</th>
+			case 'span': return <span>{children}</span>
 			case 'link': {
 				const href = object.data.get('href')
 				return <a href={href}>{children}</a>
@@ -258,7 +251,7 @@ class DefaultEditor extends React.Component {
 
 	hasLinks() {
 		const { state } = this.state
-		return state.inlines.some(inline => inline.type == 'link')
+		return (state.inlines.some(inline => inline.type === 'link') || state.blocks.some(block => block.type === 'link'))
 	}
 
  /**
@@ -400,6 +393,7 @@ class DefaultEditor extends React.Component {
 		const hasLinks = this.hasLinks()
 
 		if (hasLinks) {
+			console.log('haslinks clicked')
 			state = state
 				.transform()
 				.unwrapInline('link')
@@ -498,10 +492,14 @@ class DefaultEditor extends React.Component {
 
 	renderMarkButton(type, icon) {
 		const isActive = this.hasMark(type)
+		const styles = classNames({
+			button: true,
+			'is-active': isActive
+		})
 		const onMouseDown = e => this.onClickMarkButton(e, type)
 
 		return (
-			<button className="button" onMouseDown={onMouseDown} data-active={isActive}>
+			<button className={styles} onMouseDown={onMouseDown} data-active={isActive}>
 				<span className="icon is-medium material-icons">{icon}</span>
 			</button>
 		)
@@ -509,20 +507,28 @@ class DefaultEditor extends React.Component {
 
 	renderLinkButton(type, icon) {
 		const hasLinks = this.hasLinks()
+		const styles = classNames({
+			button: true,
+			'is-active': hasLinks
+		})
 
 		return (
-			<span className="button" onMouseDown={this.onClickLinkButton} data-active={hasLinks}>
+			<button className={styles} onMouseDown={this.onClickLinkButton} data-active={hasLinks}>
 				<span className="material-icons">{icon}</span>
-			</span>
+			</button>
 		)
 	}
 
 	renderBlockButton(type, icon) {
 		const isActive = this.hasBlock(type)
+		const styles = classNames({
+			button: true,
+			'is-active': isActive
+		})
 		const onMouseDown = e => this.onClickBlockButton(e, type)
 
 		return (
-			<button className="button" onMouseDown={onMouseDown} data-active={isActive}>
+			<button className={styles} onMouseDown={onMouseDown} data-active={isActive}>
 				<span className="icon is-medium material-icons">{icon}</span>
 			</button>
 		)
@@ -530,10 +536,14 @@ class DefaultEditor extends React.Component {
 
 	renderImageButton(type, icon) {
 		const isActive = this.hasBlock(type)
+		const styles = classNames({
+			button: true,
+			'is-active': isActive
+		})
 		const onMouseDown = e => this.onClickImageButton(e)
 
 		return (
-			<button className="button" onMouseDown={onMouseDown} data-active={isActive}>
+			<button className={styles} onMouseDown={onMouseDown} data-active={isActive}>
 				<span className="material-icons">{icon}</span>
 			</button>
 		)
@@ -602,7 +612,10 @@ DefaultEditor.propTypes = {
 	connectDragSource: React.PropTypes.func,
 	index: React.PropTypes.number,
 	updateComponentTitle: React.PropTypes.func,
-	updateContentValue: React.PropTypes.func
+	updateContentValue: React.PropTypes.func,
+	imageURL: React.PropTypes.string,
+	imageIndex: React.PropTypes.number,
+	setImageIndex: React.PropTypes.func
 }
 
 export default DefaultEditor
