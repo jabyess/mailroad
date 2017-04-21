@@ -14,6 +14,7 @@ const DEFAULT_NODE = 'paragraph'
 
 const schema = {
 	nodes: {
+		'div': props => <div {...props.attributes}>{props.children}</div>,
 		'paragraph': props => <p {...props.attributes}>{props.children}</p>,
 		'heading-one': props => <h1 {...props.attributes}>{props.children}</h1>,
 		'heading-two': props => <h2 {...props.attributes}>{props.children}</h2>,
@@ -24,6 +25,11 @@ const schema = {
 		'bulleted-list': props => <ul {...props.attributes}>{props.children}</ul>,
 		'numbered-list': props => <ol {...props.attributes}>{props.children}</ol>,
 		'list-item': props => <li {...props.attributes}>{props.children}</li>,
+		'table-body': props => <tbody {...props.attributes}>{props.children}</tbody>,
+		'table': props => <table {...props.attributes}>{props.children}</table>,
+		'table-row': props => <tr {...props.attributes}>{props.children}</tr>,
+		'table-cell': props => <td {...props.attributes}>{props.children}</td>,
+		'table-head': props => <th {...props.attributes}>{props.children}</th>,
 		'image': props => {
 			const { node, state } = props
 			const isFocused = state.selection.hasEdgeIn(node)
@@ -61,7 +67,8 @@ const BLOCK_TAGS = {
 	table: 'table',
 	tr: 'table-row',
 	td: 'table-cell',
-	th: 'table-header',
+	th: 'table-head',
+	tbody: 'table-body',
 	img: 'image',
 	span: 'span'
 }
@@ -118,10 +125,12 @@ const rules = [
 			case 'bulleted-list': return <ul>{children}</ul>
 			case 'list-item': return <li>{children}</li>
 			case 'table': return <table>{children}</table>
+			case 'table-body': return <tbody>{children}</tbody>
 			case 'table-row': return <tr>{children}</tr>
 			case 'table-cell' : return <td>{children}</td>
-			case 'table-header': return <th>{children}</th>
+			case 'table-head': return <th>{children}</th>
 			case 'span': return <span>{children}</span>
+			case 'div': return <div>{children}</div>
 			case 'link': {
 				const href = object.data.get('href')
 				return <a href={href}>{children}</a>
