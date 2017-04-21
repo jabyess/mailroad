@@ -393,7 +393,6 @@ class DefaultEditor extends React.Component {
 		const hasLinks = this.hasLinks()
 
 		if (hasLinks) {
-			console.log('haslinks clicked')
 			state = state
 				.transform()
 				.unwrapInline('link')
@@ -414,8 +413,9 @@ class DefaultEditor extends React.Component {
 
 		else {
 			const href = window.prompt('Enter the URL of the link:')
-			const text = window.prompt('Enter the text for the link:')
-			state = state
+			if(href) {
+				const text = window.prompt('Enter the text for the link:')
+				state = state
 				.transform()
 				.insertText(text)
 				.extendBackward(text.length)
@@ -425,6 +425,8 @@ class DefaultEditor extends React.Component {
 				})
 				.collapseToEnd()
 				.apply()
+			}
+			
 		}
 
 		this.setState({ state })	
