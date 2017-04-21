@@ -8,6 +8,7 @@ class FlexibleImage extends React.Component {
 		autoBind(this,
 			'showGallery',
 			'getImageMeta',
+			'onTitleChange',
 			'removeImage'
 		)
 	}
@@ -45,6 +46,11 @@ class FlexibleImage extends React.Component {
 		let content = this.props.content
 		content.pop()
 		this.props.updateContentValue(content, this.props.index)
+	}
+
+	onTitleChange(e) {
+		const componentTitle = e.target.value
+		this.props.updateComponentTitle(componentTitle, this.props.index)
 	}
 
 	render() {
@@ -90,8 +96,14 @@ class FlexibleImage extends React.Component {
 
 FlexibleImage.propTypes = {
 	setImageIndex: React.PropTypes.func,
-	index: React.PropTypes.number
-
+	index: React.PropTypes.number,
+	imageIndex: React.PropTypes.number,
+	imageURL: React.PropTypes.string,
+	updateComponentTitle: React.PropTypes.func,
+	updateContentValue: React.PropTypes.func,
+	componentTitles: React.PropTypes.array,
+	componentTitle: React.PropTypes.string,
+	content: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array, React.PropTypes.string])
 }
 
 export default FlexibleImage

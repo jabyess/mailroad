@@ -9,13 +9,14 @@ class SingleHeading extends React.Component {
 			'handleTextChange',
 			'handleCenteredChange',
 			'handleUppercaseChange',
-			'handleFontChange'
+			'handleFontChange',
+			'onTitleChange'
 		)
 	}
 
 	onTitleChange(e) {
 		let componentTitle = e.target.value
-		this.props.updateContentValue(componentTitle, this.props.index)
+		this.props.updateComponentTitle(componentTitle, this.props.index)
 	}
 
 	handleTextChange(e) {
@@ -105,11 +106,12 @@ class SingleHeading extends React.Component {
 }
 
 SingleHeading.propTypes = {
-	index: React.PropTypes.number,
-	updateContentValue: React.PropTypes.func,
 	content: React.PropTypes.oneOfType([React.PropTypes.array, React.PropTypes.object]),
 	componentTitle: React.PropTypes.string,
-	componentTitles: React.PropTypes.array
+	index: React.PropTypes.number,
+	componentTitles: React.PropTypes.array,
+	updateContentValue: React.PropTypes.func,
+	updateComponentTitle: React.PropTypes.func
 }
 
 export default SingleHeading

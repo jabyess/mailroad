@@ -251,6 +251,7 @@ class EditorContainer extends React.Component {
 			this.fireNotification('success', 'Compiled Successfully')
 		})
 		.catch(err => {
+			this.fireNotification('warning', 'Problem compiling template')
 			console.log('error compiling email', err)
 		})
 	}
