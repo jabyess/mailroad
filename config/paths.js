@@ -17,8 +17,9 @@ module.exports = {
 	appIndexJS: resolveApp('server/lib/index.js'),
 	appIndexHTML: resolveApp('server/lib/index.html'),
 	build: resolveApp('dist'),
+	public: resolveApp('public'),
 	jsx: resolveApp('client/jsx'),
 	sass: resolveApp('client/sass'),
 	css: resolveApp('dist/base.css'),
-	mjml: resolveApp('server/mjml-templates')
+	mjml: resolveApp('mjml-templates')
 }

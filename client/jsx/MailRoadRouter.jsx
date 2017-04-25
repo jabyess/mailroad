@@ -21,7 +21,6 @@ class MailRoadRouter extends React.Component {
 
 	requireAuth(nextState, replace, callback) {
 		const sessionToken = localStorage.getItem('mailroad-session-token')
-		console.log('requireAuth')
 		// if no localStorage token, redirect to login
 		if(!sessionToken) {
 			replace({

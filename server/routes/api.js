@@ -43,7 +43,7 @@ router.get('/list/:skip?', jsonParser, (req, res) => {
 })
 
 router.get('/templates', (req, res) => {
-	const templateDir = path.resolve(__dirname, '../mjml-templates')
+	const templateDir = path.resolve(__dirname, '../../mjml-templates')
 	fs.readdir(templateDir, (err, files) => {
 		if(!err) {
 			let fileList = files.filter((file) => {

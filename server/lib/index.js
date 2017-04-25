@@ -70,9 +70,7 @@ app.get('*', (req, res) => {
 })
 
 // on startup, should check to see if database connection is good.
-// if so, make sure all couchdb-views are in the system by making http requests against them
 // if so, start db
-// if not, create them then start db
 axios.get(COUCHDB_URL)
 	.then((response) => {
 		if(response && response.data) {
