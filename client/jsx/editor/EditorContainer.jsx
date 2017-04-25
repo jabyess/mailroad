@@ -38,8 +38,6 @@ class EditorContainer extends React.Component {
 			'handleAuthorChange',
 			'updateContentValue',
 			'updateComponentTitle',
-			'updateEventDate',
-			'updateEventTitle',
 			'removeEditorFromContainer',
 			'toggleVisible',
 			'setImageSizes',
@@ -94,7 +92,8 @@ class EditorContainer extends React.Component {
 		// set default values for different component types when adding to editorContainer
 		const insertHTMLString = ['DefaultEditor']
 		const insertArray = ['FlexibleImage']
-		const insertObj = ['EventsCalendar', 'SingleImage', 'SingleHeading']
+		const insertArrayObj = ['EventsCalendar', 'SingleHeading']
+		const insertObj = ['SingleImage']
 		let content
 
 		editorNames.forEach(currentEditor => {
@@ -104,8 +103,11 @@ class EditorContainer extends React.Component {
 			else if(insertArray.some(editorName => currentEditor === editorName)) {
 				content = []
 			}
-			else if(insertObj.some(editorName => currentEditor === editorName)) {
+			else if(insertArrayObj.some(editorName => currentEditor === editorName)) {
 				content = [{}]
+			}
+			else if(insertObj.some(editorName => currentEditor === editorName)) {
+				content = {}
 			}
 			else {
 				content = ''
@@ -166,17 +168,17 @@ class EditorContainer extends React.Component {
 		window.dispatchEvent(newEvent)
 	}
 
-	updateEventDate(date, index, eventIndex) {
-		this.setState((state) => {
-			state.contents[index].content[eventIndex].date = date
-		})
-	}
+	// updateEventDate(date, index, eventIndex) {
+	// 	this.setState((state) => {
+	// 		state.contents[index].content[eventIndex].date = date
+	// 	})
+	// }
 
-	updateEventTitle(name, index, eventIndex) {
-		this.setState((state) => {
-			state.contents[index].content[eventIndex].name = name
-		})
-	}
+	// updateEventTitle(name, index, eventIndex) {
+	// 	this.setState((state) => {
+	// 		state.contents[index].content[eventIndex].name = name
+	// 	})
+	// }
 
 	updateContentValue(content, index) {
 		this.setState((state) => {
@@ -394,8 +396,6 @@ class EditorContainer extends React.Component {
 					updateComponentTitle={this.updateComponentTitle}
 					updateContentValue={this.updateContentValue}
 					reorderEditorIndexes={this.reorderEditorIndexes}
-					updateEventDate={this.updateEventDate}
-					updateEventTitle={this.updateEventTitle}
 				/>
 				<div className="column is-one-third">
 					<EditorMetaContainer 
