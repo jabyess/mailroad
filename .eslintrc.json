@@ -5,6 +5,7 @@
 	},
 	"extends": ["eslint:recommended", "plugin:react/recommended"],
 	"parser": "babel-eslint",
+	"ignore": [ "dist/**" ],
 	"parserOptions": {
 		"ecmaVersion": 2016,
 		"ecmaFeatures": {
