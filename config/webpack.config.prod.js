@@ -23,8 +23,18 @@ const config = {
 			{
 				test : /(\.scss|\.sass)/,
 				include: paths.sass,
-				enforce: 'pre',
-				use: [ 'style-loader', 'css-loader', 'sass-loader' ],
+				use: ExtractTextPlugin.extract({
+					fallback: 'style-loader',
+					use: [
+						{
+							loader: 'css-loader',
+							options: {
+								minimize: true
+							}
+						}, 
+						'sass-loader'
+					],
+				})
 			},
 			{
 				test: /(\.jsx|\.js)/,
@@ -51,16 +61,10 @@ const config = {
 					}
 				]
 			},
-			{
-				test: /\.css$/,
-				use: ExtractTextPlugin.extract({
-					fallback: 'style-loader',
-					use: 'css-loader',
-				})
-			}
 		]
 	},
 	plugins: [
+		new ExtractTextPlugin('styles.css'),
 		new CompressionPlugin({
 			test: /\.js$/,
 		}),
