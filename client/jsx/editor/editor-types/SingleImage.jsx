@@ -25,6 +25,9 @@ class SingleImage extends React.Component {
 				newContent.width = width
 				newContent.height = height
 				newContent.imageURL = nextProps.imageURL
+				if(!newContent.caption) {
+					newContent.caption = ''
+				}
 				this.props.updateContentValue(newContent, this.props.index)
 			})
 		}
@@ -53,8 +56,7 @@ class SingleImage extends React.Component {
 
 	onChangeCaption(e) {
 		const caption = e.target.value
-		let newContent = Object.assign({}, this.props.content)
-		newContent.caption = caption
+		let newContent = Object.assign({}, this.props.content, { caption })
 		this.props.updateContentValue(newContent, this.props.index)
 	}
 
@@ -119,6 +121,10 @@ class SingleImage extends React.Component {
 			</div>
 		)
 	}
+}
+
+SingleImage.defaultProps = {
+	content: {caption: '', imageURL: ''}
 }
 
 SingleImage.propTypes = {

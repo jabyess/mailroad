@@ -119,6 +119,13 @@ class EditorMetaContainer extends React.Component {
 
 }
 
+EditorMetaContainer.defaultProps = {
+	template: '',
+	templates: [],
+	author: '',
+	title: ''
+}
+
 EditorMetaContainer.propTypes = {
 	author: React.PropTypes.string,
 	createdAt: React.PropTypes.string,
