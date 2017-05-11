@@ -1,7 +1,10 @@
 import React from 'react'
 import axios from 'axios'
 import { browserHistory } from 'react-router'
-import shortid from 'shortid'
+
+
+// set XHR flag for login attempt
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 
 export default class LoginForm extends React.Component {
 	constructor() {
@@ -28,7 +31,6 @@ export default class LoginForm extends React.Component {
 
 	submitLogin(e) {
 		e.preventDefault()
-		const sessionToken = `sess-${shortid.generate()}`
 		const formData = new FormData()
 
 		formData.append('username', this.state.username)
@@ -37,11 +39,9 @@ export default class LoginForm extends React.Component {
 		axios.post('/api/auth/login', {
 			username: this.state.username,
 			password: this.state.password,
-			sessionToken: sessionToken
 		})
 		.then(() => {
-			//on success, write cookie and redirect
-			localStorage.setItem('mailroad-session-token', sessionToken)
+			//on success, and redirect
 			browserHistory.replace('/')
 			return false
 		}, fail => {

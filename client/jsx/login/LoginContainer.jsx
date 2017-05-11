@@ -11,6 +11,7 @@ export default class LoginContainer extends React.Component {
 			<div className="columns">
 				<div className="column is-8 is-offset-2">
 					<h1>Log yourself in</h1>
+					<h2>React</h2>
 					<LoginForm />
 				</div>
 			</div>

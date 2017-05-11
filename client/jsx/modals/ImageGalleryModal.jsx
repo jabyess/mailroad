@@ -1,7 +1,6 @@
 import React from 'react'
 import autoBind from 'react-autobind'
-import axios from 'axios'
-
+import axiosClient from '../../lib/axios.js'
 
 const IMAGES_PER_PAGE = 20
 
@@ -25,7 +24,7 @@ class ImageGalleryModal extends React.Component {
 	}
 
 	getImagesFromDB() {
-		axios('/api/s3/list')
+		axiosClient('/api/s3/list')
 			.then((imageResponse) => {
 				this.setState({
 					images: imageResponse.data.images,
@@ -39,7 +38,7 @@ class ImageGalleryModal extends React.Component {
 
 	loadMore() {
 		if(this.state.images.length < this.state.totalRows) {
-			axios.get('/api/s3/list/', {
+			axiosClient.get('/api/s3/list/', {
 				params: {
 					skip: this.state.page * IMAGES_PER_PAGE
 				}
@@ -60,7 +59,7 @@ class ImageGalleryModal extends React.Component {
 		let index = e.target.dataset.index
 		let fileName = this.state.images[index].id
 		console.log(fileName)
-		axios.post('/api/s3/delete', {
+		axiosClient.post('/api/s3/delete', {
 			fileName
 		}).then((deleteResponse) => {
 			if(deleteResponse.status === 200) {
@@ -79,7 +78,7 @@ class ImageGalleryModal extends React.Component {
 			const grouping = this.state.images[index].grouping
 			const url = `/api/s3/list/${grouping}`
 
-			axios.get(url).then((response) => {
+			axiosClient.get(url).then((response) => {
 
 				const imageSizes = response.data.docs.map(image => {
 					return {

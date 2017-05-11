@@ -14,7 +14,7 @@ import LinkModal from '../modals/LinkModal'
 import HTML5Backend from 'react-dnd-html5-backend'
 import EditorControlsContainer from './EditorControlsContainer'
 import PDB from '../../lib/pouchdb'
-import axios from 'axios'
+import axiosClient from '../../lib/axios.js'
 import { DragDropContext } from 'react-dnd'
 import { debounce, formatTimestamp } from '../../lib/utils'
 
@@ -124,7 +124,7 @@ class EditorContainer extends React.Component {
 	}
 
 	getCategories() {
-		axios.get('/api/meta/loadConfig', {
+		axiosClient.get('/api/meta/loadConfig', {
 			params: {
 				config: 'categories'
 			}
@@ -209,7 +209,7 @@ class EditorContainer extends React.Component {
 	}
 
 	getTemplates() {
-		axios.get('/api/email/templates')
+		axiosClient.get('/api/email/templates')
 			.then((templates) => {
 				this.setState({ templates: templates.data })
 			})
@@ -226,10 +226,9 @@ class EditorContainer extends React.Component {
 			id: shortid.generate()
 		}]
 		let title = 'New Email'
-		let token = localStorage.getItem('mailroad-session-token')
 
-		axios.post('/api/email/create', {
-			contents, title, token
+		axiosClient.post('/api/email/create', {
+			contents, title
 		})
 		.then(jsonResponse => {
 			this.setState(jsonResponse.data, this.pouchDB.updateDoc(jsonResponse.data))
@@ -245,7 +244,7 @@ class EditorContainer extends React.Component {
 	compileHTMLTemplate() {
 		let {contents, title, template} = this.state
 		const context = { contents, title, template }
-		axios.post('/api/email/compile', {
+		axiosClient.post('/api/email/compile', {
 			context: JSON.stringify(context)
 		})
 		.then(text => {
