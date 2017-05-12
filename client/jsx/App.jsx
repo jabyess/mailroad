@@ -1,34 +1,27 @@
 import React from 'react'
 import { browserHistory } from 'react-router'
 import NavBar from './NavBar.jsx'
-import axios from 'axios'
+import axiosClient from '../lib/axios.js'
 import NotificationContainer from './NotificationContainer'
 
 
 class App extends React.Component {
 	constructor() {
 		super()
-
-		
 	}
 
 	doLogout() {
-		const sessionToken = localStorage.getItem('mailroad-session-token')
-
-		axios.delete(`/api/auth/${sessionToken}`)
-		.then((deleted) => {
-			if(deleted) {
+		axiosClient.get('/api/auth/logout')
+			.then(status => {
+				console.log(status)
 				browserHistory.push('/login')
-				localStorage.removeItem('mailroad-session-token')
-			}
-		}, () => {
-			browserHistory.push('/login')
-			localStorage.removeItem('mailroad-session-token')
-		})
-		.catch(err => {
-			// TODO: send error log to endpoint
-			console.log('err', err)
-		})
+			})
+			.catch(err => {
+				axiosClient.post('/api/log', {
+					level: 'error',
+					data: err
+				})
+			})
 	}
 	
 	render() {

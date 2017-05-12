@@ -1,6 +1,6 @@
 import React from 'react'
 import EditorCategories from './EditorCategories.jsx'
-import axios from 'axios'
+import axiosClient from '../../lib/axios.js'
 import autoBind from 'react-autobind'
 
 export default class AdminContainer extends React.Component {
@@ -24,7 +24,7 @@ export default class AdminContainer extends React.Component {
 	}
 
 	componentDidMount () {
-		axios.get('/api/meta/loadConfig', {
+		axiosClient.get('/api/meta/loadConfig', {
 			params: {
 				config: 'categories'
 			}
@@ -80,7 +80,7 @@ export default class AdminContainer extends React.Component {
 
 	handleSave() {
 		const categories = this.state.categories
-		axios.post('/api/meta/save', {
+		axiosClient.post('/api/meta/save', {
 			categories
 		})
 		.then(result => {

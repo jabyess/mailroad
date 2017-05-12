@@ -1,7 +1,7 @@
 import React from 'react'
 import ImageSizeInputs from './ImageSizeInputs.jsx'
 import autoBind from 'react-autobind'
-import axios from 'axios'
+import axiosClient from '../../lib/axios.js'
 import Dropzone from 'react-dropzone'
 import Promise from 'bluebird'
 
@@ -59,7 +59,7 @@ class MediaUploadForm extends React.Component {
 			})
 			imageData.append('sizes', JSON.stringify(validatedSizes))
 
-			axios.post('/api/s3/create', imageData).then((res) => {
+			axiosClient.post('/api/s3/create', imageData).then((res) => {
 				//TODO: success popup
 				console.log(res)
 				if(res.status === 200) {

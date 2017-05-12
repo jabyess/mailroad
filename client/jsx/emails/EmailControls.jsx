@@ -1,7 +1,7 @@
 import React from 'react'
 import autoBind from 'react-autobind'
 import classNames from 'classnames'
-import axios from 'axios'
+import axiosClient from '../../lib/axios.js'
 
 class EmailControls extends React.Component {
 	constructor() {
@@ -21,7 +21,7 @@ class EmailControls extends React.Component {
 
 	handleDelete() {
 		const ids = Object.keys(this.props.selectedCheckboxes)
-		axios.delete('/api/email/delete', {
+		axiosClient.delete('/api/email/delete', {
 			params: {
 				id : [...ids]
 			}
@@ -44,7 +44,7 @@ class EmailControls extends React.Component {
 			return null
 		}
 
-		axios.post('/api/email/copy', { id: selected[0] })
+		axiosClient.post('/api/email/copy', { id: selected[0] })
 			.then(res => {
 				this.props.refreshEmailList()
 				return res.text()

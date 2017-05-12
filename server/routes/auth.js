@@ -2,7 +2,7 @@ const dotenv = require('dotenv')
 const bodyParser = require('body-parser')
 const axios = require('axios')
 const passport = require('passport')
-let LocalStrategy = require('passport-local').Strategy
+const LocalStrategy = require('passport-local').Strategy
 const redis = require('redis')
 const winston = require('winston')
 
@@ -22,24 +22,29 @@ passportjs.init = (app) => {
 		return axios.get(AUTH_URL, {
 			auth: {
 				username: username,
-				password: password,
+				password: password
 			}
-		}).then(authenticated => {
-			const sessionToken = req.body.sessionToken
+		})
+		.then(authenticated => {
+			const sessionID = `sess-${req.session.id}`
 
 			let redisObj = {
 				name: authenticated.data.user.cb,
 				email: authenticated.data.user.uid,
-				uuid: authenticated.data.user.id
+				uuid: authenticated.data.user.id, 
+				sessionID: sessionID
 			}
+
 			let redisString = JSON.stringify(redisObj)
 
-			redisClient.setex(sessionToken, 86400, redisString, (err) => {
+			// 86400 = seconds = 1 day
+			redisClient.setex(sessionID, 86400, redisString, (err) => {
 				if(!err) {
 					return done(null, redisString)
 				}
 				else {
 					winston.error(err)
+					done(err)
 					return false
 				}
 			})
@@ -70,15 +75,15 @@ passportjs.init = (app) => {
 	app.use(passport.initialize())
 	app.use(passport.session())
 
-	passport.serializeUser((token, done) => {
-		done(null, token)
+	passport.serializeUser((userObj, done) => {
+		let parsedObj = JSON.parse(userObj)
+		done(null, parsedObj.sessionID)
 	})
 
-	passport.deserializeUser((token, done) => {
-		let tokenObj = JSON.parse(token)
-		redisClient.get(tokenObj.uuid, (err, uuid) => {
+	passport.deserializeUser((sessionID, done) => {
+		redisClient.get(sessionID, (err, userObj) => {
 			if(!err) {
-				done(null, uuid)
+				done(null, userObj)
 			}
 			else {
 				winston.error(err)
@@ -87,11 +92,10 @@ passportjs.init = (app) => {
 	})
 
 	app.post('/api/auth/login', jsonParser, passport.authenticate('local', {
-		session: true
-	}), (req, res) => {
-		//if passport.authenticate validates, send success status
-		res.sendStatus(200)
-	})
+		session: true,
+		successRedirect: '/',
+		// no failure redirect
+	}))
 
 	app.delete('/api/auth/:uid', (req, res) => {
 		const uid = req.params.uid
@@ -105,6 +109,21 @@ passportjs.init = (app) => {
 			else {
 				// TODO: system log error
 				console.log(err)
+				res.status(500).send(err)
+			}
+		})
+	})
+
+	app.get('/api/auth/logout', (req, res) => {
+		const sessionID = `sess-${req.session.id}`
+		redisClient.del(sessionID, (err) => {
+			if(!err) {
+				req.logout()
+				res.sendStatus(403)
+			}
+			else {
+				winston.error(err)
+				req.logout()
 				res.status(500).send(err)
 			}
 		})
@@ -125,6 +144,30 @@ passportjs.init = (app) => {
 			}
 		})
 	})
+}
+
+passportjs.verifySession = (req, res, next) => {
+	let sess = req.session && req.session.passport ? req.session.passport.user : null
+
+	if(req.originalUrl.includes('/api/auth/login')) {
+		next()
+	}
+
+	else if(!sess || !req.xhr) {
+		res.sendStatus(403)
+	}
+
+	else {
+		redisClient.ttl(sess, err => {
+			if(!err) {
+				next()
+			}
+			else {
+				winston.error(err)
+				res.status(500).send(err)
+			}
+		})
+	}
 
 }
 

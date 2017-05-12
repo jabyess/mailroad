@@ -1,10 +1,10 @@
 import React from 'react'
 import autoBind from 'react-autobind'
-import EmailTable from './EmailTable.jsx'
-import EmailControls from './EmailControls.jsx'
-import EmailPagination from './EmailPagination.jsx'
-import axios from 'axios'
-import PDB from '../../lib/pouchdb.js'
+import EmailTable from './EmailTable'
+import EmailControls from './EmailControls'
+import EmailPagination from './EmailPagination'
+import axiosClient from '../../lib/axios'
+import PDB from '../../lib/pouchdb'
 
 const EMAILS_PER_PAGE = 10
 
@@ -48,7 +48,7 @@ export default class EmailContainer extends React.Component {
 
 	displayEmails(paginatedEmails, direction) {
 		if(!paginatedEmails) {
-			axios('/api/email/list')
+			axiosClient('/api/email/list')
 				.then((results) => {
 					let values = this.mapEmailResults(results.data.rows)
 					this.setState({
@@ -74,7 +74,7 @@ export default class EmailContainer extends React.Component {
 	}
 
 	skipToPage(page) {
-		axios('/api/email/list', {
+		axiosClient('/api/email/list', {
 			params: {
 				skip: (page - 1) * EMAILS_PER_PAGE
 			}
@@ -104,7 +104,7 @@ export default class EmailContainer extends React.Component {
 
 	triggerSearch(searchText) {
 		console.log(searchText)
-		axios.post('/api/email/search', {
+		axiosClient.post('/api/email/search', {
 			searchText
 		})
 		.then((results) => {
@@ -126,7 +126,7 @@ export default class EmailContainer extends React.Component {
 	pagePrev() {
 		// let skip = 0
 		let skip = (this.state.page === 2) ? null : (this.state.page - 2) * EMAILS_PER_PAGE
-		axios.get('/api/email/list/', {
+		axiosClient.get('/api/email/list/', {
 			params: {
 				skip: skip
 			}
@@ -136,7 +136,7 @@ export default class EmailContainer extends React.Component {
 	}
 
 	pageNext() {
-		axios.get('/api/email/list/', {
+		axiosClient.get('/api/email/list/', {
 			params: {
 				skip: this.state.page * EMAILS_PER_PAGE
 			}

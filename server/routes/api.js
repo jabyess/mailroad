@@ -80,12 +80,13 @@ router.post('/compile', jsonParser, (req,res) => {
 })
 
 router.post('/create', jsonParser, (req,res) => {
-	const { contents, title, token } = req.body
+	const { contents, title } = req.body
+	const sessionID = `sess-${req.sessionID}`
 	const createdAt = Utils.getCurrentTimestampUTC()
 	const updatedAt = Utils.getCurrentTimestampUTC()
 	let user
 
-	redisClient.get(token, (err, data) => {
+	redisClient.get(sessionID, (err, data) => {
 		if(!err) {
 			user = JSON.parse(data)
 		}

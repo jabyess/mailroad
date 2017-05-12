@@ -1,9 +1,8 @@
 import React from 'react'
 import axios from 'axios'
 import { browserHistory } from 'react-router'
-import shortid from 'shortid'
 
-export default class LoginForm extends React.Component {
+class LoginForm extends React.Component {
 	constructor() {
 		super()
 
@@ -28,7 +27,6 @@ export default class LoginForm extends React.Component {
 
 	submitLogin(e) {
 		e.preventDefault()
-		const sessionToken = `sess-${shortid.generate()}`
 		const formData = new FormData()
 
 		formData.append('username', this.state.username)
@@ -37,16 +35,15 @@ export default class LoginForm extends React.Component {
 		axios.post('/api/auth/login', {
 			username: this.state.username,
 			password: this.state.password,
-			sessionToken: sessionToken
 		})
 		.then(() => {
-			//on success, write cookie and redirect
-			localStorage.setItem('mailroad-session-token', sessionToken)
+			//on success, and redirect
 			browserHistory.replace('/')
 			return false
 		}, fail => {
 			//popup toast message saying fail username/password
-			console.log('fail', fail)
+			console.log(fail)
+			this.props.fireNotification('warning', 'Invalid credentials')
 			return false
 		})
 		.catch(err => {
@@ -71,3 +68,9 @@ export default class LoginForm extends React.Component {
 		)
 	}
 }
+
+LoginForm.propTypes = {
+	fireNotification: React.PropTypes.func
+}
+
+export default LoginForm
