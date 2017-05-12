@@ -1,4 +1,5 @@
 import React from 'react'
+import classNames from 'classnames'
 
 class EditorControlsContainer extends React.Component {
 	constructor() {
@@ -17,11 +18,18 @@ class EditorControlsContainer extends React.Component {
 	}
 
 	render() {
+		const editButtonClasses = classNames({
+			button: true,
+			'is-medium': true,
+			'is-warning': true,
+			'is-active': this.props.isEditModeActive
+		})
+
 		return (
 			<div className="editorControlsContainer">
 				<div className="control is-grouped">
 					<div className="control">
-						<button className="button is-medium is-warning" onClick={this.handleEditClick}>Edit Mode</button>
+						<button className={editButtonClasses} onClick={this.handleEditClick}>Edit Mode</button>
 					</div>
 					<div className="control">
 						<button className="button is-medium is-primary" onClick={this.props.saveToDB}>Save</button>
