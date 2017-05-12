@@ -58,11 +58,6 @@ class NotificationContainer extends React.Component {
 		})
 	}
 
-	componentDidUpdate (prevProps, prevState) {
-		
-	}
-	
-
 
 	render() {
 		return(

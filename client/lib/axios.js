@@ -17,7 +17,9 @@ const statusCodes = [
 
 let axiosClient = axios.create({
 	timeout: 2000,
-	headers: {},
+	headers: {
+		'X-Requested-With': 'XMLHttpRequest'
+	},
 	validateStatus: (status) => {
 		if(statusCodes.some(s => s === status)) {
 			return true

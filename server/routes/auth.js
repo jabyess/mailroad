@@ -19,7 +19,6 @@ passportjs.init = (app) => {
 		passReqToCallback: true
 	},
 	(req, username, password, done) => {
-		console.log(req)
 		return axios.get(AUTH_URL, {
 			auth: {
 				username: username,
@@ -27,7 +26,6 @@ passportjs.init = (app) => {
 			}
 		})
 		.then(authenticated => {
-			console.log('authenticated')
 			const sessionID = `sess-${req.session.id}`
 
 			let redisObj = {
@@ -57,7 +55,6 @@ passportjs.init = (app) => {
 			// currently no ways to pass statuscode back to client
 			// unless we pass done(null, { failed.response.status })
 			// this breaks passportjs strategy convention though.
-			console.log('failed login', failed)
 			if(failed.response.status) {
 				const failObj = {
 					status: failed.response.status,
@@ -97,13 +94,8 @@ passportjs.init = (app) => {
 	app.post('/api/auth/login', jsonParser, passport.authenticate('local', {
 		session: true,
 		successRedirect: '/',
-		failureRedirect: '/login'
-	}),
-	(req, res) => {
-		//if passport.authenticate validates, send success status
-		console.log('logged in success')
-		res.sendStatus(200)
-	})
+		// no failure redirect
+	}))
 
 	app.delete('/api/auth/:uid', (req, res) => {
 		const uid = req.params.uid
@@ -156,23 +148,18 @@ passportjs.init = (app) => {
 
 passportjs.verifySession = (req, res, next) => {
 	let sess = req.session && req.session.passport ? req.session.passport.user : null
-	console.log('verify session', new Date().getTime())
-	console.log('sess', sess)
 
 	if(req.originalUrl.includes('/api/auth/login')) {
-		console.log('login route, skipping')
 		next()
 	}
 
 	else if(!sess || !req.xhr) {
-		console.log('no session', req.xhr )
 		res.sendStatus(403)
 	}
 
 	else {
-		redisClient.get(sess, (err, data) => {
+		redisClient.ttl(sess, err => {
 			if(!err) {
-				console.log('session data', data)
 				next()
 			}
 			else {

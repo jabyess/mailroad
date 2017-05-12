@@ -2,11 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { browserHistory } from 'react-router'
 
-
-// set XHR flag for login attempt
-axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
-
-export default class LoginForm extends React.Component {
+class LoginForm extends React.Component {
 	constructor() {
 		super()
 
@@ -46,7 +42,8 @@ export default class LoginForm extends React.Component {
 			return false
 		}, fail => {
 			//popup toast message saying fail username/password
-			console.log('fail', fail)
+			console.log(fail)
+			this.props.fireNotification('warning', 'Invalid credentials')
 			return false
 		})
 		.catch(err => {
@@ -71,3 +68,9 @@ export default class LoginForm extends React.Component {
 		)
 	}
 }
+
+LoginForm.propTypes = {
+	fireNotification: React.PropTypes.func
+}
+
+export default LoginForm
