@@ -1,5 +1,5 @@
 const webpack = require('webpack')
-const DotenvPlugin = require('webpack-dotenv-plugin')
+const Dotenv = require('dotenv-webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
 const paths = require('./paths')
@@ -75,10 +75,10 @@ const config = {
 			'process.env.NODE_ENV': JSON.stringify('production')
 		}),
 		new webpack.NamedModulesPlugin(),
-		new DotenvPlugin({
-			sample: './.env.sample',
-			path: './.env'
-		}),
+		new Dotenv({
+			path: './.env',
+			safe: true
+		})
 	],
 	watchOptions: {
 		ignored: /node_modules/
