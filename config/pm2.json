@@ -1,0 +1,27 @@
+{
+  "apps": [
+    {
+      "name"               :   "mailroad",
+      "script"             :   "server/lib/index.js",
+      "exec_mode"          :   "cluster",
+      "instances"          :   -1,
+      "max_memory_restart" :   "1G",
+      "interpreter"        :   "./bin/node",
+      "interpreter_args"   :   "--nolazy --nouse_idle_notification --max_old_space_size=8096 --v8-pool-size=8",
+      "error_file"         :   "/dev/null",
+      "out_file"           :   "/dev/null",
+      "merge_logs"         :   true,
+      "wait_ready"         :   false,
+      "vizion"             :   false,
+      "env": {
+        "APP_NAME"               :  "mailroad",
+        "PORT"                   :  3000,
+        "NODE_ENV"               :  "production",
+        "UV_THREADPOOL_SIZE"     :  8,
+        "BLUEBIRD_DEBUG"         :  0,
+        "BLUEBIRD_WARNINGS"      :  0,
+        "BLUEBIRD_LONG_STACK_TRACES": 0
+      }
+    }
+  ]
+}

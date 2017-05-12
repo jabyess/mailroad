@@ -88,11 +88,13 @@ app.get('*', (req, res) => {
 
 // on startup, should check to see if database connection is good.
 // if so, start db
+const EPORT = 33224
+
 axios.get(COUCHDB_URL)
 	.then((response) => {
 		if(response && response.data) {
-			app.listen(3000, () => {
-				console.log('Express listening on port 3000!')
+			app.listen(EPORT, () => {
+				console.log(`Express listening on port ${EPORT}!`)
 			})
 			return response
 		}

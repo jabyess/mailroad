@@ -20,7 +20,7 @@ const config = {
 		contentBase: paths.build,
 		publicPath: '/public/',
 		proxy: {
-			'/': 'http://localhost:3000',
+			'/': 'http://localhost:33224',
 		}
 	},
 	devtool: 'cheap-eval-source-map',

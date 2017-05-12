@@ -9,8 +9,8 @@
 * `npm run sync-views` to upload design docs to appropriate databases.
 * Once you set it all up, start everything.
 * `redis-server` to start redis
-* `npm start` to start nodemon with babel hook
-* `npm run dev` to start webpack and watcher and open browser to `localhost:8888`
+* `npm run develop` to start nodemon & express
+* `npm run webpack` to start webpack and watcher and open browser to `localhost:8888`
 
 ### Layout
 Code is divided into /client and /server folders. `client` contains react router code, jsx, sass, fonts, and some client side libs.
