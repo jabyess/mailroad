@@ -1,5 +1,5 @@
-const DotenvPlugin = require('webpack-dotenv-plugin')
 const paths = require('./paths')
+const Dotenv = require('dotenv-webpack')
 
 const config = {
 	resolve: {
@@ -59,9 +59,9 @@ const config = {
 		]
 	},
 	plugins: [
-		new DotenvPlugin({
-			sample: './.env.sample',
-			path: './.env'
+		new Dotenv({
+			path: './.env',
+			safe: true
 		})
 	],
 	watchOptions: {
