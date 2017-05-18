@@ -16,7 +16,7 @@ const statusCodes = [
 ]
 
 let axiosClient = axios.create({
-	timeout: 2000,
+	timeout: 5000,
 	headers: {
 		'X-Requested-With': 'XMLHttpRequest'
 	},

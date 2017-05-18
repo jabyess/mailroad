@@ -57,6 +57,7 @@ class EditorContainer extends React.Component {
 			contents: [],
 			categories: [],
 			category: '',
+			visible: {}
 		}
 	}
 
@@ -283,12 +284,17 @@ class EditorContainer extends React.Component {
 	}
 
 	toggleVisible(event) {
-		let visibleKey = event.detail.toString()
-		this.setState(() => {
-			let visibleObj = {}
-			visibleObj[visibleKey] = !this.state[visibleKey]
-			return visibleObj
+		console.log('togglevisible', event.detail)
+		const { component, visible } = event.detail
+		// let visibleKey = event.detail.toString()
+		this.setState((state) => {
+			return state.visible[component] = visible
 		})
+		// this.setState(() => {
+		// 	let visibleObj = {}
+		// 	visibleObj[visibleKey] = !this.state[visibleKey]
+		// 	return visibleObj
+		// })
 	}
 
 	reorderEditorIndexes(oldIndex, newIndex) {
@@ -338,12 +344,12 @@ class EditorContainer extends React.Component {
 	}
 
 	render() {
-		const renderImageGalleryModal = this.state.isImageGalleryModalVisible ? 
+		const renderImageGalleryModal = this.state.visible.ImageGalleryModal ? 
 		<ImageGalleryModal
-			setImageSizes={this.setImageSizes}
+			setImageURL={this.setImageURL}
 		/> : null
 
-		const renderImagePromptModal = this.state.isImagePromptModalVisible ? 
+		const renderImagePromptModal = this.state.visible.ImagePromptModal ? 
 		<ImagePromptModal /> : null
 
 		const renderEditorTypeSelect = this.state.isEditModeActive ? 

@@ -23,6 +23,17 @@ $pagination-ellipsis: $grey-light !default
 
 $pagination-shadow-inset: inset 0 1px 2px rgba($black, 0.2)
 
+.pagination
+  font-size: $size-normal
+  margin: -0.25rem
+  // Sizes
+  &.is-small
+    font-size: $size-small
+  &.is-medium
+    font-size: $size-medium
+  &.is-large
+    font-size: $size-large
+
 .pagination,
 .pagination-list
   align-items: center
@@ -36,17 +47,18 @@ $pagination-shadow-inset: inset 0 1px 2px rgba($black, 0.2)
 .pagination-ellipsis
   +control
   +unselectable
-  font-size: 0.875rem
+  font-size: 1em
   padding-left: 0.5em
   padding-right: 0.5em
   justify-content: center
+  margin: 0.25rem
   text-align: center
 
 .pagination-previous,
 .pagination-next,
 .pagination-link
-  border: 1px solid $pagination-border
-  min-width: 2.5em
+  border-color: $pagination-border
+  min-width: 2.25em
   &:hover
     border-color: $pagination-hover-border
     color: $pagination-hover
@@ -54,17 +66,18 @@ $pagination-shadow-inset: inset 0 1px 2px rgba($black, 0.2)
     border-color: $pagination-focus-border
   &:active
     box-shadow: $pagination-shadow-inset
-  &[disabled],
-  &.is-disabled
-    background: $pagination-disabled-background
+  &[disabled]
+    background-color: $pagination-disabled-background
+    border-color: $pagination-border
+    box-shadow: none
     color: $pagination-disabled
     opacity: 0.5
-    pointer-events: none
 
 .pagination-previous,
 .pagination-next
   padding-left: 0.75em
   padding-right: 0.75em
+  white-space: nowrap
 
 .pagination-link
   &.is-current
@@ -77,9 +90,7 @@ $pagination-shadow-inset: inset 0 1px 2px rgba($black, 0.2)
   pointer-events: none
 
 .pagination-list
-  li
-    &:not(:first-child)
-      margin-left: 0.375rem
+  flex-wrap: wrap
 
 +mobile
   .pagination
@@ -88,11 +99,7 @@ $pagination-shadow-inset: inset 0 1px 2px rgba($black, 0.2)
   .pagination-next
     flex-grow: 1
     flex-shrink: 1
-    width: calc(50% - 0.375rem)
-  .pagination-next
-    margin-left: 0.75rem
   .pagination-list
-    margin-top: 0.75rem
     li
       flex-grow: 1
       flex-shrink: 1
@@ -103,9 +110,6 @@ $pagination-shadow-inset: inset 0 1px 2px rgba($black, 0.2)
     flex-shrink: 1
     justify-content: flex-start
     order: 1
-  .pagination-previous,
-  .pagination-next
-    margin-left: 0.75rem
   .pagination-previous
     order: 2
   .pagination-next
@@ -114,7 +118,6 @@ $pagination-shadow-inset: inset 0 1px 2px rgba($black, 0.2)
     justify-content: space-between
     &.is-centered
       .pagination-previous
-        margin-left: 0
         order: 1
       .pagination-list
         justify-content: center
@@ -123,11 +126,9 @@ $pagination-shadow-inset: inset 0 1px 2px rgba($black, 0.2)
         order: 3
     &.is-right
       .pagination-previous
-        margin-left: 0
         order: 1
       .pagination-next
         order: 2
-        margin-right: 0.75rem
       .pagination-list
         justify-content: flex-end
         order: 3

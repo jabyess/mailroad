@@ -443,10 +443,13 @@ class DefaultEditor extends React.Component {
 
 	onClickImageButton() {
 		this.props.setImageIndex(this.props.index)
-		const toggleImagePromptModal = new CustomEvent('toggleVisible', {
-			detail: 'isImagePromptModalVisible'
+		const showImagePromptModal = new CustomEvent('toggleVisible', {
+			detail: {
+				component: 'ImagePromptModal',
+				visible: true
+			}
 		})
-		window.dispatchEvent(toggleImagePromptModal)
+		window.dispatchEvent(showImagePromptModal)
 	}
 
 	insertImage(imageURL) {
