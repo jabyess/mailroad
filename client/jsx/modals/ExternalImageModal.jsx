@@ -4,23 +4,26 @@ class ExternalImageModal extends React.Component {
 	constructor() {
 		super()
 
-		this.toggleVisible = this.toggleVisible.bind(this)
+		this.toggleVisible = this.closeModal.bind(this)
 		this.setImageURL = this.setImageURL.bind(this)
 		this.setLocalImageURL = this.setLocalImageURL.bind(this)
 
-		this.isExternalImageModalVisible = new CustomEvent('toggleVisible', {
-			detail: 'isExternalImageModalVisible'
+		this.modalVisible = new CustomEvent('toggleVisible', {
+			detail: {
+				component: 'ExternalImageModal',
+				visible: false
+			}
 		})
 	}
 
-	toggleVisible() {
-		window.dispatchEvent(this.isExternalImageModalVisible)
+	closeModal() {
+		window.dispatchEvent(this.modalVisible)
 	}
 
 	setImageURL() {
 		let url = this.state.imageURL
 		this.props.setImageURL(url)
-		window.dispatchEvent(this.isExternalImageModalVisible)
+		window.dispatchEvent(this.modalVisible)
 	}
 
 	setLocalImageURL(e) {
@@ -36,12 +39,14 @@ class ExternalImageModal extends React.Component {
 				<div className="modal-card">
 					<div className="modal-card-head"><p>Enter External Image URL</p></div>
 					<div className="modal-card-body">
-						<label htmlFor="">URL:</label>
-						<input type="text" className="input" value={this.props.imageURL} onChange={this.setLocalImageURL}/>
-						<button className="button" onClick={this.setImageURL}>Submit</button>
+						<form>
+							<label htmlFor="">URL:</label>
+							<input type="text" className="input" value={this.props.imageURL} onChange={this.setLocalImageURL}/>
+							<button className="button" onClick={this.setImageURL}>Submit</button>
+						</form>
 					</div>
 				</div>
-				<button className="modal-close" onClick={this.toggleVisible}></button>
+				<button className="modal-close" onClick={this.closeModal}></button>
 				
 			</div>
 		) : null

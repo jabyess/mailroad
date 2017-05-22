@@ -9,13 +9,22 @@ export default class ImagePromptModal extends React.Component {
 		this.closeModal = this.closeModal.bind(this)
 
 		this.toggleImageGalleryModal = new CustomEvent('toggleVisible', {
-			detail: 'isImageGalleryModalVisible'
+			detail: {
+				component: 'ImageGalleryModal',
+				visible: true
+			}
 		})
 		this.toggleExternalImageModal = new CustomEvent('toggleVisible', {
-			detail: 'isExternalImageModalVisible'
+			detail: {
+				component: 'ExternalImageModal',
+				visible: true
+			}
 		})
 		this.toggleImagePromptModal = new CustomEvent('toggleVisible', {
-			detail: 'isImagePromptModalVisible'
+			detail: {
+				component: 'ImagePromptModal',
+				visible: false
+			}
 		})
 	}
 	

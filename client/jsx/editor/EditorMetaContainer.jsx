@@ -37,7 +37,10 @@ class EditorMetaContainer extends React.Component {
 
 	showSourceModal() {
 		const isSourceModalVisible = new CustomEvent('toggleVisible', {
-			detail: 'isSourceModalVisible'
+			detail: {
+				component: 'SourceModal',
+				visible: true
+			}
 		})
 		window.dispatchEvent(isSourceModalVisible)
 	}

@@ -62,7 +62,6 @@ class ImageGalleryModal extends React.Component {
 	deleteImage() {
 		let index = this.state.activeImage
 		let grouping = this.state.images[index].grouping
-		console.log(grouping)
 		axiosClient.post('/api/s3/delete', {
 			grouping
 		}).then((deleteResponse) => {
@@ -98,11 +97,12 @@ class ImageGalleryModal extends React.Component {
 
 	toggleVisible() {
 		const isImageGalleryModalVisible = new CustomEvent('toggleVisible', {
-			detail: 'isImageGalleryModalVisible'
+			detail: { 
+				component: 'ImageGalleryModal',
+				visible: false
+			}
 		})
-		const clearImageIndexURL = new CustomEvent('clearImageIndexURL')
 
-		window.dispatchEvent(clearImageIndexURL)
 		window.dispatchEvent(isImageGalleryModalVisible)
 	}
 
