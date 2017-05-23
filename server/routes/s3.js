@@ -41,7 +41,6 @@ router.get('/list/:grouping', (req, res) => {
 			}
 		})
 		.then((results) => {
-			console.log(results.data.docs)
 			res.send(results.data)
 		})
 		.catch(err => {
@@ -87,8 +86,7 @@ router.get('/list/:skip?', (req, res) => {
 })
 
 router.post('/delete', jsonParser, (req, res) => {
-	const fileName = req.body.fileName.split('-')
-	const grouping = fileName[2]
+	const grouping = req.body.grouping
 
 	axios.post(COUCH_IMAGES_FIND, {
 		selector: {

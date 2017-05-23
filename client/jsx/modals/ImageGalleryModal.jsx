@@ -1,6 +1,8 @@
 import React from 'react'
 import autoBind from 'react-autobind'
 import axiosClient from '../../lib/axios.js'
+import ImageGalleryImages from './ImageGalleryImages.jsx'
+import ImageGalleryPane from './ImageGalleryPane.jsx'
 
 const IMAGES_PER_PAGE = 20
 
@@ -13,7 +15,9 @@ class ImageGalleryModal extends React.Component {
 			'loadMore',
 			'deleteImage',
 			'updateMediaList',
-			'setParentImageSizes'
+			'setParentImageSizes',
+			'getImageInfo',
+			'setActiveImage',
 		)
 
 		this.state = {
@@ -55,12 +59,11 @@ class ImageGalleryModal extends React.Component {
 		}
 	}
 
-	deleteImage(e) {
-		let index = e.target.dataset.index
-		let fileName = this.state.images[index].id
-		console.log(fileName)
+	deleteImage() {
+		let index = this.state.activeImage
+		let grouping = this.state.images[index].grouping
 		axiosClient.post('/api/s3/delete', {
-			fileName
+			grouping
 		}).then((deleteResponse) => {
 			if(deleteResponse.status === 200) {
 				this.updateMediaList()
@@ -74,24 +77,8 @@ class ImageGalleryModal extends React.Component {
 	setParentImageSizes(e) {
 		e.persist()
 		if(this.props.setImageSizes) {
-			const index = e.target.dataset.index
-			const grouping = this.state.images[index].grouping
-			const url = `/api/s3/list/${grouping}`
-
-			axiosClient.get(url).then((response) => {
-
-				const imageSizes = response.data.docs.map(image => {
-					return {
-						size: image.size,
-						url: image.url
-					}
-				})
-
-				this.props.setImageSizes(imageSizes)
-			})
-			.catch((err) => {
-				console.log('error in imagesize getting', err)
-			})
+			const imageSizes = this.state.currentImage.sizes
+			this.props.setImageSizes(imageSizes)
 		}
 	}
 
@@ -110,48 +97,57 @@ class ImageGalleryModal extends React.Component {
 
 	toggleVisible() {
 		const isImageGalleryModalVisible = new CustomEvent('toggleVisible', {
-			detail: 'isImageGalleryModalVisible'
+			detail: { 
+				component: 'ImageGalleryModal',
+				visible: false
+			}
 		})
-		const clearImageIndexURL = new CustomEvent('clearImageIndexURL')
 
-		window.dispatchEvent(clearImageIndexURL)
 		window.dispatchEvent(isImageGalleryModalVisible)
+	}
+
+	setActiveImage(index) {
+		this.setState({ activeImage: parseInt(index, 10) })
+	}
+
+	getImageInfo(grouping) {
+		axiosClient.get(`/api/s3/list/${grouping}`)
+			.then(images => {
+				const docs = images.data.docs
+				const sizes = docs.map(d => ({size: d.size, id: d._id, url: d.url}))
+				const currentImage = {
+					date: docs[0].date,
+					filename: docs[0].filename,
+					sizes: sizes
+				}
+
+				this.setState({ currentImage })
+			})
+			.catch(err => {
+				console.error(err)
+			})
 	}
 
 	render() {
 		return (
-			<div className="modal is-active imageGalleryModal">
-				<div className="modal-background"></div>
-				<div className="modal-card">
-					<header className="modal-card-head">
-						<p className="modal-card-title">Image Gallery</p>
-						<button className="modal-close" onClick={this.toggleVisible}></button>
-					</header>
-					<section className="modal-card-body imageGalleryModal__content">
-						{this.state.images.map((image, index) => {
-							const bgImage = {
-								backgroundImage: 'url(' + image.url + ')'
-							}
-							return (
-								<div
-									className="imageGalleryModal__image" 
-									style={bgImage}
-									data-index={index}
-									key={index}
-									onClick={this.setParentImageSizes}
-								>
-									<button
-										className="button imageGalleryModal__delete"
-										onClick={this.deleteImage}
-										data-index={index}
-									>X</button>
-								</div>
-							)
-						})}
-					</section>
-					<footer className="modal-card-foot">
-						<button className="button imageGalleryModal__loadMore" onClick={this.loadMore}>Load More</button>
-					</footer>
+			<div className="imageGalleryModal">
+				<div className="modal-background" onClick={this.toggleVisible}></div>
+				<div className="imageGalleryModal__content">
+					<ImageGalleryImages
+						images={this.state.images}
+						getImageInfo={this.getImageInfo}
+						setActiveImage={this.setActiveImage}
+						activeImage={this.state.activeImage}
+					/>
+					<ImageGalleryPane
+						{...this.props}
+						currentImage={this.state.currentImage}
+						toggleVisible={this.toggleVisible}
+						deleteImage={this.deleteImage}
+						loadMore={this.loadMore}
+						loadMoreVisible={this.state.loadMoreVisible}
+						activeImage={this.state.activeImage}
+					/>
 				</div>
 			</div>
 		) 
@@ -160,6 +156,7 @@ class ImageGalleryModal extends React.Component {
 
 ImageGalleryModal.propTypes = {
 	setImageSizes: React.PropTypes.func
+
 }
 
 export default ImageGalleryModal

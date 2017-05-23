@@ -5,16 +5,17 @@ class SourceModal extends React.Component {
 	constructor() {
 		super()
 
-		this.isSourceModalVisible = new CustomEvent('toggleVisible', {
-			detail: 'isSourceModalVisible'
-		})
-
-		this.toggleVisible = this.toggleVisible.bind(this)
-		
 	}
 
 	toggleVisible() {
-		window.dispatchEvent(this.isSourceModalVisible)
+		const	isSourceModalVisible = new CustomEvent('toggleVisible', {
+			detail: {
+				component: 'SourceModal',
+				visible: false
+			}
+		})
+
+		window.dispatchEvent(isSourceModalVisible)
 	}
 
 	render() {

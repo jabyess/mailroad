@@ -10,7 +10,6 @@ class EditorControlsContainer extends React.Component {
 	}
 
 	handleEditClick() {
-		console.log('clicked')
 		let toggleEditMode = new CustomEvent('toggleVisible', {
 			detail: 'isEditModeActive'
 		})

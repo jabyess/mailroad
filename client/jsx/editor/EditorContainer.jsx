@@ -7,7 +7,6 @@ import shortid from 'shortid'
 import EditorTypeContainer from './EditorTypeContainer'
 import ImagePromptModal from '../modals/ImagePromptModal'
 import ImageGalleryModal from '../modals/ImageGalleryModal'
-import ImageSizeModal from '../modals/ImageSizeModal'
 import SourceModal from '../modals/SourceModal'
 import ExternalImageModal from '../modals/ExternalImageModal'
 import LinkModal from '../modals/LinkModal'
@@ -40,7 +39,6 @@ class EditorContainer extends React.Component {
 			'updateComponentTitle',
 			'removeEditorFromContainer',
 			'toggleVisible',
-			'setImageSizes',
 			'setImageURL',
 			'setImageIndex',
 			'clearImageIndexURL',
@@ -57,6 +55,7 @@ class EditorContainer extends React.Component {
 			contents: [],
 			categories: [],
 			category: '',
+			visible: {}
 		}
 	}
 
@@ -168,18 +167,6 @@ class EditorContainer extends React.Component {
 		window.dispatchEvent(newEvent)
 	}
 
-	// updateEventDate(date, index, eventIndex) {
-	// 	this.setState((state) => {
-	// 		state.contents[index].content[eventIndex].date = date
-	// 	})
-	// }
-
-	// updateEventTitle(name, index, eventIndex) {
-	// 	this.setState((state) => {
-	// 		state.contents[index].content[eventIndex].name = name
-	// 	})
-	// }
-
 	updateContentValue(content, index) {
 		this.setState((state) => {
 			state.contents[index].content = content
@@ -283,11 +270,9 @@ class EditorContainer extends React.Component {
 	}
 
 	toggleVisible(event) {
-		let visibleKey = event.detail.toString()
-		this.setState(() => {
-			let visibleObj = {}
-			visibleObj[visibleKey] = !this.state[visibleKey]
-			return visibleObj
+		const { component, visible } = event.detail
+		this.setState((state) => {
+			return state.visible[component] = visible
 		})
 	}
 
@@ -301,20 +286,6 @@ class EditorContainer extends React.Component {
 
 	setImageURL(imageURL) {
 		this.setState({ imageURL })
-	}
-
-	setImageSizes(imageSizes) {
-		const isImageSizeModalVisible = new CustomEvent('toggleVisible', {
-			detail: 'isImageSizeModalVisible'
-		})
-		const isImageGalleryModalVisible = new CustomEvent('toggleVisible', {
-			detail: 'isImageGalleryModalVisible'
-		})
-
-		this.setState({ imageSizes }, () => {
-			window.dispatchEvent(isImageSizeModalVisible)
-			window.dispatchEvent(isImageGalleryModalVisible)
-		})
 	}
 
 	setImageIndex(imageIndex) {
@@ -338,12 +309,12 @@ class EditorContainer extends React.Component {
 	}
 
 	render() {
-		const renderImageGalleryModal = this.state.isImageGalleryModalVisible ? 
+		const renderImageGalleryModal = this.state.visible.ImageGalleryModal ? 
 		<ImageGalleryModal
-			setImageSizes={this.setImageSizes}
+			setImageURL={this.setImageURL}
 		/> : null
 
-		const renderImagePromptModal = this.state.isImagePromptModalVisible ? 
+		const renderImagePromptModal = this.state.visible.ImagePromptModal ? 
 		<ImagePromptModal /> : null
 
 		const renderEditorTypeSelect = this.state.isEditModeActive ? 
@@ -352,24 +323,17 @@ class EditorContainer extends React.Component {
 			fireNotification={this.fireNotification}
 			/> : null
 
-		const renderLinkModal = this.state.isLinkModalVisible ? 
+		const renderLinkModal = this.state.visible.LinkModal ? 
 		<LinkModal /> : null
 
-		const renderImageSizeModal = this.state.isImageSizeModalVisible ? 
-		<ImageSizeModal
-			imageSizes={this.state.imageSizes}
-			isImageSizeModalVisible={this.state.isImageSizeModalVisible}
-			setImageURL={this.setImageURL}
-		/> : null
-
-		const renderExternalImageModal = this.state.isExternalImageModalVisible ? 
+		const renderExternalImageModal = this.state.visible.ExternalImageModal ? 
 			<ExternalImageModal 
 				setImageURL={this.setImageURL}
-				isExternalImageModalVisible={this.state.isExternalImageModalVisible}
+				isExternalImageModalVisible={this.state.visible.ExternalImageModal}
 			/>
 		: null
 
-		const renderSourceModal = this.state.isSourceModalVisible ? 
+		const renderSourceModal = this.state.visible.SourceModal ? 
 		<SourceModal 
 			textContent={this.state.compiledEmail}
 		/> : null
@@ -380,7 +344,6 @@ class EditorContainer extends React.Component {
 			<div className="editor-container columns">
 				{renderImagePromptModal}
 				{renderImageGalleryModal}
-				{renderImageSizeModal}
 				{renderLinkModal}
 				{renderExternalImageModal}
 				{renderSourceModal}
