@@ -39,7 +39,6 @@ class EditorContainer extends React.Component {
 			'updateComponentTitle',
 			'removeEditorFromContainer',
 			'toggleVisible',
-			'setImageSizes',
 			'setImageURL',
 			'setImageIndex',
 			'clearImageIndexURL',

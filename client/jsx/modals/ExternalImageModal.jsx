@@ -4,20 +4,18 @@ class ExternalImageModal extends React.Component {
 	constructor() {
 		super()
 
-		this.toggleVisible = this.closeModal.bind(this)
 		this.setImageURL = this.setImageURL.bind(this)
 		this.setLocalImageURL = this.setLocalImageURL.bind(this)
+	}
 
-		this.modalVisible = new CustomEvent('toggleVisible', {
+	closeModal() {
+		const modalVisible = new CustomEvent('toggleVisible', {
 			detail: {
 				component: 'ExternalImageModal',
 				visible: false
 			}
 		})
-	}
-
-	closeModal() {
-		window.dispatchEvent(this.modalVisible)
+		window.dispatchEvent(modalVisible)
 	}
 
 	setImageURL() {

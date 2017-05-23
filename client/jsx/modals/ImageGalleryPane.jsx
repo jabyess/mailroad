@@ -5,15 +5,10 @@ class ImageGalleryPane extends React.Component {
 	constructor() {
 		super()
 
-		// this.setParentImageURL = this.setParentImageURL.bind(this)
-		
 	}
 
 	setParentImageURL(url) {
-		console.log(url)
-
 		if(this.props.setImageURL) {
-			console.log('setimageurl')
 			this.props.setImageURL(url)
 			const hideImageGalleryModal = new CustomEvent('toggleVisible', {
 				detail: {
