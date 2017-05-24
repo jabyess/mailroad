@@ -42,7 +42,7 @@ else {
 
 // express and passportjs config
 // init static route before expressSession
-// init expressSession before passport 
+// init expressSession before passport
 let app = express()
 app.use('/public', gzipStatic(paths.build))
 
@@ -58,7 +58,7 @@ app.use(expressSession({
 	}
 }))
 
-// protect api route 
+// protect api route
 app.use('/api', passportjs.verifySession)
 
 // this is the /api/auth route
@@ -73,6 +73,15 @@ app.post('/api/log', jsonParser, (req, res) => {
 	const { data, level } = req.body.data
 	winston.log(level, data)
 	res.sendStatus(200)
+})
+
+//healthcheck for AWS instance monitoring
+app.get('/__health-check__', (req, res) => {
+	res.set({
+		'Content-Type': 'text/plain',
+		'Connection': 'close'
+	}).status(200).send('OK').end()
+	return null
 })
 
 //sendfile for any routes that don't match
@@ -106,4 +115,3 @@ axios.get(COUCHDB_URL)
 		console.log(err)
 		throw err
 	})
-
