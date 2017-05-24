@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import autoBind from 'react-autobind'
 
 class SingleHeading extends React.Component {
@@ -106,12 +107,12 @@ class SingleHeading extends React.Component {
 }
 
 SingleHeading.propTypes = {
-	content: React.PropTypes.oneOfType([React.PropTypes.array, React.PropTypes.object]),
-	componentTitle: React.PropTypes.string,
-	index: React.PropTypes.number,
-	componentTitles: React.PropTypes.array,
-	updateContentValue: React.PropTypes.func,
-	updateComponentTitle: React.PropTypes.func
+	content: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
+	componentTitle: PropTypes.string,
+	index: PropTypes.number,
+	componentTitles: PropTypes.array,
+	updateContentValue: PropTypes.func,
+	updateComponentTitle: PropTypes.func
 }
 
 export default SingleHeading

@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 class ExternalImageModal extends React.Component {
 	constructor() {
@@ -52,11 +53,9 @@ class ExternalImageModal extends React.Component {
 }
 
 ExternalImageModal.propTypes = {
-	isExternalImageModalVisible: React.PropTypes.bool,
-	setImageURL: React.PropTypes.func,
-	imageURL: React.PropTypes.string
-	
-
+	isExternalImageModalVisible: PropTypes.bool,
+	setImageURL: PropTypes.func,
+	imageURL: PropTypes.string
 }
 
 export default ExternalImageModal

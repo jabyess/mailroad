@@ -1,9 +1,9 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { browserHistory } from 'react-router'
 import NavBar from './NavBar.jsx'
 import axiosClient from '../lib/axios.js'
 import NotificationContainer from './NotificationContainer'
-
 
 class App extends React.Component {
 	constructor() {
@@ -44,7 +44,7 @@ class App extends React.Component {
 }
 
 App.propTypes = {
-	children: React.PropTypes.element
+	children: PropTypes.element
 }
 
 export default App

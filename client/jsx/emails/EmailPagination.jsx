@@ -1,5 +1,5 @@
 import React from 'react'
-
+import PropTypes from 'prop-types'
 
 class EmailPagination extends React.Component {
 	constructor() {
@@ -67,11 +67,11 @@ class EmailPagination extends React.Component {
 }
 
 EmailPagination.propTypes = {
-	pageNext: React.PropTypes.func,
-	pagePrev: React.PropTypes.func,
-	page: React.PropTypes.number,
-	emailsPerPage: React.PropTypes.number,
-	totalRows: React.PropTypes.number,
-	skipToPage: React.PropTypes.func
+	pageNext: PropTypes.func,
+	pagePrev: PropTypes.func,
+	page: PropTypes.number,
+	emailsPerPage: PropTypes.number,
+	totalRows: PropTypes.number,
+	skipToPage: PropTypes.func
 }
 export default EmailPagination

@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { SingleDatePicker } from 'react-dates'
 import moment from 'moment'
 
@@ -73,11 +74,11 @@ class DatePicker extends React.Component {
 }
 
 DatePicker.propTypes = {
-	updateContentValue: React.PropTypes.func,
-	index: React.PropTypes.number,
-	componentTitle: React.PropTypes.string,
-	componentTitles: React.PropTypes.array,
-	updateComponentTitle: React.PropTypes.func
+	updateContentValue: PropTypes.func,
+	index: PropTypes.number,
+	componentTitle: PropTypes.string,
+	componentTitles: PropTypes.array,
+	updateComponentTitle: PropTypes.func
 }
 
 export default DatePicker

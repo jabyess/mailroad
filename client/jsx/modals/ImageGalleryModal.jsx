@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import autoBind from 'react-autobind'
 import axiosClient from '../../lib/axios.js'
 import ImageGalleryImages from './ImageGalleryImages.jsx'
@@ -155,7 +156,7 @@ class ImageGalleryModal extends React.Component {
 }
 
 ImageGalleryModal.propTypes = {
-	setImageSizes: React.PropTypes.func
+	setImageSizes: PropTypes.func
 
 }
 

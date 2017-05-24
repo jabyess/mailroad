@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import autoBind from 'react-autobind'
 
 class EventsCalendar extends React.Component {
@@ -105,12 +106,12 @@ EventsCalendar.defaultProps = {
 }
 
 EventsCalendar.propTypes = {
-	componentTitle: React.PropTypes.string,
-	componentTitles: React.PropTypes.array,
-	content: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]),
-	index: React.PropTypes.number,
-	updateContentValue: React.PropTypes.func,
-	updateComponentTitle: React.PropTypes.func,
+	componentTitle: PropTypes.string,
+	componentTitles: PropTypes.array,
+	content: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+	index: PropTypes.number,
+	updateContentValue: PropTypes.func,
+	updateComponentTitle: PropTypes.func,
 }
 
 export default EventsCalendar

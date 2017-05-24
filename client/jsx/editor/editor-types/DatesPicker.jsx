@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { DateRangePicker } from 'react-dates'
 import autoBind from 'react-autobind'
 import moment from 'moment'
@@ -86,13 +87,13 @@ class DatesPicker extends React.Component {
 }
 
 DatesPicker.propTypes = {
-	updateContentValue: React.PropTypes.func,
-	updateComponentTitle: React.PropTypes.func,
-	componentTitle: React.PropTypes.string,
-	componentTitles: React.PropTypes.array,
-	index: React.PropTypes.number,
-	startDate: React.PropTypes.string,
-	endDate: React.PropTypes.string
+	updateContentValue: PropTypes.func,
+	updateComponentTitle: PropTypes.func,
+	componentTitle: PropTypes.string,
+	componentTitles: PropTypes.array,
+	index: PropTypes.number,
+	startDate: PropTypes.string,
+	endDate: PropTypes.string
 }
 
 export default DatesPicker
