@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { DropTarget } from 'react-dnd'
 import ItemTypes from './editor-types/ItemTypes.js'
 import DynamicEditor from './DynamicEditor.jsx'
@@ -54,20 +55,20 @@ EditorTypeRow.defaultProps = {
 }
 
 EditorTypeRow.propTypes = {
-	index: React.PropTypes.number,
-	imageURL: React.PropTypes.string,
-	imageIndex: React.PropTypes.number,
-	setImageIndex: React.PropTypes.func,
-	isEditModeActive:  React.PropTypes.bool,
-	content:  React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object, React.PropTypes.array]),
-	componentTitles:  React.PropTypes.array,
-	componentTitle:  React.PropTypes.string,
-	editorType:  React.PropTypes.string,
-	updateComponentTitle: React.PropTypes.func,
-	updateContentValue: React.PropTypes.func,
-	removeEditorFromContainer: React.PropTypes.func,
-	isOver: React.PropTypes.bool,
-	connectDropTarget: React.PropTypes.func,
+	index: PropTypes.number,
+	imageURL: PropTypes.string,
+	imageIndex: PropTypes.number,
+	setImageIndex: PropTypes.func,
+	isEditModeActive:  PropTypes.bool,
+	content:  PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.array]),
+	componentTitles:  PropTypes.array,
+	componentTitle:  PropTypes.string,
+	editorType:  PropTypes.string,
+	updateComponentTitle: PropTypes.func,
+	updateContentValue: PropTypes.func,
+	removeEditorFromContainer: PropTypes.func,
+	isOver: PropTypes.bool,
+	connectDropTarget: PropTypes.func,
 }
 
 export default DropTarget(ItemTypesArray, editorTypeRowDropTarget, collect)(EditorTypeRow)

@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import ClipboardButton from 'react-clipboard.js'
 
 class ImageGalleryPane extends React.Component {
@@ -107,13 +108,13 @@ ImageGalleryPane.defaultProps = {
 }
 
 ImageGalleryPane.propTypes = {
-	loadMore: React.PropTypes.func,
-	deleteImage: React.PropTypes.func,
-	currentImage: React.PropTypes.object,
-	toggleVisible: React.PropTypes.func,
-	loadMoreVisible: React.PropTypes.bool,
-	activeImage: React.PropTypes.number,
-	setImageURL: React.PropTypes.func
+	loadMore: PropTypes.func,
+	deleteImage: PropTypes.func,
+	currentImage: PropTypes.object,
+	toggleVisible: PropTypes.func,
+	loadMoreVisible: PropTypes.bool,
+	activeImage: PropTypes.number,
+	setImageURL: PropTypes.func
 }
 
 export default ImageGalleryPane

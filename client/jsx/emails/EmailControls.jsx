@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import autoBind from 'react-autobind'
 import classNames from 'classnames'
 import axiosClient from '../../lib/axios.js'
@@ -81,9 +82,9 @@ class EmailControls extends React.Component {
 }
 
 EmailControls.propTypes =  {
-	selectedCheckboxes: React.PropTypes.object,
-	refreshEmailList: React.PropTypes.func,
-	triggerSearch: React.PropTypes.func
+	selectedCheckboxes: PropTypes.object,
+	refreshEmailList: PropTypes.func,
+	triggerSearch: PropTypes.func
 }
 
 export default EmailControls

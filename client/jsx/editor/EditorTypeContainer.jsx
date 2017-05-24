@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import EditorTypeRow from './EditorTypeRow'
 
 class EditorTypeContainer extends React.Component {
@@ -37,19 +38,18 @@ class EditorTypeContainer extends React.Component {
 }
 
 EditorTypeContainer.propTypes = {
-	componentTitles: React.PropTypes.array,
-	imageURL: React.PropTypes.string,
-	imageIndex: React.PropTypes.number,
-	setImageIndex: React.PropTypes.func,
-	isEditModeActive: React.PropTypes.bool,
-	removeEditorFromContainer: React.PropTypes.func,
-	updateComponentTitle: React.PropTypes.func,
-	updateContentValue: React.PropTypes.func,
-	reorderEditorIndexes: React.PropTypes.func,
-	updateEventDate: React.PropTypes.func,
-	updateEventTitle: React.PropTypes.func,
-
-
+	componentTitles: PropTypes.array,
+	contents: PropTypes.array,
+	imageURL: PropTypes.string,
+	imageIndex: PropTypes.number,
+	setImageIndex: PropTypes.func,
+	isEditModeActive: PropTypes.bool,
+	removeEditorFromContainer: PropTypes.func,
+	updateComponentTitle: PropTypes.func,
+	updateContentValue: PropTypes.func,
+	reorderEditorIndexes: PropTypes.func,
+	updateEventDate: PropTypes.func,
+	updateEventTitle: PropTypes.func,
 }
 
 export default EditorTypeContainer

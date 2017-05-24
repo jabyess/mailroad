@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import axios from 'axios'
 import { browserHistory } from 'react-router'
 
@@ -70,7 +71,7 @@ class LoginForm extends React.Component {
 }
 
 LoginForm.propTypes = {
-	fireNotification: React.PropTypes.func
+	fireNotification: PropTypes.func
 }
 
 export default LoginForm

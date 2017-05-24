@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import autoBind from 'react-autobind'
 
 class FlexibleImage extends React.Component {
@@ -95,15 +96,15 @@ class FlexibleImage extends React.Component {
 }
 
 FlexibleImage.propTypes = {
-	setImageIndex: React.PropTypes.func,
-	index: React.PropTypes.number,
-	imageIndex: React.PropTypes.number,
-	imageURL: React.PropTypes.string,
-	updateComponentTitle: React.PropTypes.func,
-	updateContentValue: React.PropTypes.func,
-	componentTitles: React.PropTypes.array,
-	componentTitle: React.PropTypes.string,
-	content: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array, React.PropTypes.string])
+	setImageIndex: PropTypes.func,
+	index: PropTypes.number,
+	imageIndex: PropTypes.number,
+	imageURL: PropTypes.string,
+	updateComponentTitle: PropTypes.func,
+	updateContentValue: PropTypes.func,
+	componentTitles: PropTypes.array,
+	componentTitle: PropTypes.string,
+	content: PropTypes.oneOfType([PropTypes.object, PropTypes.array, PropTypes.string])
 }
 
 export default FlexibleImage

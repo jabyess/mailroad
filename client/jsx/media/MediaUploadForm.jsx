@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import ImageSizeInputs from './ImageSizeInputs.jsx'
 import autoBind from 'react-autobind'
 import axiosClient from '../../lib/axios.js'
@@ -153,7 +154,7 @@ class MediaUploadForm extends React.Component {
 }
 
 MediaUploadForm.propTypes = {
-	toggleImageGalleryModal: React.PropTypes.func
+	toggleImageGalleryModal: PropTypes.func
 }
 
 export default MediaUploadForm

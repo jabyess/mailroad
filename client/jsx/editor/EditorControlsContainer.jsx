@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
 class EditorControlsContainer extends React.Component {
@@ -43,8 +44,9 @@ class EditorControlsContainer extends React.Component {
 }
 
 EditorControlsContainer.propTypes = {
-	saveToDB: React.PropTypes.func,
-	compileHTMLTemplate: React.PropTypes.func
+	saveToDB: PropTypes.func,
+	compileHTMLTemplate: PropTypes.func,
+	isEditModeActive: PropTypes.bool
 }
 
 export default EditorControlsContainer
