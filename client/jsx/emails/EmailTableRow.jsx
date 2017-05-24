@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Link } from 'react-router'
 import { formatTimestamp } from '../../lib/utils'
 
@@ -50,8 +51,8 @@ class EmailTableRow extends React.Component {
 }
 
 EmailTableRow.propTypes = {
-	rowValues: React.PropTypes.object,
-	updateSelectedCheckboxes: React.PropTypes.func,
-	checked: React.PropTypes.bool
+	rowValues: PropTypes.object,
+	updateSelectedCheckboxes: PropTypes.func,
+	checked: PropTypes.bool
 }
 export default EmailTableRow

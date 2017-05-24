@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import autoBind from 'react-autobind'
 
 class EditorMetaContainer extends React.Component {
@@ -130,16 +131,16 @@ EditorMetaContainer.defaultProps = {
 }
 
 EditorMetaContainer.propTypes = {
-	author: React.PropTypes.string,
-	createdAt: React.PropTypes.string,
-	updatedAt: React.PropTypes.string,
-	templates: React.PropTypes.array,
-	template: React.PropTypes.string,
-	title: React.PropTypes.string,
-	handleAuthorChange: React.PropTypes.func,
-	handleTemplateChange: React.PropTypes.func,
-	handleTitleChange: React.PropTypes.func,
-	updateCategory: React.PropTypes.func
+	author: PropTypes.string,
+	createdAt: PropTypes.string,
+	updatedAt: PropTypes.string,
+	templates: PropTypes.array,
+	template: PropTypes.string,
+	title: PropTypes.string,
+	handleAuthorChange: PropTypes.func,
+	handleTemplateChange: PropTypes.func,
+	handleTitleChange: PropTypes.func,
+	updateCategory: PropTypes.func
 }
 
 export default EditorMetaContainer

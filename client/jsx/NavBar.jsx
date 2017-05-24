@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Link, IndexLink } from 'react-router'
 
 class NavBar extends React.Component {
@@ -22,7 +23,7 @@ class NavBar extends React.Component {
 }
 
 NavBar.propTypes = {
-	doLogout: React.PropTypes.func
+	doLogout: PropTypes.func
 }
 
 export default NavBar

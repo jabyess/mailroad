@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 class ImageGalleryImages extends React.Component {
 	constructor() {
@@ -39,10 +40,10 @@ class ImageGalleryImages extends React.Component {
 }
 
 ImageGalleryImages.propTypes = {
-	images: React.PropTypes.array,
-	getImageInfo: React.PropTypes.func,
-	setActiveImage: React.PropTypes.func,
-	activeImage: React.PropTypes.number
+	images: PropTypes.array,
+	getImageInfo: PropTypes.func,
+	setActiveImage: PropTypes.func,
+	activeImage: PropTypes.number
 
 }
 

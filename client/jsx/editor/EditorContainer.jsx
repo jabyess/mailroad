@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { browserHistory } from 'react-router'
 import autoBind from 'react-autobind'
 import EditorMetaContainer from './EditorMetaContainer'
@@ -383,9 +384,9 @@ class EditorContainer extends React.Component {
 }
 
 EditorContainer.propTypes = {
-	params: React.PropTypes.oneOfType([
-		React.PropTypes.string,
-		React.PropTypes.object
+	params: PropTypes.oneOfType([
+		PropTypes.string,
+		PropTypes.object
 	])
 }
 

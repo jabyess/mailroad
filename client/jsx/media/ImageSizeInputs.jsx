@@ -1,5 +1,5 @@
-
 import React from 'react'
+import PropTypes from 'prop-types'
 
 class ImageSizeInputs extends React.Component {
 	constructor(props) {
@@ -97,12 +97,12 @@ class ImageSizeInputs extends React.Component {
 }
 
 ImageSizeInputs.propTypes = {
-	sizeInputs: React.PropTypes.array,
-	droppedFiles: React.PropTypes.array,
-	addSizeRow: React.PropTypes.func,
-	removeSizeRow: React.PropTypes.func,
-	handleWidthChange: React.PropTypes.func,
-	handleHeightChange: React.PropTypes.func,
+	sizeInputs: PropTypes.array,
+	droppedFiles: PropTypes.array,
+	addSizeRow: PropTypes.func,
+	removeSizeRow: PropTypes.func,
+	handleWidthChange: PropTypes.func,
+	handleHeightChange: PropTypes.func,
 }
 
 export default ImageSizeInputs

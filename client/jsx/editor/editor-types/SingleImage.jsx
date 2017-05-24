@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import autoBind from 'react-autobind'
 
 class SingleImage extends React.Component {
@@ -128,15 +129,15 @@ SingleImage.defaultProps = {
 }
 
 SingleImage.propTypes = {
-	content: React.PropTypes.oneOfType([React.PropTypes.object, React.PropTypes.array]),
-	componentTitles: React.PropTypes.array,
-	componentTitle: React.PropTypes.string,
-	updateContentValue: React.PropTypes.func,
-	updateComponentTitle: React.PropTypes.func,
-	setImageIndex: React.PropTypes.func,
-	index: React.PropTypes.number,
-	imageIndex: React.PropTypes.number,
-	imageURL: React.PropTypes.string
+	content: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+	componentTitles: PropTypes.array,
+	componentTitle: PropTypes.string,
+	updateContentValue: PropTypes.func,
+	updateComponentTitle: PropTypes.func,
+	setImageIndex: PropTypes.func,
+	index: PropTypes.number,
+	imageIndex: PropTypes.number,
+	imageURL: PropTypes.string
 }
 
 export default SingleImage

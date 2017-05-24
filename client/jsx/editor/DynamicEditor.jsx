@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import * as dynamicEditorTypes from './editor-types/EditorTypes'
 import ItemTypes from './editor-types/ItemTypes'
 import { DragSource } from 'react-dnd'
@@ -69,19 +70,19 @@ class DynamicEditor extends React.Component {
 }
 
 DynamicEditor.propTypes = {
-	editorType: React.PropTypes.string,
-	connectDragSource: React.PropTypes.func,
-	isEditModeActive: React.PropTypes.bool,
-	index: React.PropTypes.number,
-	imageIndex: React.PropTypes.number,
-	imageURL: React.PropTypes.string,
-	setImageIndex: React.PropTypes.func,
-	removeEditorFromContainer: React.PropTypes.func,
-	content:  React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.object, React.PropTypes.array]),
-	componentTitle: React.PropTypes.string,
-	componentTitles: React.PropTypes.array,
-	updateComponentTitle: React.PropTypes.func,
-	updateContentValue: React.PropTypes.func,
+	editorType: PropTypes.string,
+	connectDragSource: PropTypes.func,
+	isEditModeActive: PropTypes.bool,
+	index: PropTypes.number,
+	imageIndex: PropTypes.number,
+	imageURL: PropTypes.string,
+	setImageIndex: PropTypes.func,
+	removeEditorFromContainer: PropTypes.func,
+	content:  PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.array]),
+	componentTitle: PropTypes.string,
+	componentTitles: PropTypes.array,
+	updateComponentTitle: PropTypes.func,
+	updateContentValue: PropTypes.func,
 }
 
 

@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import EmailTableRow from './EmailTableRow.jsx'
 
 class EmailTable extends React.Component {
@@ -35,9 +36,9 @@ class EmailTable extends React.Component {
 }
 
 EmailTable.propTypes = {
-	selectedCheckboxes: React.PropTypes.object,
-	updateSelectedCheckboxes: React.PropTypes.func,
-	emailItems: React.PropTypes.array
+	selectedCheckboxes: PropTypes.object,
+	updateSelectedCheckboxes: PropTypes.func,
+	emailItems: PropTypes.array
 }
 
 export default EmailTable

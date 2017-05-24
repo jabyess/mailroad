@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Editor, Html } from 'slate'
 import autoBind from 'react-autobind'
 import { debounce } from '../../../lib/utils.js'
@@ -620,16 +621,16 @@ class DefaultEditor extends React.Component {
 }
 
 DefaultEditor.propTypes = {
-	componentTitle: React.PropTypes.string,
-	componentTitles: React.PropTypes.array,
-	content: React.PropTypes.string,
-	connectDragSource: React.PropTypes.func,
-	index: React.PropTypes.number,
-	updateComponentTitle: React.PropTypes.func,
-	updateContentValue: React.PropTypes.func,
-	imageURL: React.PropTypes.string,
-	imageIndex: React.PropTypes.number,
-	setImageIndex: React.PropTypes.func
+	componentTitle: PropTypes.string,
+	componentTitles: PropTypes.array,
+	content: PropTypes.string,
+	connectDragSource: PropTypes.func,
+	index: PropTypes.number,
+	updateComponentTitle: PropTypes.func,
+	updateContentValue: PropTypes.func,
+	imageURL: PropTypes.string,
+	imageIndex: PropTypes.number,
+	setImageIndex: PropTypes.func
 }
 
 export default DefaultEditor

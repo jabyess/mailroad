@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import ClipboardButton from 'react-clipboard.js'
 
 class SourceModal extends React.Component {
@@ -42,7 +43,7 @@ class SourceModal extends React.Component {
 }
 
 SourceModal.propTypes = {
-	textContent: React.PropTypes.string
+	textContent: PropTypes.string
 
 }
 

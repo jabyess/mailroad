@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import * as EditorTypes from './EditorTypes'
 
 class EditorTypeSelect extends React.Component {
@@ -48,8 +49,8 @@ class EditorTypeSelect extends React.Component {
 }
 
 EditorTypeSelect.propTypes = {
-	addEditorToContainer: React.PropTypes.func,
-	fireNotification: React.PropTypes.func
+	addEditorToContainer: PropTypes.func,
+	fireNotification: PropTypes.func
 }
 
 export default EditorTypeSelect

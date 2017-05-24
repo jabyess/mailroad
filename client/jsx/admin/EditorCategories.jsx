@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 import EditorCategory from './EditorCategory.jsx'
 
@@ -43,11 +44,11 @@ class EditorCategories extends React.Component {
 }
 
 EditorCategories.propTypes = {
-	addComponentTitle: React.PropTypes.func,
-	updateComponentTitle: React.PropTypes.func,
-	removeComponentTitle: React.PropTypes.func,
-	categories: React.PropTypes.array,
-	updateCategory: React.PropTypes.func
+	addComponentTitle: PropTypes.func,
+	updateComponentTitle: PropTypes.func,
+	removeComponentTitle: PropTypes.func,
+	categories: PropTypes.array,
+	updateCategory: PropTypes.func
 }
 
 export default EditorCategories
