@@ -104,11 +104,18 @@ describe('Mailroad API: /api/*', function () {
    */
 
    describe('Emails: /api/email', function () {
-     it('GET /api/email/list: lists emails', function (done) {
+
+     // fetching emails
+
+
+     it('GET /api/email/list: lists emails for validated user, default options', function (done) {
        login((agent, cookie) => {
          agent
           .get('/api/email/list')
           .set('Cookie', cookie)
+          .send({
+            user: process.env.MCI_TEST_USER
+          })
           .expect(200)
           .expect('Content-type', /application\/json/)
           .end((err, res) => {
@@ -116,8 +123,137 @@ describe('Mailroad API: /api/*', function () {
             res.body.should.be.a.Object();
             res.body.rows.should.be.a.Array();
             done();
-          })
-       })
+          });
+       });
      });
+
+     it('GET /api/email/list/:skip: lists emails for validated user, with a skip param passed', function (done) {
+       login((agent, cookie) => {
+         agent
+          .get('/api/email/list/10')
+          .set('Cookie', cookie)
+          .send({
+            user: process.env.MCI_TEST_USER
+          })
+          .expect(200)
+          .expect('Content-type', /application\/json/)
+          .end((err, res) => {
+            res.status.should.equal(200);
+            res.body.should.be.a.Object();
+            res.body.rows.should.be.a.Array();
+            done();
+          });
+       });
+     });
+
+     it('GET /api/email/list: lists emails for validated user', function (done) {
+       login((agent, cookie) => {
+         agent
+          .get('/api/email/list')
+          .set('Cookie', cookie)
+          .send({
+            user: process.env.MCI_TEST_USER
+          })
+          .expect(200)
+          .expect('Content-type', /application\/json/)
+          .end((err, res) => {
+            res.status.should.equal(200);
+            res.body.should.be.a.Object();
+            res.body.rows.should.be.a.Array();
+            done();
+          });
+       });
+     });
+
+     it('GET /api/email/list: bad request if no user parameter sent', function (done) {
+       login((agent, cookie) => {
+         agent
+          .get('/api/email/list')
+          .set('Cookie', cookie)
+          .expect(400)
+          .expect('Content-type', /application\/json/)
+          .end((err, res) => {
+            res.status.should.equal(400);
+            done();
+          });
+       });
+     });
+
+     it('GET /api/email/list: forbidden request if the user sent in request does not match logged in user', function (done) {
+       login((agent, cookie) => {
+         agent
+          .get('/api/email/list')
+          .send({
+            user: 'not_the_logged_in_user'
+          })
+          .set('Cookie', cookie)
+          .expect(403)
+          .expect('Content-type', /application\/json/)
+          .end((err, res) => {
+            res.status.should.equal(403);
+            res.text.should.equal('Forbidden');
+            done();
+          });
+       });
+     });
+
+
+
+     // fetching templates
+
+
+     it('GET /api/email/templates: lists available templates for validated user', function (done) {
+       login((agent, cookie) => {
+         agent
+          .get('/api/email/templates')
+          .send({
+            user: process.env.MCI_TEST_USER
+          })
+          .set('Cookie', cookie)
+          .expect(200)
+          .expect('Content-type', /application\/json/)
+          .end((err, res) => {
+            res.status.should.equal(200);
+            res.body.should.be.a.Array();
+            done();
+          });
+       });
+     });
+
+     it('GET /api/email/templates: bad request if no user parameter sent', function (done) {
+       login((agent, cookie) => {
+         agent
+          .get('/api/email/templates')
+          .set('Cookie', cookie)
+          .expect(400)
+          .expect('Content-type', /application\/json/)
+          .end((err, res) => {
+            res.status.should.equal(400);
+            done();
+          });
+       });
+     });
+
+     it('GET /api/email/templates: forbidden request if the user sent in request does not match logged in user', function (done) {
+       login((agent, cookie) => {
+         agent
+          .get('/api/email/templates')
+          .send({
+            user: 'not_the_logged_in_user'
+          })
+          .set('Cookie', cookie)
+          .expect(403)
+          .expect('Content-type', /application\/json/)
+          .end((err, res) => {
+            res.status.should.equal(403);
+            res.text.should.equal('Forbidden');
+            done();
+          });
+       });
+     });
+
+
+     // TODO: GET /:id, POST /compile, POST /create, DELETE /delete, POST /search, POST /copy
+     
    });
 });
