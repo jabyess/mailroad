@@ -76,6 +76,29 @@ describe('Mailroad API: /api/*', function () {
 
   /**
    * ---------------------------------------------------
+   * AUTH API TESTS
+   * ---------------------------------------------------
+   */
+
+   describe('Auth: /api/auth', function () {
+     it('POST /api/auth/login: logs in user', function (done) {
+       request.agent(app)
+        .post('/api/auth/login')
+        .send({
+          username: process.env.MCI_TEST_USER,
+          password: process.env.MCI_TEST_PASS
+        })
+        .expect(302)
+        .end((err, res) => {
+          res.status.should.equal(302);
+          res.headers.location.should.equal('/');
+          done();
+        });
+     });
+   });
+
+  /**
+   * ---------------------------------------------------
    * EMAIL API TESTS
    * ---------------------------------------------------
    */
@@ -85,12 +108,13 @@ describe('Mailroad API: /api/*', function () {
        login((agent, cookie) => {
          agent
           .get('/api/email/list')
-          .set('cookie', cookie)
+          .set('Cookie', cookie)
           .expect(200)
           .expect('Content-type', /application\/json/)
           .end((err, res) => {
             res.status.should.equal(200);
-            res.body.should.be.a.Array();
+            res.body.should.be.a.Object();
+            res.body.rows.should.be.a.Array();
             done();
           })
        })
