@@ -81,6 +81,7 @@ describe('Mailroad API: /api/*', function () {
    */
 
    describe('Auth: /api/auth', function () {
+
      it('POST /api/auth/login: logs in user', function (done) {
        request.agent(app)
         .post('/api/auth/login')
@@ -95,6 +96,22 @@ describe('Mailroad API: /api/*', function () {
           done();
         });
      });
+
+     it('POST /api/auth/login: rejects bad login', function (done) {
+       request.agent(app)
+        .post('/api/auth/login')
+        .send({
+          username: 'notareal@user.com',
+          password: 'thisisapassword'
+        })
+        .expect(401)
+        .end((err, res) => {
+          res.status.should.equal(401);
+          done();
+        });
+     });
+
+     // TODO: DELETE /auth/:uid, GET /auth/logout, GET /auth/verify/:uid
    });
 
   /**
@@ -254,6 +271,33 @@ describe('Mailroad API: /api/*', function () {
 
 
      // TODO: GET /:id, POST /compile, POST /create, DELETE /delete, POST /search, POST /copy
-     
+
    });
+
+
+
+   /**
+    * ---------------------------------------------------
+    * S3 API TESTS
+    * ---------------------------------------------------
+    */
+
+    describe('S3: /api/s3', function () {
+
+      // TODO: GET /list/:grouping, GET /list/:skip?, POST /delete, POST /create,
+    });
+
+
+
+
+    /**
+     * ---------------------------------------------------
+     * META API TESTS
+     * ---------------------------------------------------
+     */
+
+     describe('Meta: /api/meta', function () {
+
+       // TODO: GET /loadConfig
+     });
 });
