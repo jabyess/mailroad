@@ -31,7 +31,7 @@ passportjs.init = (app) => {
 			let redisObj = {
 				name: authenticated.data.user.cb,
 				email: authenticated.data.user.uid,
-				uuid: authenticated.data.user.id, 
+				uuid: authenticated.data.user.id,
 				sessionID: sessionID
 			}
 
@@ -153,7 +153,7 @@ passportjs.verifySession = (req, res, next) => {
 		next()
 	}
 
-	else if(!sess || !req.xhr) {
+	else if(!sess && !req.xhr) {
 		res.sendStatus(403)
 	}
 
