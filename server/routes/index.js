@@ -1,3 +1,5 @@
+'use strict'
+
 const router = require('express').Router()
 
 router.use('/api/email', require('./api.js'))
