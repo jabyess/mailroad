@@ -111,7 +111,63 @@ describe('Mailroad API: /api/*', function () {
         });
      });
 
-     // TODO: DELETE /auth/:uid, GET /auth/logout, GET /auth/verify/:uid
+     it('GET /api/auth/logout: logs out a logged-in user', function (done) {
+       login((agent, cookie) => {
+         agent
+          .get('/api/auth/logout')
+          .set('Cookie', cookie)
+          .expect(302)
+          .end((err, res) => {
+            res.status.should.equal(302);
+            res.headers.location.should.equal('/login');
+            done();
+          });
+       });
+     });
+
+     it('GET /: redirects a user to /login if not logged in', function (done) {
+       request.agent(app)
+        .get('/')
+        .expect(302)
+        .end((err, res) => {
+          res.status.should.equal(302);
+          res.headers.location.should.equal('/login');
+          done();
+        });
+     });
+
+     it('GET /editor: redirects a user to /login if not logged in', function (done) {
+       request.agent(app)
+        .get('/editor')
+        .expect(302)
+        .end((err, res) => {
+          res.status.should.equal(302);
+          res.headers.location.should.equal('/login');
+          done();
+        });
+     });
+
+     it('GET /admin: redirects a user to /login if not logged in', function (done) {
+       request.agent(app)
+        .get('/admin')
+        .expect(302)
+        .end((err, res) => {
+          res.status.should.equal(302);
+          res.headers.location.should.equal('/login');
+          done();
+        });
+     });
+
+     it('GET /media: redirects a user to /login if not logged in', function (done) {
+       request.agent(app)
+        .get('/media')
+        .expect(302)
+        .end((err, res) => {
+          res.status.should.equal(302);
+          res.headers.location.should.equal('/login');
+          done();
+        });
+     });
    });
 
   /**
@@ -182,36 +238,19 @@ describe('Mailroad API: /api/*', function () {
        });
      });
 
-     it('GET /api/email/list: bad request if no user parameter sent', function (done) {
-       login((agent, cookie) => {
-         agent
-          .get('/api/email/list')
-          .set('Cookie', cookie)
-          .expect(400)
-          .expect('Content-type', /application\/json/)
-          .end((err, res) => {
-            res.status.should.equal(400);
-            done();
-          });
-       });
-     });
-
-     it('GET /api/email/list: forbidden request if the user sent in request does not match logged in user', function (done) {
-       login((agent, cookie) => {
-         agent
-          .get('/api/email/list')
-          .send({
-            user: 'not_the_logged_in_user'
-          })
-          .set('Cookie', cookie)
-          .expect(403)
-          .expect('Content-type', /application\/json/)
-          .end((err, res) => {
-            res.status.should.equal(403);
-            res.text.should.equal('Forbidden');
-            done();
-          });
-       });
+     it('GET /api/email/list: forbidden request if no cookie sent', function (done) {
+       request.agent(app)
+        .get('/api/email/list')
+        .send({
+          username: process.env.MCI_TEST_USER,
+          password: process.env.MCI_TEST_PASS
+        })
+        .expect(403)
+        .expect('Content-type', /application\/json/)
+        .end((err, res) => {
+          res.status.should.equal(403);
+          done();
+        });
      });
 
 
@@ -237,36 +276,18 @@ describe('Mailroad API: /api/*', function () {
        });
      });
 
-     it('GET /api/email/templates: bad request if no user parameter sent', function (done) {
-       login((agent, cookie) => {
-         agent
-          .get('/api/email/templates')
-          .set('Cookie', cookie)
-          .expect(400)
-          .expect('Content-type', /application\/json/)
-          .end((err, res) => {
-            res.status.should.equal(400);
-            done();
-          });
-       });
-     });
-
-     it('GET /api/email/templates: forbidden request if the user sent in request does not match logged in user', function (done) {
-       login((agent, cookie) => {
-         agent
-          .get('/api/email/templates')
-          .send({
-            user: 'not_the_logged_in_user'
-          })
-          .set('Cookie', cookie)
-          .expect(403)
-          .expect('Content-type', /application\/json/)
-          .end((err, res) => {
-            res.status.should.equal(403);
-            res.text.should.equal('Forbidden');
-            done();
-          });
-       });
+     it('GET /api/email/templates: forbidden request if no cookie passed', function (done) {
+       request.agent(app)
+        .get('/api/email/templates')
+        .send({
+          user: process.env.MCI_TEST_USER
+        })
+        .expect(403)
+        .expect('Content-type', /application\/json/)
+        .end((err, res) => {
+          res.status.should.equal(403);
+          done();
+        });
      });
 
 

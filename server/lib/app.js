@@ -1,25 +1,28 @@
 const dotenv = require('dotenv')
 const express = require('express')
+const app = express()
 const path = require('path')
 const fs = require('fs')
 const gzipStatic = require('connect-gzip-static')
 const expressSession = require('express-session')
-const passportjs = require('../routes/auth.js')
-const API = require('../routes/api.js')
-const S3 = require('../routes/s3.js')
-const meta = require('../routes/meta.js')
+const RedisStore = require('connect-redis')(expressSession)
+const redisClient = require('./redis.js')
 const paths = require('../../config/paths')
-const bodyParser = require('body-parser')
+const jsonParser = require('body-parser').json()
+const passport = require('../routes/auth.js')
 const winston = require('winston')
 
 require('winston-loggly-bulk')
-
 dotenv.config()
 
-const jsonParser = bodyParser.json()
 const { NODE_ENV, SESSION_SECRET } = process.env
 
-//configure logging environment (loggly or local)
+
+
+
+// logging
+
+
 if(NODE_ENV === 'production') {
 	winston.add(winston.transports.Loggly, {
 		token: process.env.WINSTON_API_TOKEN,
@@ -27,9 +30,7 @@ if(NODE_ENV === 'production') {
 		tags: [ 'mailroad' ],
 		json: true
 	})
-}
-
-else {
+} else {
 	const logDir = path.resolve(process.cwd(), 'logs')
 	if(fs.statSync(logDir)) {
 		winston.add(winston.transports.File, {
@@ -39,13 +40,18 @@ else {
 	}
 }
 
-// express and passportjs config
-// init static route before expressSession
-// init expressSession before passport
-let app = express()
+
+// app config (sessions, headers, and authentication)
+
+
 app.use('/public', gzipStatic(paths.build))
 
 app.use(expressSession({
+	store: new RedisStore({
+		client: redisClient,
+		ttl: 86400,     // 24 hours
+		prefix: 'sess-'
+	}),
 	secret: SESSION_SECRET,
 	resave: false,
 	saveUninitialized: false,
@@ -57,24 +63,22 @@ app.use(expressSession({
 	}
 }))
 
-// protect api route
-app.use('/api', passportjs.verifySession)
+passport.init(app)
+app.use('/api', passport.verifySession)
 
-// this is the /api/auth route
-// pass in the express instance
-passportjs.init(app)
 
-// api routes config
-app.use('/api/email', API)
-app.use('/api/s3', S3)
-app.use('/api/meta', meta)
+// routes (api, logging, and catchalls)
+
+
+
+app.use('/', require('../routes'))
+
 app.post('/api/log', jsonParser, (req, res) => {
 	const { data, level } = req.body.data
 	winston.log(level, data)
 	res.sendStatus(200)
 })
 
-//healthcheck for AWS instance monitoring
 app.get('/__health-check__', (req, res) => {
 	res.set({
 		'Content-Type': 'text/plain',
@@ -83,8 +87,7 @@ app.get('/__health-check__', (req, res) => {
 	return null
 })
 
-//sendfile for any routes that don't match
-app.get('*', (req, res) => {
+app.get('*', passport.verifySession, (req, res) => {
 	res.sendFile('index.html', {
 		root: process.env.PWD + '/public'
 	}, (err) => {
@@ -93,5 +96,7 @@ app.get('*', (req, res) => {
 		}
 	})
 })
+
+
 
 module.exports = app
