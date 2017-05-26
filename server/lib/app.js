@@ -39,10 +39,8 @@ else {
 	}
 }
 
-// express and passportjs config
-// init static route before expressSession
-// init expressSession before passport
-let app = express()
+const app = express()
+
 app.use('/public', gzipStatic(paths.build))
 
 app.use(expressSession({
@@ -84,7 +82,7 @@ app.get('/__health-check__', (req, res) => {
 })
 
 //sendfile for any routes that don't match
-app.get('*', (req, res) => {
+app.get('*', passportjs.verifySession, (req, res) => {
 	res.sendFile('index.html', {
 		root: process.env.PWD + '/public'
 	}, (err) => {

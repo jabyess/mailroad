@@ -149,12 +149,12 @@ passportjs.init = (app) => {
 passportjs.verifySession = (req, res, next) => {
 	let sess = req.session && req.session.passport ? req.session.passport.user : null
 
-	if(req.originalUrl.includes('/api/auth/login')) {
+	if(req.originalUrl.includes('/login')) {
 		next()
 	}
 
-	else if(!sess && !req.xhr) {
-		res.sendStatus(403)
+	else if(!sess) {
+		res.redirect('/login')
 	}
 
 	else {
