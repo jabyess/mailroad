@@ -111,7 +111,63 @@ describe('Mailroad API: /api/*', function () {
         });
      });
 
-     // TODO: DELETE /auth/:uid, GET /auth/logout, GET /auth/verify/:uid
+     it('GET /api/auth/logout: logs out a logged-in user', function (done) {
+       login((agent, cookie) => {
+         agent
+          .get('/api/auth/logout')
+          .set('Cookie', cookie)
+          .expect(302)
+          .end((err, res) => {
+            res.status.should.equal(302);
+            res.headers.location.should.equal('/login');
+            done();
+          });
+       });
+     });
+
+     it('GET /: redirects a user to /login if not logged in', function (done) {
+       request.agent(app)
+        .get('/')
+        .expect(302)
+        .end((err, res) => {
+          res.status.should.equal(302);
+          res.headers.location.should.equal('/login');
+          done();
+        });
+     });
+
+     it('GET /editor: redirects a user to /login if not logged in', function (done) {
+       request.agent(app)
+        .get('/editor')
+        .expect(302)
+        .end((err, res) => {
+          res.status.should.equal(302);
+          res.headers.location.should.equal('/login');
+          done();
+        });
+     });
+
+     it('GET /admin: redirects a user to /login if not logged in', function (done) {
+       request.agent(app)
+        .get('/admin')
+        .expect(302)
+        .end((err, res) => {
+          res.status.should.equal(302);
+          res.headers.location.should.equal('/login');
+          done();
+        });
+     });
+
+     it('GET /media: redirects a user to /login if not logged in', function (done) {
+       request.agent(app)
+        .get('/media')
+        .expect(302)
+        .end((err, res) => {
+          res.status.should.equal(302);
+          res.headers.location.should.equal('/login');
+          done();
+        });
+     });
    });
 
   /**
