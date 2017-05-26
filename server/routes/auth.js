@@ -119,7 +119,7 @@ passportjs.init = (app) => {
 		redisClient.del(sessionID, (err) => {
 			if(!err) {
 				req.logout()
-				res.sendStatus(403)
+				res.redirect('/login')
 			}
 			else {
 				winston.error(err)
