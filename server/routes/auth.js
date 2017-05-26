@@ -154,7 +154,7 @@ passportjs.verifySession = (req, res, next) => {
 	}
 
 	else if(!sess) {
-		res.redirect('/login')
+		req.originalUrl.includes('/api') ? res.sendStatus(403) : res.redirect('/login')
 	}
 
 	else {
