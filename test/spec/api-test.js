@@ -239,20 +239,18 @@ describe('Mailroad API: /api/*', function () {
      });
 
      it('GET /api/email/list: forbidden request if no cookie sent', function (done) {
-       login((agent, cookie) => {
-         agent
-          .get('/api/email/list')
-          .send({
-            username: process.env.MCI_TEST_USER,
-            password: process.env.MCI_TEST_PASS
-          })
-          .expect(403)
-          .expect('Content-type', /application\/json/)
-          .end((err, res) => {
-            res.status.should.equal(403);
-            done();
-          });
-       });
+       request.agent(app)
+        .get('/api/email/list')
+        .send({
+          username: process.env.MCI_TEST_USER,
+          password: process.env.MCI_TEST_PASS
+        })
+        .expect(403)
+        .expect('Content-type', /application\/json/)
+        .end((err, res) => {
+          res.status.should.equal(403);
+          done();
+        });
      });
 
      it('GET /api/email/list: bad request if no user parameter sent', function (done) {
@@ -311,20 +309,17 @@ describe('Mailroad API: /api/*', function () {
      });
 
      it('GET /api/email/templates: forbidden request if no cookie passed', function (done) {
-       login((agent, cookie) => {
-         agent
-          .get('/api/email/templates')
-          .send({
-            user: process.env.MCI_TEST_USER
-          })
-          .expect(200)
-          .expect('Content-type', /application\/json/)
-          .end((err, res) => {
-            res.status.should.equal(200);
-            res.body.should.be.a.Array();
-            done();
-          });
-       });
+       request.agent(app)
+        .get('/api/email/templates')
+        .send({
+          user: process.env.MCI_TEST_USER
+        })
+        .expect(403)
+        .expect('Content-type', /application\/json/)
+        .end((err, res) => {
+          res.status.should.equal(403);
+          done();
+        });
      });
 
      it('GET /api/email/templates: bad request if no user parameter sent', function (done) {
