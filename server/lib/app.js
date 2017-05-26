@@ -5,6 +5,8 @@ const path = require('path')
 const fs = require('fs')
 const gzipStatic = require('connect-gzip-static')
 const expressSession = require('express-session')
+const RedisStore = require('connect-redis')(expressSession)
+const redisClient = require('./redis.js')
 const paths = require('../../config/paths')
 const jsonParser = require('body-parser').json()
 const passport = require('../routes/auth.js')
@@ -14,7 +16,6 @@ require('winston-loggly-bulk')
 dotenv.config()
 
 const { NODE_ENV, SESSION_SECRET } = process.env
-
 
 
 
@@ -46,6 +47,11 @@ if(NODE_ENV === 'production') {
 app.use('/public', gzipStatic(paths.build))
 
 app.use(expressSession({
+	store: new RedisStore({
+		client: redisClient,
+		ttl: 86400,     // 24 hours
+		prefix: 'sess-'
+	}),
 	secret: SESSION_SECRET,
 	resave: false,
 	saveUninitialized: false,
