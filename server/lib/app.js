@@ -63,9 +63,8 @@ app.use(expressSession({
 	}
 }))
 
-app.use('/api', passport.verifySession)
 passport.init(app)
-
+app.use('/api', passport.verifySession)
 
 
 // routes (api, logging, and catchalls)

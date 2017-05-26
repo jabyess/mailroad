@@ -29,7 +29,7 @@ const authenticate = (username, password, done) => {
 		} else {
 			return done(null, userObj.data.user)
 		}
-	}).catch(done)
+	}).catch(err => done(null, false, err))
 }
 
 
@@ -119,28 +119,15 @@ passportjs.init = (app) => {
 }
 
 passportjs.verifySession = (req, res, next) => {
-	let sess = req.session && req.session.passport ? req.session.passport.user : null
-
-	if(req.originalUrl.includes('/login')) {
+	// skip /login routes
+	if (req.originalUrl.includes('/login')) {
 		next()
-	}
-
-	else if(!sess) {
+	} else if (req.isAuthenticated && req.isAuthenticated()) {
+		next()
+	// redirect on browser routes; send Forbidden on api routes
+	} else {
 		req.originalUrl.includes('/api') ? res.sendStatus(403) : res.redirect('/login')
 	}
-
-	else {
-		redisClient.ttl(sess, err => {
-			if(!err) {
-				next()
-			}
-			else {
-				winston.error(err)
-				res.status(500).send(err)
-			}
-		})
-	}
-
 }
 
 module.exports = passportjs
