@@ -3,13 +3,11 @@ const bodyParser = require('body-parser')
 const axios = require('axios')
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
-const redis = require('redis')
 const winston = require('winston')
 
 dotenv.config()
 
 const AUTH_URL = process.env.AUTH_URL
-const redisClient = redis.createClient()
 const jsonParser = bodyParser.json()
 const passportjs = {}
 
@@ -69,52 +67,9 @@ passportjs.init = (app) => {
 		successRedirect: '/'
 	}))
 
-	app.delete('/api/auth/:uid', (req, res) => {
-		const uid = req.params.uid
-		redisClient.del(uid, (err, deletedRecords) => {
-			if(!err && deletedRecords > 0) {
-				res.sendStatus(200)
-			}
-			else if(!err && deletedRecords < 1) {
-				res.sendStatus(404)
-			}
-			else {
-				// TODO: system log error
-				console.log(err)
-				res.status(500).send(err)
-			}
-		})
-	})
-
 	app.get('/api/auth/logout', (req, res) => {
-		const sessionID = `sess-${req.session.id}`
-		redisClient.del(sessionID, (err) => {
-			if(!err) {
-				req.logout()
-				res.redirect('/login')
-			}
-			else {
-				winston.error(err)
-				req.logout()
-				res.status(500).send(err)
-			}
-		})
-	})
-
-	app.get('/api/auth/verify/:uid', (req, res) => {
-		const uid = req.params.uid
-		redisClient.get(uid, (err, data) => {
-			if(err) {
-				winston.error(err)
-				res.sendStatus(500)
-			}
-			else if(!data) {
-				res.sendStatus(404)
-			}
-			else if(data) {
-				res.sendStatus(200)
-			}
-		})
+		req.logout()
+		res.redirect('/login')
 	})
 }
 
