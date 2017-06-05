@@ -8,6 +8,7 @@ const mjml = require('../lib/mjml.js')
 const MJML = new mjml()
 const redis = require('redis')
 const couchdb = require('../lib/mci-couchdb.js')
+const joi = require('../lib/validation.js')
 
 dotenv.config()
 
@@ -15,8 +16,8 @@ let router = express.Router()
 let jsonParser = bodyParser.json()
 const redisClient = redis.createClient()
 
-router.get('/list/:skip?', jsonParser, (req, res) => {
-	const skip = req.query && req.query.skip ? req.query.skip : null
+router.get('/list/:skip?', jsonParser, joi.validate(joi.schema.emails.list), (req, res) => {
+	const skip = req.joi.skip || null
 
 	couchdb.listEmails(skip)
 	.then(emails => {
@@ -45,9 +46,9 @@ router.get('/templates', (req, res) => {
 	})
 })
 
-router.post('/compile', jsonParser, (req,res) => {
+router.post('/compile', jsonParser, joi.validate(joi.schema.emails.compile), (req,res) => {
 
-	const context = JSON.parse(req.body.context)
+	const context = JSON.parse(req.joi.context)
 	const template = context.template
 
 	const parsedMJML = MJML.parseHandlebars(context, template)
@@ -64,8 +65,8 @@ router.post('/compile', jsonParser, (req,res) => {
 
 })
 
-router.post('/create', jsonParser, (req,res) => {
-	const { contents, title } = req.body
+router.post('/create', jsonParser, joi.validate(joi.schema.emails.create), (req,res) => {
+	const { contents, title } = req.joi
 	const sessionID = `sess-${req.sessionID}`
 	let user
 
@@ -92,8 +93,8 @@ router.post('/create', jsonParser, (req,res) => {
 	})
 })
 
-router.get('/:id', (req, res) => {
-	couchdb.getEmailByID(req.params.id).then(email => {
+router.get('/:id', joi.validate(joi.schema.emails.getOne), (req, res) => {
+	couchdb.getEmailByID(req.joi.id).then(email => {
 		return res.send(email.data)
 	}).catch(err => {
 		winston.error(err)
@@ -101,14 +102,8 @@ router.get('/:id', (req, res) => {
 	})
 })
 
-router.delete('/delete', jsonParser, (req, res) => {
-	if (!req.query || !req.query.id) {
-		return res.sendStatus(400)
-	}
-
-	const ids = typeof req.query.id === 'string' ? [req.query.id] : req.query.id
-
-	couchdb.deleteEmails(ids)
+router.delete('/delete', jsonParser, joi.validate(joi.schema.emails.delete), (req, res) => {
+	couchdb.deleteEmails(req.joi.id)
 	.then(() => {
 		return res.sendStatus(200)
 	}).catch(err => {
@@ -118,8 +113,8 @@ router.delete('/delete', jsonParser, (req, res) => {
 })
 
 // TODO: make this work + test it
-router.post('/search', jsonParser, (req, res) => {
-	couchdb.searchEmails(req.body.searchText)
+router.post('/search', jsonParser, joi.validate(joi.schema.emails.search), (req, res) => {
+	couchdb.searchEmails(req.joi.searchText)
 	.then(emails => {
 		return res.send(emails)
 	}).catch(err => {
@@ -128,15 +123,8 @@ router.post('/search', jsonParser, (req, res) => {
 	})
 })
 
-router.post('/copy', jsonParser, (req, res) => {
-	const id = req.body.id
-
-	// guard clause: prevent non-string ID
-	if (!id || typeof id !== 'string') {
-		return res.status(400).json({message: 'Did not pass valid email to duplicate'})
-	}
-
-	couchdb.duplicateEmail(id)
+router.post('/copy', jsonParser, joi.validate(joi.schema.emails.duplicate), (req, res) => {
+	couchdb.duplicateEmail(req.joi.id)
 	.then(ok => {
 		return couchdb.getEmailByID(ok.data.id)
 	}).then((email) => {
