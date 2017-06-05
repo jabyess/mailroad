@@ -36,6 +36,7 @@
     "extract-text-webpack-plugin": "^2.0.0-rc.3",
     "handlebars": "^4.0.5",
     "ioredis": "^3.0.0",
+    "joi": "^10.5.2",
     "juice": "^4.0.2",
     "mjml": "^3.3.0",
     "moment": "^2.17.1",
