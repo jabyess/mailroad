@@ -8,10 +8,6 @@ class EmailTableRow extends React.Component {
 	constructor(props) {
 		super(props)
 
-		this.state = {
-			checked: false
-		}
-
 		this.handleCheckboxChange = this.handleCheckboxChange.bind(this)
 	}
 
@@ -21,12 +17,6 @@ class EmailTableRow extends React.Component {
 		}
 	}
 
-	componentWillReceiveProps (nextProps) {
-		if(this.state.checked !== nextProps.checked) {
-			this.setState({checked: nextProps.checked})
-		}
-	}
-	
 	render() {
 		return (
 			<tr className="email-table__row">

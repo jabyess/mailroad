@@ -141,11 +141,8 @@ router.get('/:id', (req, res) => {
 })
 
 router.delete('/delete', jsonParser, (req, res) => {
-	console.log(req.query)
 	if(req.query && req.query.id) {
 		const ids = req.query.id
-
-		console.log('ids:', ids)
 
 		let idsToDelete = ids.map((_id) => {
 			return axios.get(`${COUCH_EMAILS}${_id}`).then((result) => {
@@ -156,7 +153,7 @@ router.delete('/delete', jsonParser, (req, res) => {
 				winston.error(err)
 			})
 		})
-
+		
 		Promise.all(idsToDelete).then((deleteObject) => {
 			if(deleteObject && deleteObject.length > 1) {
 				let url = COUCH_EMAILS + '_bulk_docs'
@@ -233,27 +230,33 @@ router.post('/copy', jsonParser, (req, res) => {
 
 	// get the data, snag a uuid, then post the data to that id. respond with data
 	axios.get(COUCH_EMAILS + id)
-	.then(result => {
-		copyData = result.data
-		return axios.get(COUCH_UUID)
-	}).then(result => {
-		const uuid = result.data.uuids[0]
-		return axios.put(COUCH_EMAILS + uuid, {
-			contents: copyData.contents,
-			title: copyData.title,
-			template: copyData.template || '',
-			templates: copyData.templates || [],
-			createdAt: createdAt,
-			updatedAt: updatedAt
+		.then(result => {
+			copyData = result.data
+			return axios.get(COUCH_UUID)
 		})
-	}).then(result => {
-		return axios.get(COUCH_EMAILS + result.data.id)
-	}).then(final => {
-		return res.send(final.data)
-	}).catch(err => {
-		winston.error(err)
-		res.status(500).json({message: err.message})
-	})
+		.then(result => {
+			const uuid = result.data.uuids[0]
+			return axios.put(COUCH_EMAILS + uuid, {
+				contents: copyData.contents,
+				title: copyData.title,
+				template: copyData.template || '',
+				templates: copyData.templates || [],
+				createdAt: createdAt,
+				updatedAt: updatedAt,
+				category: copyData.category,
+				author: copyData.author
+			})
+		})
+		.then(result => {
+			return axios.get(COUCH_EMAILS + result.data.id)
+		})
+		.then(final => {
+			return res.send(final.data)
+		})
+		.catch(err => {
+			winston.error(err)
+			res.status(500).json({message: err.message})
+		})
 })
 
 module.exports = router
