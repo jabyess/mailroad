@@ -318,7 +318,7 @@ class EditorContainer extends React.Component {
 		const renderImagePromptModal = this.state.visible.ImagePromptModal ? 
 		<ImagePromptModal /> : null
 
-		const renderEditorTypeSelect = this.state.isEditModeActive ? 
+		const renderEditorTypeSelect = this.state.visible.isEditModeActive ? 
 		<EditorTypeSelect
 			addEditorToContainer={this.addEditorToContainer}
 			fireNotification={this.fireNotification}
@@ -354,7 +354,7 @@ class EditorContainer extends React.Component {
 					imageURL={this.state.imageURL}
 					imageIndex={this.state.imageIndex}
 					setImageIndex={this.setImageIndex}
-					isEditModeActive={this.state.isEditModeActive}
+					isEditModeActive={this.state.visible.isEditModeActive}
 					removeEditorFromContainer={this.removeEditorFromContainer}
 					updateComponentTitle={this.updateComponentTitle}
 					updateContentValue={this.updateContentValue}
@@ -372,7 +372,7 @@ class EditorContainer extends React.Component {
 					/>
 					<EditorControlsContainer
 						toggleEditMode={this.toggleEditMode}
-						isEditModeActive={this.state.isEditModeActive}
+						isEditModeActive={this.state.visible.isEditModeActive}
 						saveToDB={this.saveToDB}
 						compileHTMLTemplate={this.compileHTMLTemplate}
 					/>

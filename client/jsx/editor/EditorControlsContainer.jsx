@@ -12,7 +12,10 @@ class EditorControlsContainer extends React.Component {
 
 	handleEditClick() {
 		let toggleEditMode = new CustomEvent('toggleVisible', {
-			detail: 'isEditModeActive'
+			detail: {
+				component: 'isEditModeActive',
+				visible: !this.props.isEditModeActive
+			}
 		})
 		window.dispatchEvent(toggleEditMode)
 	}
@@ -27,16 +30,14 @@ class EditorControlsContainer extends React.Component {
 
 		return (
 			<div className="editorControlsContainer">
-				<div className="control is-grouped">
-					<div className="control">
-						<button className={editButtonClasses} onClick={this.handleEditClick}>Edit Mode</button>
-					</div>
-					<div className="control">
-						<button className="button is-medium is-primary" onClick={this.props.saveToDB}>Save</button>
-					</div>
-					<div className="control">
-						<button className="button is-medium is-primary" onClick={this.props.compileHTMLTemplate}>Compile</button>
-					</div>
+				<div className="control">
+					<button className={editButtonClasses} onClick={this.handleEditClick}>Edit Mode</button>
+				</div>
+				<div className="control">
+					<button className="button is-medium is-primary" onClick={this.props.saveToDB}>Save</button>
+				</div>
+				<div className="control">
+					<button className="button is-medium is-primary" onClick={this.props.compileHTMLTemplate}>Compile</button>
 				</div>
 			</div>
 		)
