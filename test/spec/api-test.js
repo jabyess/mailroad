@@ -2,11 +2,12 @@
 /* eslint-disable */
 
 const app      = require('../../server/lib/app.js'),
+      couchdb = require('../../server/lib/mci-couchdb.js'),
       request  = require('supertest'),
       should   = require('should'),
       login    = require('../lib/login.js')(request, app),
       axios    = require('axios'),
-      dotenv   = require('dotenv');
+      dotenv   = require('dotenv')
 
 require('should-http');
 dotenv.config();
@@ -14,11 +15,6 @@ dotenv.config();
 // Credentials for testing
 // const TEST_USER = 'test';
 // const TEST_PASS = 'test';
-
-const COUCH_URL = process.env.COUCHDB_URL // http://localhost:5984/
-const COUCH_UUID = COUCH_URL + '_uuids' // http://localhost:5984/uuids
-const COUCH_EMAILS = COUCH_URL + process.env.EMAIL_DB + '/' // http://localhost:5984/emails/
-const COUCH_EMAILS_FIND = COUCH_EMAILS + '_find' // http://localhost:5984/emails/_find
 
 /*
 
@@ -290,9 +286,191 @@ describe('Mailroad API: /api/*', function () {
         });
      });
 
+     it('GET /api/email/:id : fetches an email by id for a validated user', function (done) {
+       const payload = {
+         contents: [{
+           content: '<p>Just start typing</p>',
+           editorType: 'DefaultEditor',
+           componentTitle: '',
+           id: 'HypNy2Tbb'
+         }],
+         title: 'Test Email',
+         author: 'Ammar',
+         email: 'amian@morningconsult.com'
+       }
 
-     // TODO: GET /:id, POST /compile, POST /create, DELETE /delete, POST /search, POST /copy
+       couchdb.createEmail(payload)
+       .then(ack => {
+         login((agent, cookie) => {
+           agent
+            .get(`/api/email/${ack.data.id}`)
+            .send({
+              user: process.env.MCI_TEST_USER
+            })
+            .set('Cookie', cookie)
+            .expect(200)
+            .expect('Content-type', /application\/json/)
+            .end((err, res) => {
+              res.status.should.equal(200);
+              res.body.should.be.a.Object();
+              res.body.contents.should.be.a.Array();
+              done();
+              return null;
+            });
+         });
+       }).catch(err => {
+         console.error(err);
+         return null;
+       });
+     });
 
+     it('POST /api/email/create : creates an email for a validated user', function (done) {
+       const payload = {
+         contents: [{
+           content: '<p>Just start typing</p>',
+           editorType: 'DefaultEditor',
+           componentTitle: '',
+           id: 'HypNy2Tbb'
+         }],
+         title: 'Test Email',
+         author: 'Ammar',
+         email: 'amian@morningconsult.com'
+       }
+
+       login((agent, cookie) => {
+         agent
+          .post('/api/email/create')
+          .send(payload)
+          .set('Cookie', cookie)
+          .expect(200)
+          .expect('Content-type', /application\/json/)
+          .end((err, res) => {
+            res.status.should.equal(200);
+            res.body.should.be.a.Object();
+            res.body.contents.should.be.a.Array();
+            done();
+          });
+       });
+     });
+
+     it('DELETE /api/email/delete : deletes a single email for a validated user', function (done) {
+       const payload = {
+         contents: [{
+           content: '<p>Just start typing</p>',
+           editorType: 'DefaultEditor',
+           componentTitle: '',
+           id: 'HypNy2Tbb'
+         }],
+         title: 'Test Email',
+         author: 'Ammar',
+         email: 'amian@morningconsult.com'
+       }
+
+       couchdb.createEmail(payload)
+       .then(ack => {
+         login((agent, cookie) => {
+           agent
+            .delete(`/api/email/delete`)
+            .query({
+              id: [ack.data.id]
+            })
+            .set('Cookie', cookie)
+            .expect(200)
+            .expect('Content-type', /application\/json/)
+            .end((err, res) => {
+              res.status.should.equal(200);
+              done();
+              return null;
+            });
+         });
+       }).catch(err => {
+         console.error(err);
+         return null;
+       });
+     });
+
+     it('DELETE /api/email/delete : deletes multiple for a validated user', function (done) {
+       const payload = {
+         contents: [{
+           content: '<p>Just start typing</p>',
+           editorType: 'DefaultEditor',
+           componentTitle: '',
+           id: 'HypNy2Tbb'
+         }],
+         title: 'Test Email',
+         author: 'Ammar',
+         email: 'amian@morningconsult.com'
+       }
+
+       let first_id, second_id
+
+       couchdb.createEmail(payload)
+       .then(ack => {
+         first_id = ack.data.id
+         return couchdb.createEmail(payload)
+       }).then(ack => {
+         second_id = ack.data.id
+
+         login((agent, cookie) => {
+           agent
+            .delete(`/api/email/delete`)
+            .query({
+              id: [first_id, second_id]
+            })
+            .set('Cookie', cookie)
+            .expect(200)
+            .expect('Content-type', /application\/json/)
+            .end((err, res) => {
+              res.status.should.equal(200);
+              done();
+              return null;
+            });
+         });
+       }).catch(err => {
+         console.error(err);
+         return null;
+       });
+     });
+
+     it('POST /api/email/copy : duplicates an existing email for a validated user', function (done) {
+       const payload = {
+         contents: [{
+           content: '<p>Just start typing</p>',
+           editorType: 'DefaultEditor',
+           componentTitle: '',
+           id: 'HypNy2Tbb'
+         }],
+         title: 'Test Email',
+         author: 'Ammar',
+         email: 'amian@morningconsult.com'
+       }
+
+       couchdb.createEmail(payload)
+       .then(ack => {
+         login((agent, cookie) => {
+           agent
+            .post(`/api/email/copy`)
+            .send({
+              id: ack.data.id
+            })
+            .set('Cookie', cookie)
+            .expect(200)
+            .expect('Content-type', /application\/json/)
+            .end((err, res) => {
+              res.status.should.equal(200);
+              res.body.title.should.equal(payload.title)
+              res.body.contents[0].content.should.equal(payload.contents[0].content)
+              done();
+              return null;
+            });
+         });
+       }).catch(err => {
+         console.error(err);
+         return null;
+       });
+     });
+
+     // TODO: POST /compile, POST /search
    });
 
 
