@@ -41,3 +41,12 @@ export function debounceCallback(func, wait, immediate, callback) {
 export function formatTimestamp(timestamp) {
 	return moment(timestamp).format('YYYY-MM-DD hh:mm A')
 }
+
+export function fireNotification(type, text) {
+	const note = new CustomEvent('MRNotification', {
+		detail: {
+			type, text
+		}
+	})
+	window.dispatchEvent(note)
+}
