@@ -5,13 +5,10 @@ const Promise = require('bluebird')
 const Utils = require('./utils.js')
 const merge = require('lodash.merge')
 const COUCH_URL = process.env.COUCH_URL || 'http://localhost:5984'
-
 const couchdb = {}
 
 
-
 // primitive building blocks
-
 
 couchdb.getUniqueUUID = () => {
 	return axios.get(`${COUCH_URL}/_uuids`).then(res => {
@@ -44,13 +41,11 @@ couchdb.putEmail = (uuid, options) => {
 }
 
 
-
 couchdb.bulkPutEmails = (change_docs) => {
 	return axios.post(`${COUCH_URL}/emails/_bulk_docs`, {
 		docs: change_docs
 	})
 }
-
 
 
 couchdb.searchEmails = (query) => {
@@ -62,11 +57,7 @@ couchdb.searchEmails = (query) => {
 }
 
 
-
-
 // compound queries
-
-
 
 couchdb.createEmail = (options) => {
 	return couchdb.getUniqueUUID().then(uuid => {
@@ -75,14 +66,15 @@ couchdb.createEmail = (options) => {
 }
 
 
-
 couchdb.duplicateEmail = (uuid) => {
 	return couchdb.getEmailByID(uuid).then(duplicate => {
 		return couchdb.createEmail({
 			contents: duplicate.data.contents,
 			title: duplicate.data.title,
 			template: duplicate.data.template || '',
-			templates: duplicate.data.templates || []
+			templates: duplicate.data.templates || [],
+			author: duplicate.data.author,
+			category: duplicate.data.category
 		})
 	})
 }
