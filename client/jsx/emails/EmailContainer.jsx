@@ -56,7 +56,7 @@ export default class EmailContainer extends React.Component {
 						totalRows: results.data.total_rows
 					})
 				})
-				.catch((ex) => {
+				.catch(ex => {
 					console.log('listEmails exception: ', ex)
 				})
 		}
@@ -67,10 +67,16 @@ export default class EmailContainer extends React.Component {
 		}
 	}
 
-	refreshEmailList() {
-		this.setState(() => {
-			return this.state.selectedCheckboxes = {}
-		}, this.displayEmails)
+	refreshEmailList(clearState) {
+		if(clearState) {
+			this.setState(() => {
+				const keys = Object.keys(this.state.selectedCheckboxes)
+				keys.forEach(k => delete this.state.selectedCheckboxes[k])
+			}, this.displayEmails)
+		}
+		else {
+			this.displayEmails()
+		}
 	}
 
 	skipToPage(page) {

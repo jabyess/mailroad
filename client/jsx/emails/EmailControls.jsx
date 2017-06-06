@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import autoBind from 'react-autobind'
 import classNames from 'classnames'
 import axiosClient from '../../lib/axios.js'
+import { fireNotification } from '../../lib/utils.js'
 
 class EmailControls extends React.Component {
 	constructor() {
@@ -27,9 +28,16 @@ class EmailControls extends React.Component {
 				id : [...ids]
 			}
 		}).then((success) => {
-			this.props.refreshEmailList()
+			this.props.refreshEmailList(true)
+			if(ids.length > 1) {
+				fireNotification('success', `Deleted ${ids.length} emails`)
+			}
+			else {
+				fireNotification('success', 'Deleted 1 email')
+			}
 			return success
 		}).catch((error) => {
+			fireNotification('danger', error)
 			console.log(error)
 		})
 	}
@@ -48,8 +56,12 @@ class EmailControls extends React.Component {
 		axiosClient.post('/api/email/copy', { id: selected[0] })
 			.then(res => {
 				this.props.refreshEmailList()
-				return res.text()
-			}).catch(console.log)
+				if(res.status === 200) {
+					return fireNotification('success', 'Successfully copied email')
+				}
+			}).catch(err => {
+				console.log(err)
+			})
 	}
 
 	handleSearch() {
@@ -65,13 +77,13 @@ class EmailControls extends React.Component {
 	render() {
 		this.copyClassNames = classNames({
 			'button': true,
-			'is-disabled': Object.keys(this.props.selectedCheckboxes).length > 1 ? true : false
 		})
+		const disabled = Object.keys(this.props.selectedCheckboxes).length > 1 ? true : false
 
 		return (
 			<div className="box control">
 				<button className="button" onClick={this.handleDelete}>Delete</button>
-				<button className={this.copyClassNames} onClick={this.handleCopy}>Copy</button>
+				<button className={this.copyClassNames} disabled={disabled} onClick={this.handleCopy}>Copy</button>
 				<input className="input" type="text" placeholder="Doesn't work yet" value={this.state.searchValue} onChange={this.handleSearchChange} />
 				<button className="button" onClick={this.handleSearch}>Search</button>
 				<button className="button" onClick={this.clearSearch}>Clear</button>
