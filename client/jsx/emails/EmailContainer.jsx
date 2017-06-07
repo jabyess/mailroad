@@ -4,7 +4,6 @@ import EmailTable from './EmailTable'
 import EmailControls from './EmailControls'
 import EmailPagination from './EmailPagination'
 import axiosClient from '../../lib/axios'
-import PDB from '../../lib/pouchdb'
 
 const EMAILS_PER_PAGE = 10
 
@@ -21,8 +20,6 @@ export default class EmailContainer extends React.Component {
 			'skipToPage'
 		)
 
-		this.pouchDB = new PDB()
-		
 		this.state = {
 			emailItems: [],
 			selectedCheckboxes: {},
@@ -122,11 +119,7 @@ export default class EmailContainer extends React.Component {
 	}
 	
 	componentDidMount() {
-		this.pouchDB.syncEverything((syncComplete) => {
-			if(syncComplete) {
-				this.displayEmails()
-			}
-		})
+		this.displayEmails()
 	}
 
 	pagePrev() {

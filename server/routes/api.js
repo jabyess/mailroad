@@ -8,6 +8,7 @@ const mjml = require('../lib/mjml.js')
 const MJML = new mjml()
 const redis = require('redis')
 const couchdb = require('../lib/mci-couchdb.js')
+const merge = require('lodash.merge')
 
 dotenv.config()
 
@@ -61,7 +62,6 @@ router.post('/compile', jsonParser, (req,res) => {
 		console.log(compiledHTML.errors)
 		res.status(500).send(compiledHTML.errors[0].message)
 	}
-
 })
 
 router.post('/create', jsonParser, (req,res) => {
@@ -99,6 +99,27 @@ router.get('/:id', (req, res) => {
 		winston.error(err)
 		return res.sendStatus(500)
 	})
+})
+
+router.put('/:id', jsonParser, (req, res) => {
+	const id = req.params.id
+	let reqDoc = req.body.doc
+	couchdb.putEmail(id, reqDoc)
+		.then((success) => {
+			if(success) {
+				couchdb.getEmailByID(success.data.id)
+				.then(successDoc => {
+					return res.status(200).send(successDoc.data)
+				})
+			}
+		})
+		.catch(err => {
+			console.log(err)
+			res.status(err.response.status).send(err.message)
+			winston.error(err)
+		})
+
+
 })
 
 router.delete('/delete', jsonParser, (req, res) => {

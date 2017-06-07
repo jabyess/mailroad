@@ -5,6 +5,7 @@ const Promise = require('bluebird')
 const Utils = require('./utils.js')
 const merge = require('lodash.merge')
 const COUCH_URL = process.env.COUCH_URL || 'http://localhost:5984'
+const EMAIL_DB = process.env.EMAIL_DB || 'emails'
 const couchdb = {}
 
 
@@ -16,14 +17,12 @@ couchdb.getUniqueUUID = () => {
 	})
 }
 
-
 couchdb.getEmailByID = (id) => {
-	return axios.get(`${COUCH_URL}/emails/${id}`)
+	return axios.get(`${COUCH_URL}/${EMAIL_DB}/${id}`)
 }
 
-
 couchdb.listEmails = (skip) => {
-	return axios.get(`${COUCH_URL}/emails/_design/emails/_view/EmailsByUpdatedDate`, {
+	return axios.get(`${COUCH_URL}/${EMAIL_DB}/_design/emails/_view/EmailsByUpdatedDate`, {
 		params: {
 			limit: 10,
 			descending: true,
@@ -32,24 +31,23 @@ couchdb.listEmails = (skip) => {
 	})
 }
 
-
 couchdb.putEmail = (uuid, options) => {
-	return axios.put(`${COUCH_URL}/emails/${uuid}`, merge({}, {
-		createdAt: Utils.getCurrentTimestampUTC(),
+	return axios.put(`${COUCH_URL}/${EMAIL_DB}/${uuid}`, merge({}, {
+		// createdAt: Utils.getCurrentTimestampUTC(),
 		updatedAt: Utils.getCurrentTimestampUTC()
 	}, options))
 }
 
 
 couchdb.bulkPutEmails = (change_docs) => {
-	return axios.post(`${COUCH_URL}/emails/_bulk_docs`, {
+	return axios.post(`${COUCH_URL}/${EMAIL_DB}/_bulk_docs`, {
 		docs: change_docs
 	})
 }
 
 
 couchdb.searchEmails = (query) => {
-	return axios.post(`${COUCH_URL}/emails/_find`, {
+	return axios.post(`${COUCH_URL}/${EMAIL_DB}/_find`, {
 		selector: {
 			title: query
 		}

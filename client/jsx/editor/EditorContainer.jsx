@@ -13,10 +13,10 @@ import ExternalImageModal from '../modals/ExternalImageModal'
 import LinkModal from '../modals/LinkModal'
 import HTML5Backend from 'react-dnd-html5-backend'
 import EditorControlsContainer from './EditorControlsContainer'
-import PDB from '../../lib/pouchdb'
 import axiosClient from '../../lib/axios.js'
 import { DragDropContext } from 'react-dnd'
 import { debounce, formatTimestamp } from '../../lib/utils'
+import { fireNotification } from '../../lib/utils'
 
 class EditorContainer extends React.Component {
 	constructor() {
@@ -45,10 +45,6 @@ class EditorContainer extends React.Component {
 			'clearImageIndexURL',
 			'extractFromState'
 		)
-
-		this.pouchDB = new PDB('emailbuilder')
-
-		this.pouchDB.updateDoc = debounce(this.pouchDB.updateDoc, 2000, false)
 
 		this.state = {
 			template: '',
@@ -85,7 +81,6 @@ class EditorContainer extends React.Component {
 
 	componentDidUpdate() {
 		let doc = this.extractFromState(this.state)
-		this.pouchDB.updateDoc(doc)
 	}
 
 	addEditorToContainer(editorNames) {
@@ -133,7 +128,7 @@ class EditorContainer extends React.Component {
 			this.setState({categories: response.data.categories})
 		})
 		.catch(err => {
-			this.fireNotification('danger', `Error getting categories: ${err}`)
+			fireNotification('danger', `Error getting categories: ${err}`)
 		})
 	}
 
@@ -159,15 +154,6 @@ class EditorContainer extends React.Component {
 		this.setState({ template })
 	}
 
-	fireNotification(type, text) {
-		const newEvent = new CustomEvent('MRNotification', {
-			detail: { 
-				type, text
-			}
-		})
-		window.dispatchEvent(newEvent)
-	}
-
 	updateContentValue(content, index) {
 		this.setState((state) => {
 			state.contents[index].content = content
@@ -186,13 +172,13 @@ class EditorContainer extends React.Component {
 	}
 
 	getEmailContents(id) {
-		this.pouchDB.getDoc(id, (doc) => {
-			if(doc) {
-				this.setState(doc)
-			}
-			else {
-				console.error('no doc from getEmailContents')
-			}
+		axiosClient(`/api/email/${id}`)
+		.then(doc => {
+			this.setState(doc.data)
+		})
+		.catch(err => {
+			// axiosClient
+			console.log(err)
 		})
 	}
 
@@ -202,7 +188,7 @@ class EditorContainer extends React.Component {
 				this.setState({ templates: templates.data })
 			})
 			.catch((err) => {
-				this.fireNotification('danger', err)
+				fireNotification('danger', err)
 			})
 	}
 
@@ -219,13 +205,13 @@ class EditorContainer extends React.Component {
 			contents, title
 		})
 		.then(jsonResponse => {
-			this.setState(jsonResponse.data, this.pouchDB.updateDoc(jsonResponse.data))
+			this.setState(jsonResponse.data)
 		},
 		rejected => {
-			this.fireNotification('danger', `Error creating email: ${rejected}`)
+			fireNotification('danger', `Error creating email: ${rejected}`)
 		})
 		.catch(err => {
-			this.fireNotification('danger', `Caught error creating email: ${err}`)
+			fireNotification('danger', `Caught error creating email: ${err}`)
 		})
 	}
 
@@ -237,10 +223,10 @@ class EditorContainer extends React.Component {
 		})
 		.then(text => {
 			this.setState({compiledEmail: text.data})
-			this.fireNotification('success', 'Compiled Successfully')
+			fireNotification('success', 'Compiled Successfully')
 		})
 		.catch(err => {
-			this.fireNotification('warning', 'Problem compiling template')
+			fireNotification('warning', 'Problem compiling template')
 			console.log('error compiling email', err)
 		})
 	}
@@ -260,14 +246,19 @@ class EditorContainer extends React.Component {
 			browserHistory.push(window.location.pathname + '/' + doc._id)
 		}
 
-		this.pouchDB.syncToDB(doc, (complete) => {
-			if(complete.status === 'complete') {
-				this.fireNotification('success', 'Saved to Database')
-			}
-			else {
-				this.fireNotification('warning', complete.status)
-			}
+		axiosClient.put(`/api/email/${doc._id}`, {
+			doc: doc
 		})
+			.then(res => {
+				if(res && res.data) {
+					this.setState(res.data)
+					fireNotification('success','Saved to Database')
+				}
+			})
+			.catch(err => {
+				console.error(err)
+			})
+
 	}
 
 	toggleVisible(event) {
@@ -321,7 +312,7 @@ class EditorContainer extends React.Component {
 		const renderEditorTypeSelect = this.state.visible.isEditModeActive ? 
 		<EditorTypeSelect
 			addEditorToContainer={this.addEditorToContainer}
-			fireNotification={this.fireNotification}
+			fireNotification={fireNotification}
 			/> : null
 
 		const renderLinkModal = this.state.visible.LinkModal ? 
