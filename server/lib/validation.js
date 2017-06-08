@@ -33,6 +33,10 @@ exports.schema = {
 			contents: Joi.array().required().error(Error('Invalid "contents" parameter.')),
 			title: Joi.string().required().error(Error('Invalid "title" parameter.'))
 		}),
+		put: Joi.object().keys({
+			id: Joi.string().required().min(0).error(Error('Invalid "id" parameter.')),
+			doc: Joi.object().required().error(Error('Invalid "doc" parameter.'))
+		}),
 		duplicate: Joi.object().keys({
 			id: Joi.string().required().min(0).error(Error('Invalid "id" parameter.'))
 		}),
