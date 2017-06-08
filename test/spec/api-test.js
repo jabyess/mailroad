@@ -7,7 +7,8 @@ const app      = require('../../server/lib/app.js'),
       should   = require('should'),
       login    = require('../lib/login.js')(request, app),
       axios    = require('axios'),
-      dotenv   = require('dotenv')
+      dotenv   = require('dotenv'),
+      merge    = require('lodash.merge');
 
 require('should-http');
 dotenv.config();
@@ -446,6 +447,125 @@ describe('Mailroad API: /api/*', function () {
             res.status.should.equal(400);
             done();
           });
+       });
+     });
+
+     it('PUT /api/email/:id : update an existing document for a validated user request', function (done) {
+       const payload = {
+         contents: [{
+           content: '<p>Just start typing</p>',
+           editorType: 'DefaultEditor',
+           componentTitle: '',
+           id: 'HypNy2Tbb'
+         }],
+         title: 'Test Email',
+         author: 'Ammar',
+         email: 'amian@morningconsult.com'
+       }
+
+       let uuid;
+
+       couchdb.createEmail(payload)
+       .then(success => {
+         uuid = success.data.id;
+         return couchdb.getEmailByID(uuid);
+       }).then(doc => {
+         login((agent, cookie) => {
+           agent
+            .put(`/api/email/${uuid}`)
+            .set('Cookie', cookie)
+            .send({
+              doc: merge({}, doc.data, { title: 'Updated Title' })
+            })
+            .expect(200)
+            .expect('Content-type', /application\/json/)
+            .end((err, res) => {
+              res.status.should.equal(200);
+              res.body.title.should.equal('Updated Title');
+              done();
+              return null;
+            });
+         });
+       }).catch(err => {
+         console.error(err);
+         return null;
+       });
+     });
+
+     it('PUT /api/email/:id : rejects an update if no doc parameter is sent', function (done) {
+       const payload = {
+         contents: [{
+           content: '<p>Just start typing</p>',
+           editorType: 'DefaultEditor',
+           componentTitle: '',
+           id: 'HypNy2Tbb'
+         }],
+         title: 'Test Email',
+         author: 'Ammar',
+         email: 'amian@morningconsult.com'
+       }
+
+       let uuid
+
+       couchdb.createEmail(payload)
+       .then(ack => {
+         uuid = ack.data.id;
+         return couchdb.getEmailByID(uuid);
+       }).then(doc => {
+         login((agent, cookie) => {
+           agent
+            .put(`/api/email/${uuid}`)
+            .set('Cookie', cookie)
+            .expect(400)
+            .end((err, res) => {
+              res.status.should.equal(400);
+              done();
+              return null;
+            });
+         });
+       }).catch(err => {
+         console.error(err);
+         return null;
+       });
+     });
+
+     it('PUT /api/email/:id : rejects an update if doc parameter is not an object', function (done) {
+       const payload = {
+         contents: [{
+           content: '<p>Just start typing</p>',
+           editorType: 'DefaultEditor',
+           componentTitle: '',
+           id: 'HypNy2Tbb'
+         }],
+         title: 'Test Email',
+         author: 'Ammar',
+         email: 'amian@morningconsult.com'
+       }
+
+       let uuid
+
+       couchdb.createEmail(payload)
+       .then(ack => {
+         uuid = ack.data.id;
+         return couchdb.getEmailByID(uuid);
+       }).then(doc => {
+         login((agent, cookie) => {
+           agent
+            .put(`/api/email/${uuid}`)
+            .send({
+              doc: 'dont look at me im hideous!'
+            })
+            .set('Cookie', cookie)
+            .expect(400)
+            .end((err, res) => {
+              res.status.should.equal(400);
+              done();
+              return null;
+            });
+         });
+       }).catch(err => {
+         console.error(err);
+         return null;
        });
      });
 
