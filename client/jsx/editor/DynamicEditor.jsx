@@ -52,15 +52,16 @@ class DynamicEditor extends React.Component {
 	render() {
 		let DynamicEditorType = dynamicEditorTypes[this.props.editorType]
 		let { isEditModeActive, connectDragSource } = this.props
+		const renderControls = isEditModeActive ? (
+			<div className="editor-container-row__controls">
+				<button className="button is-danger is-outlined" onClick={this.removeEditor}>X</button>
+				<button className="button is-success is-outlined editor-container-row__controls__drag">...</button>
+			</div>
+		) : null
 
 		return connectDragSource(
-			<div>
-				{isEditModeActive ?
-					<div className="editor-type-row__controls">
-						<button className="button" onClick={this.removeEditor}>X</button>
-						<div className="button">...</div>
-					</div>
-				: '' }
+			<div className="editor-container-row">
+				{renderControls}
 				<DynamicEditorType
 					{...this.props}
 				/>

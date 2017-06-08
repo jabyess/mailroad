@@ -137,9 +137,12 @@ class EditorContainer extends React.Component {
 	}
 
 	removeEditorFromContainer(index) {
-		this.setState(() => {
-			this.state.contents.splice(index, 1)
-		})
+		const remove = window.confirm('Remove this element?')
+		if(remove) {
+			this.setState(() => {
+				this.state.contents.splice(index, 1)
+			})
+		}
 	}
 
 	handleAuthorChange(author) {
