@@ -1,23 +1,23 @@
+const fs = require('fs')
+const https = require('https')
 const app = require('./app.js')
-const axios = require('axios')
+const PORT = process.env.PORT || 33224
 
-// on startup, should check to see if database connection is good.
-// if so, start db
-const EPORT = 33224
+let server
 
-axios.get(process.env.COUCHDB_URL)
-.then((response) => {
-	if(response && response.data) {
-		app.listen(EPORT, () => {
-			console.log(`Express listening on port ${EPORT}!`)
-		})
-		return response
-	}
-	else {
-		throw new Error('Could not connect to couchDB. Please check your config.')
-	}
-})
-.catch(err => {
-	console.log(err)
-	throw err
+if (process.env.NODE_ENV === 'production') {
+	server = app
+} else {
+	server = https.createServer({
+		// https://matoski.com/article/node-express-generate-ssl/
+		key: fs.readFileSync('server/ssl/server.key'),
+		cert: fs.readFileSync('server/ssl/server.crt'),
+		ca: fs.readFileSync('server/ssl/ca.crt'),
+		requestCert: true,
+		rejectUnauthorized: false
+	}, app)
+}
+
+server.listen(PORT, () => {
+	console.log(`Express listening on port ${PORT}!`)
 })
