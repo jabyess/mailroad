@@ -101,25 +101,16 @@ router.get('/:id', joi.validate(joi.schema.emails.getOne), (req, res) => {
 	})
 })
 
-router.put('/:id', jsonParser, (req, res) => {
-	const id = req.params.id
-	let reqDoc = req.body.doc
-	couchdb.putEmail(id, reqDoc)
-		.then((success) => {
-			if(success) {
-				couchdb.getEmailByID(success.data.id)
-				.then(successDoc => {
-					return res.status(200).send(successDoc.data)
-				})
-			}
-		})
-		.catch(err => {
-			console.log(err)
-			res.status(err.response.status).send(err.message)
-			winston.error(err)
-		})
-
-
+router.put('/:id', jsonParser, joi.validate(joi.schema.emails.put), (req, res) => {
+	couchdb.putEmail(req.joi.id, req.joi.doc)
+	.then((success) => {
+		return couchdb.getEmailByID(success.data.id)
+	}).then((doc) => {
+		return res.status(200).send(doc.data)
+	}).catch(err => {
+		winston.error(err)
+		return res.sendStatus(500)
+	})
 })
 
 router.delete('/delete', jsonParser, joi.validate(joi.schema.emails.delete), (req, res) => {
