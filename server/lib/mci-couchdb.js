@@ -33,7 +33,6 @@ couchdb.listEmails = (skip) => {
 
 couchdb.putEmail = (uuid, options) => {
 	return axios.put(`${COUCH_URL}/${EMAIL_DB}/${uuid}`, merge({}, {
-		// createdAt: Utils.getCurrentTimestampUTC(),
 		updatedAt: Utils.getCurrentTimestampUTC()
 	}, options))
 }
@@ -59,7 +58,9 @@ couchdb.searchEmails = (query) => {
 
 couchdb.createEmail = (options) => {
 	return couchdb.getUniqueUUID().then(uuid => {
-		return couchdb.putEmail(uuid, options)
+		return couchdb.putEmail(uuid, merge({}, {
+			createdAt: Utils.getCurrentTimestampUTC()
+		}, options))
 	})
 }
 

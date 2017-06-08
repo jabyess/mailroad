@@ -7,7 +7,8 @@ const app      = require('../../server/lib/app.js'),
       should   = require('should'),
       login    = require('../lib/login.js')(request, app),
       axios    = require('axios'),
-      dotenv   = require('dotenv')
+      dotenv   = require('dotenv'),
+      merge    = require('lodash.merge');
 
 require('should-http');
 dotenv.config();
@@ -234,6 +235,22 @@ describe('Mailroad API: /api/*', function () {
        });
      });
 
+     it('GET /api/email/list: rejects a request with a non-numerical "skip" paramaeter', function (done) {
+       login((agent, cookie) => {
+         agent
+          .get('/api/email/list/foo')
+          .set('Cookie', cookie)
+          .send({
+            user: process.env.MCI_TEST_USER
+          })
+          .expect(400)
+          .end((err, res) => {
+            res.status.should.equal(400);
+            done();
+          });
+       });
+     });
+
      it('GET /api/email/list: forbidden request if no cookie sent', function (done) {
        request.agent(app)
         .get('/api/email/list')
@@ -353,6 +370,205 @@ describe('Mailroad API: /api/*', function () {
        });
      });
 
+     it('POST /api/email/create : rejects email creation if "contents" parameter is not passed', function (done) {
+       login((agent, cookie) => {
+         agent
+          .post('/api/email/create')
+          .send({
+            title: 'Test Email'
+          })
+          .set('Cookie', cookie)
+          .expect(400)
+          .end((err, res) => {
+            res.status.should.equal(400);
+            done();
+          });
+       });
+     });
+
+     it('POST /api/email/create : rejects email creation if "contents" parameter is not an array', function (done) {
+       login((agent, cookie) => {
+         agent
+          .post('/api/email/create')
+          .send({
+            contents: {foo: 'bar'},
+            title: 'Test Email'
+          })
+          .set('Cookie', cookie)
+          .expect(400)
+          .end((err, res) => {
+            res.status.should.equal(400);
+            done();
+          });
+       });
+     });
+
+     it('POST /api/email/create : rejects email creation if "title" parameter is not passed', function (done) {
+       const contents = [{
+         content: '<p>Just start typing</p>',
+         editorType: 'DefaultEditor',
+         componentTitle: '',
+         id: 'HypNy2Tbb'
+       }]
+
+       login((agent, cookie) => {
+         agent
+          .post('/api/email/create')
+          .send({
+            contents: contents
+          })
+          .set('Cookie', cookie)
+          .expect(400)
+          .end((err, res) => {
+            res.status.should.equal(400);
+            done();
+          });
+       });
+     });
+
+     it('POST /api/email/create : rejects email creation if "title" parameter is not a string', function (done) {
+       const contents = [{
+         content: '<p>Just start typing</p>',
+         editorType: 'DefaultEditor',
+         componentTitle: '',
+         id: 'HypNy2Tbb'
+       }]
+
+       login((agent, cookie) => {
+         agent
+          .post('/api/email/create')
+          .send({
+            contents: contents,
+            title: {foo: 'bar'}
+          })
+          .set('Cookie', cookie)
+          .expect(400)
+          .end((err, res) => {
+            res.status.should.equal(400);
+            done();
+          });
+       });
+     });
+
+     it('PUT /api/email/:id : update an existing document for a validated user request', function (done) {
+       const payload = {
+         contents: [{
+           content: '<p>Just start typing</p>',
+           editorType: 'DefaultEditor',
+           componentTitle: '',
+           id: 'HypNy2Tbb'
+         }],
+         title: 'Test Email',
+         author: 'Ammar',
+         email: 'amian@morningconsult.com'
+       }
+
+       let uuid;
+
+       couchdb.createEmail(payload)
+       .then(success => {
+         uuid = success.data.id;
+         return couchdb.getEmailByID(uuid);
+       }).then(doc => {
+         login((agent, cookie) => {
+           agent
+            .put(`/api/email/${uuid}`)
+            .set('Cookie', cookie)
+            .send({
+              doc: merge({}, doc.data, { title: 'Updated Title' })
+            })
+            .expect(200)
+            .expect('Content-type', /application\/json/)
+            .end((err, res) => {
+              res.status.should.equal(200);
+              res.body.title.should.equal('Updated Title');
+              done();
+              return null;
+            });
+         });
+       }).catch(err => {
+         console.error(err);
+         return null;
+       });
+     });
+
+     it('PUT /api/email/:id : rejects an update if no doc parameter is sent', function (done) {
+       const payload = {
+         contents: [{
+           content: '<p>Just start typing</p>',
+           editorType: 'DefaultEditor',
+           componentTitle: '',
+           id: 'HypNy2Tbb'
+         }],
+         title: 'Test Email',
+         author: 'Ammar',
+         email: 'amian@morningconsult.com'
+       }
+
+       let uuid
+
+       couchdb.createEmail(payload)
+       .then(ack => {
+         uuid = ack.data.id;
+         return couchdb.getEmailByID(uuid);
+       }).then(doc => {
+         login((agent, cookie) => {
+           agent
+            .put(`/api/email/${uuid}`)
+            .set('Cookie', cookie)
+            .expect(400)
+            .end((err, res) => {
+              res.status.should.equal(400);
+              done();
+              return null;
+            });
+         });
+       }).catch(err => {
+         console.error(err);
+         return null;
+       });
+     });
+
+     it('PUT /api/email/:id : rejects an update if doc parameter is not an object', function (done) {
+       const payload = {
+         contents: [{
+           content: '<p>Just start typing</p>',
+           editorType: 'DefaultEditor',
+           componentTitle: '',
+           id: 'HypNy2Tbb'
+         }],
+         title: 'Test Email',
+         author: 'Ammar',
+         email: 'amian@morningconsult.com'
+       }
+
+       let uuid
+
+       couchdb.createEmail(payload)
+       .then(ack => {
+         uuid = ack.data.id;
+         return couchdb.getEmailByID(uuid);
+       }).then(doc => {
+         login((agent, cookie) => {
+           agent
+            .put(`/api/email/${uuid}`)
+            .send({
+              doc: 'dont look at me im hideous!'
+            })
+            .set('Cookie', cookie)
+            .expect(400)
+            .end((err, res) => {
+              res.status.should.equal(400);
+              done();
+              return null;
+            });
+         });
+       }).catch(err => {
+         console.error(err);
+         return null;
+       });
+     });
+
      it('DELETE /api/email/delete : deletes a single email for a validated user', function (done) {
        const payload = {
          contents: [{
@@ -432,6 +648,74 @@ describe('Mailroad API: /api/*', function () {
        });
      });
 
+     it('DELETE /api/email/delete : deletes email even if "id" is a string (validator coerces single string to array with one item)', function (done) {
+       const payload = {
+         contents: [{
+           content: '<p>Just start typing</p>',
+           editorType: 'DefaultEditor',
+           componentTitle: '',
+           id: 'HypNy2Tbb'
+         }],
+         title: 'Test Email',
+         author: 'Ammar',
+         email: 'amian@morningconsult.com'
+       }
+
+       couchdb.createEmail(payload)
+       .then(ack => {
+         login((agent, cookie) => {
+           agent
+            .delete(`/api/email/delete`)
+            .query({
+              id: ack.data.id
+            })
+            .set('Cookie', cookie)
+            .expect(200)
+            .expect('Content-type', /application\/json/)
+            .end((err, res) => {
+              res.status.should.equal(200);
+              done();
+              return null;
+            });
+         });
+       }).catch(err => {
+         console.error(err);
+         return null;
+       });
+     });
+
+     it('DELETE /api/email/delete : rejects deletion if "id" parameter is not present', function (done) {
+       const payload = {
+         contents: [{
+           content: '<p>Just start typing</p>',
+           editorType: 'DefaultEditor',
+           componentTitle: '',
+           id: 'HypNy2Tbb'
+         }],
+         title: 'Test Email',
+         author: 'Ammar',
+         email: 'amian@morningconsult.com'
+       }
+
+       couchdb.createEmail(payload)
+       .then(ack => {
+         login((agent, cookie) => {
+           agent
+            .delete(`/api/email/delete`)
+            .set('Cookie', cookie)
+            .expect(400)
+            .end((err, res) => {
+              res.status.should.equal(400);
+              done();
+              return null;
+            });
+         });
+       }).catch(err => {
+         console.error(err);
+         return null;
+       });
+     });
+
      it('POST /api/email/copy : duplicates an existing email for a validated user', function (done) {
        const payload = {
          contents: [{
@@ -460,6 +744,73 @@ describe('Mailroad API: /api/*', function () {
               res.status.should.equal(200);
               res.body.title.should.equal(payload.title)
               res.body.contents[0].content.should.equal(payload.contents[0].content)
+              done();
+              return null;
+            });
+         });
+       }).catch(err => {
+         console.error(err);
+         return null;
+       });
+     });
+
+     it('POST /api/email/copy : rejects email duplication if "id" parameter not present', function (done) {
+       const payload = {
+         contents: [{
+           content: '<p>Just start typing</p>',
+           editorType: 'DefaultEditor',
+           componentTitle: '',
+           id: 'HypNy2Tbb'
+         }],
+         title: 'Test Email',
+         author: 'Ammar',
+         email: 'amian@morningconsult.com'
+       }
+
+       couchdb.createEmail(payload)
+       .then(ack => {
+         login((agent, cookie) => {
+           agent
+            .post(`/api/email/copy`)
+            .set('Cookie', cookie)
+            .expect(400)
+            .end((err, res) => {
+              res.status.should.equal(400);
+              done();
+              return null;
+            });
+         });
+       }).catch(err => {
+         console.error(err);
+         return null;
+       });
+     });
+
+     it('POST /api/email/copy : rejects email duplication if "id" parameter is not a string', function (done) {
+       const payload = {
+         contents: [{
+           content: '<p>Just start typing</p>',
+           editorType: 'DefaultEditor',
+           componentTitle: '',
+           id: 'HypNy2Tbb'
+         }],
+         title: 'Test Email',
+         author: 'Ammar',
+         email: 'amian@morningconsult.com'
+       }
+
+       couchdb.createEmail(payload)
+       .then(ack => {
+         login((agent, cookie) => {
+           agent
+            .post(`/api/email/copy`)
+            .send({
+              id: {foo: 'bar'}
+            })
+            .set('Cookie', cookie)
+            .expect(400)
+            .end((err, res) => {
+              res.status.should.equal(400);
               done();
               return null;
             });
