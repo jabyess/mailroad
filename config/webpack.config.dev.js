@@ -20,7 +20,10 @@ const config = {
 		contentBase: paths.build,
 		publicPath: '/public/',
 		proxy: {
-			'/': 'http://localhost:33224',
+			'/': {
+				target: 'https://localhost:33224',
+				secure: false
+			}
 		}
 	},
 	devtool: 'cheap-eval-source-map',
@@ -49,7 +52,7 @@ const config = {
 				test: /\.woff$/,
 				use: [
 					{
-						loader: 'url-loader', 
+						loader: 'url-loader',
 						options: {
 							limit: 50000
 						}
@@ -65,7 +68,7 @@ const config = {
 		})
 	],
 	watchOptions: {
-		ignored: /node_modules/	
+		ignored: /node_modules/
 	}
 }
 
