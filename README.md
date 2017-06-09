@@ -14,6 +14,16 @@
 * `npm run develop` to start nodemon & express
 * `npm run webpack` to start webpack and watcher and open browser to `localhost:8888`
 
+
+### Self-Signing SSL Certs for Local Development
+
+```bash
+cd <parent-dir>/mailroad/server/ssl
+```
+
+then follow the instructions here:
+https://matoski.com/article/node-express-generate-ssl/
+
 ### Layout
 Code is divided into /client and /server folders. `client` contains react router code, jsx, sass, fonts, and some client side libs.
 `server` contains the express code (api routes), email templates, server side libs, other logic.
