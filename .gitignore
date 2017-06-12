@@ -7,3 +7,8 @@ logs/*
 
 npm-debug.log.*
 npm-debug.log
+
+server/ssl/*key*
+server/ssl/*crt*
+server/ssl/*csr*
+server/ssl/*passphrase*
