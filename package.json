@@ -8,7 +8,7 @@
     "url": "https://github.com/jabyess/mailroad.git"
   },
   "scripts": {
-    "test": "mocha",
+    "test": "jest && mocha",
     "babel-node": "babel-node --presets=es2015",
     "sync-views": "node server/couchdb-views/views.js sync",
     "build": "webpack --progress --debug --config ./config/webpack.config.prod.js && babel ./server/ -d ./dist",
