@@ -41,7 +41,22 @@ if(NODE_ENV === 'production') {
 }
 
 
+
+
+
 // app config (sessions, headers, and authentication)
+
+
+app.disable('x-powered-by')
+app.set('etag', false)
+app.set('json spaces', process.env.PRODUCTION ? 0 : 2) // standardize json life
+app.set('trust proxy', true)
+
+// proto overwrite
+app.all('*', (req, res, next) => {
+	req.headers['x-forwarded-proto'] = 'https'
+	next()
+})
 
 
 app.use('/public', gzipStatic(paths.build))
