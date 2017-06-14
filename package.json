@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "npm run client-tests && npm run server-tests",
-    "client-tests": "jest",
+    "client-tests": "webpack --progress --config ./config/webpack.config.dev.js && jest --verbose",
     "server-tests": "mocha",
     "babel-node": "babel-node --presets=es2015",
     "sync-views": "node server/couchdb-views/views.js sync",
@@ -64,6 +64,21 @@
     "winston": "^2.3.1",
     "winston-loggly-bulk": "^1.4.2"
   },
+  "babel": {
+    "presets": [
+        "es2015",
+        "react"
+    ]
+  },
+  "jest": {
+    "scriptPreprocessor": "./node_modules/babel-jest",
+    "unmockedModulePathPatterns": [
+      "./node_modules/react",
+      "./node_modules/react-dom",
+      "./node_modules/react-addons-test-utils",
+      "./node_modules/fbjs"
+    ]
+  },
   "devDependencies": {
     "babel-cli": "^6.24.0",
     "babel-core": "^6.9.1",
@@ -83,6 +98,7 @@
     "mocha": "^3.4.2",
     "mochawesome": "^2.2.0",
     "node-sass": "^3.8.0",
+    "react-addons-test-utils": "^15.5.1",
     "sass-loader": "^4.0.0",
     "should": "^11.2.1",
     "should-http": "^0.1.1",
