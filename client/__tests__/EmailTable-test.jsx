@@ -13,13 +13,13 @@ const noop = () => {}
 const selected = {}
 
 // Test: does an email table get created properly?
-test('Creates a table of n emails', () => {
+it('Creates a table of n emails', () => {
 	const component = renderer.create(
     <EmailTable
       emailItems={emails}
       selectedCheckboxes={selected}
       updateSelectedCheckboxes={noop}
-      >
+    >
     </EmailTable>
   )
 
@@ -34,4 +34,6 @@ test('Creates a table of n emails', () => {
 
 	const first_row = trows[0]
 	expect(first_row.type).toBe('tr')
+
+  expect(tree).toMatchSnapshot()
 })
