@@ -9,27 +9,19 @@ class MediaContainer extends React.Component {
 	constructor() {
 		super()
 
-		this.state = {}
+		this.state = { 
+			visible: {}
+		}
 
 		autoBind(this,
-			'toggleImageGalleryModal',
 			'toggleVisible'
 		)
 	}
 
-	toggleImageGalleryModal() {
-		const isImageGalleryModalVisible = new CustomEvent('toggleVisible', {
-			detail: 'isImageGalleryModalVisible'
-		})
-		window.dispatchEvent(isImageGalleryModalVisible)
-	}
-
 	toggleVisible(event) {
-		let visibleKey = event.detail.toString()
-		this.setState(() => {
-			let visibleObj = {}
-			visibleObj[visibleKey] = !this.state[visibleKey]
-			return visibleObj
+		const { component, visible } = event.detail
+		this.setState((state) => {
+			return state.visible[component] = visible
 		})
 	}
 
@@ -43,7 +35,7 @@ class MediaContainer extends React.Component {
 	
 
 	render() {
-		const renderImageGalleryModal = this.state.isImageGalleryModalVisible ? <ImageGalleryModal /> : null
+		const renderImageGalleryModal = this.state.visible.ImageGalleryModal ? <ImageGalleryModal /> : null
 		return (
 			<div className="media-container">
 				{renderImageGalleryModal}

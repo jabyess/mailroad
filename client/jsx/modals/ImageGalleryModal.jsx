@@ -4,6 +4,7 @@ import autoBind from 'react-autobind'
 import axiosClient from '../../lib/axios.js'
 import ImageGalleryImages from './ImageGalleryImages.jsx'
 import ImageGalleryPane from './ImageGalleryPane.jsx'
+import { fireNotification } from '../../lib/utils.js'
 
 const IMAGES_PER_PAGE = 20
 
@@ -49,12 +50,15 @@ class ImageGalleryModal extends React.Component {
 				}
 			}).then((imageResponse) => {
 				const maxLength = imageResponse.data.images.length
-				const loopLength = maxLength <= this.state.images.length ? maxLength : this.state.totalRows - this.state.images.length
+				const loopLength = (maxLength <= this.state.images.length) ? maxLength : this.state.totalRows - this.state.images.length
 				this.setState((state) => {
 					for(let i = 0; i < loopLength; i++) {
 						state.images.push(imageResponse.data.images[i])
 					}
-					this.state.page = this.state.page++
+					if(state.images.length === state.totalRows) {
+						state.loadMoreVisible = false
+					}
+					return state.page = this.state.page + 1
 				})
 			})
 		}
@@ -68,6 +72,7 @@ class ImageGalleryModal extends React.Component {
 		}).then((deleteResponse) => {
 			if(deleteResponse.status === 200) {
 				this.updateMediaList()
+				fireNotification('success','Deleted Image')
 			}
 		}).catch(err => {
 			console.error('error deleting image', err)

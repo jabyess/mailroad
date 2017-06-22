@@ -93,7 +93,10 @@ class MediaUploadForm extends React.Component {
 
 	showGalleryModal() {
 		const isImageGalleryModalVisible = new CustomEvent('toggleVisible', {
-			detail: 'isImageGalleryModalVisible'
+			detail: {
+				component: 'ImageGalleryModal',
+				visible: true,
+			}
 		})
 		window.dispatchEvent(isImageGalleryModalVisible)
 	}
