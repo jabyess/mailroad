@@ -23,27 +23,28 @@ class EditorContainer extends React.Component {
 		super()
 
 		autoBind(this,
-			'createEmail',
-			'saveToDB',
-			'getEmailContents',
 			'addEditorToContainer',
+			'clearImageIndexURL',
+			'compileHTMLTemplate',
+			'createEmail',
+			'extractFromState',
+			'filterComponentTitles',
+			'getEmailContents',
 			'getEditorType',
 			'getCategories',
-			'updateCategory',
-			'filterComponentTitles',
-			'reorderEditorIndexes',
-			'compileHTMLTemplate',
 			'handleTitleChange',
 			'handleTemplateChange',
 			'handleAuthorChange',
+			'removeEditorFromContainer',
+			'reorderEditorIndexes',
+			'saveToDB',
+			'sendToApi',
+			'setImageIndex',
+			'setImageURL',
+			'updateCategory',
 			'updateContentValue',
 			'updateComponentTitle',
-			'removeEditorFromContainer',
 			'toggleVisible',
-			'setImageURL',
-			'setImageIndex',
-			'clearImageIndexURL',
-			'extractFromState'
 		)
 
 		this.state = {
@@ -182,6 +183,20 @@ class EditorContainer extends React.Component {
 		.catch(err => {
 			// axiosClient
 			console.log(err)
+		})
+	}
+
+	sendToApi() {
+		const id = this.state._id
+		console.log(id)
+		axiosClient.post('/api/email/send/', {
+			id
+		})
+		.then(doc => {
+			console.log(doc)
+		})
+		.catch(err => {
+			console.error(err)
 		})
 	}
 
@@ -366,6 +381,7 @@ class EditorContainer extends React.Component {
 					/>
 					<EditorControlsContainer
 						toggleEditMode={this.toggleEditMode}
+						sendToApi={this.sendToApi}
 						isEditModeActive={this.state.visible.isEditModeActive}
 						saveToDB={this.saveToDB}
 						compileHTMLTemplate={this.compileHTMLTemplate}

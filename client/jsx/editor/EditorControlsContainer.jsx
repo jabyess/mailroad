@@ -39,6 +39,9 @@ class EditorControlsContainer extends React.Component {
 				<div className="control">
 					<button className="button is-medium is-primary" onClick={this.props.compileHTMLTemplate}>Compile</button>
 				</div>
+				<div className="control">
+					<button className="button is-medium is-success" onClick={this.props.sendToApi}>Send</button>
+				</div>
 			</div>
 		)
 	}
@@ -47,7 +50,8 @@ class EditorControlsContainer extends React.Component {
 EditorControlsContainer.propTypes = {
 	saveToDB: PropTypes.func,
 	compileHTMLTemplate: PropTypes.func,
-	isEditModeActive: PropTypes.bool
+	isEditModeActive: PropTypes.bool,
+	sendToApi: PropTypes.func
 }
 
 export default EditorControlsContainer

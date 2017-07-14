@@ -48,7 +48,7 @@ router.get('/templates', (req, res) => {
 
 router.post('/compile', jsonParser, joi.validate(joi.schema.emails.compile), (req,res) => {
 
-	const context = JSON.parse(req.joi.context)
+	const { context } = req.joi
 	const template = context.template
 
 	const parsedMJML = MJML.parseHandlebars(context, template)
@@ -144,6 +144,25 @@ router.post('/copy', jsonParser, joi.validate(joi.schema.emails.duplicate), (req
 		winston.error(err)
 		return res.sendStatus(500)
 	})
+})
+
+router.post('/send', jsonParser, joi.validate(joi.schema.emails.send), (req, res) => {
+	couchdb.getEmailByID(req.joi.id)
+		.then(emailRes => {
+			// console.log(emailRes)
+			return emailRes.data
+		})
+		.then(emailData => {
+			console.log(emailData)
+			const { contents, template } = emailData
+			const compiledHTML = MJML.parseHandlebars(contents, template)
+			const compiledMJML = MJML.compileToMJML(compiledHTML)
+
+			res.send(compiledMJML)
+		})
+		.catch(err => {
+			winston.error(err)
+		})
 })
 
 module.exports = router

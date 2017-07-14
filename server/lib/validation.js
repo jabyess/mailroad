@@ -51,6 +51,9 @@ exports.schema = {
 		}),
 		compile: Joi.object().keys({
 			context: Joi.object().required().error(Error('Invalid "context" parameter.'))
+		}),
+		send: Joi.object().keys({
+			id: Joi.string().required().min(0).error(Error('Invalid "id" parameter.'))
 		})
 	}
 }
