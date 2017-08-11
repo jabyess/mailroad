@@ -194,6 +194,7 @@ class EditorContainer extends React.Component {
 		})
 		.then(doc => {
 			console.log(doc)
+			fireNotification('success', 'Sent to Mailgun')
 		})
 		.catch(err => {
 			console.error(err)
@@ -290,7 +291,7 @@ class EditorContainer extends React.Component {
 		this.setState((state) => {
 			const removed = state.contents.splice(oldIndex, 1)
 			state.contents.splice(newIndex, 0, removed[0])
-			return {contents: state.contents}
+			return { contents: state.contents }
 		})
 	}
 

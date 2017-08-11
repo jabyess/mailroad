@@ -21,11 +21,22 @@ class MJML {
 
 	}
 
-	compileToMJML(html) {
+	/**
+	 * Converts MJML markup to proper HTML
+	 * @param {string} html 
+	 * @return {string}
+	 */
+	compileToHTML(html) {
 		let output = mjml.mjml2html(html)
 		return output
 	}
 
+	/**
+	 * 
+	 * @param {object} content - Handlebars context object for the template
+	 * @param {string} template - Name of the template to compile with handlebars
+	 * @return {object}
+	 */
 	parseHandlebars(content, template) {
 		let mjmlFile = fs.readFileSync(`${paths.mjml}/${template}.mjml`, 'utf8')
 		let hbTemplate = Handlebars.compile(mjmlFile)
@@ -34,6 +45,11 @@ class MJML {
 		return compiled
 	}
 
+	/**
+	 * 
+	 * @param {string} html 
+	 * @param {object} opts 
+	 */
 	inlineCSS(html, opts) {
 		const defaultOptions = {
 			inlinePseudoElements: false,
@@ -44,6 +60,25 @@ class MJML {
 		const inlined = juice(html, options)
 
 		return inlined
+	}
+
+	/**
+	 * Runs all 3 compilation functions and returns the result.
+	 * @param {object} content - Handlebars context object for the template
+	 * @param {string} template - Name of the template to compile with handlebars
+	 */
+	compileAll(content, template) {
+		let hb = this.parseHandlebars(content, template)
+		let rawHtml = this.compileToHTML(hb)
+		let inlinedHtml
+		if(rawHtml.errors.length < 1) {
+			inlinedHtml = this.inlineCSS(rawHtml.html)
+		}
+		else {
+			throw rawHtml.errors
+		}
+
+		return inlinedHtml
 	}
 }
 

@@ -5,15 +5,20 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const winston = require('winston')
 const mjml = require('../lib/mjml.js')
-const MJML = new mjml()
 const redis = require('redis')
 const couchdb = require('../lib/mci-couchdb.js')
 const joi = require('../lib/validation.js')
 
 dotenv.config()
 
+const { MAILGUN_API_KEY, MAILGUN_DOMAIN } = process.env
+
+const mailgun = require('mailgun-js')({apiKey: MAILGUN_API_KEY, domain: MAILGUN_DOMAIN})
+const MJML = new mjml()
+
 let router = express.Router()
 let jsonParser = bodyParser.json()
+
 const redisClient = redis.createClient()
 
 router.get('/list/:skip?', jsonParser, joi.validate(joi.schema.emails.list), (req, res) => {
@@ -52,7 +57,7 @@ router.post('/compile', jsonParser, joi.validate(joi.schema.emails.compile), (re
 	const template = context.template
 
 	const parsedMJML = MJML.parseHandlebars(context, template)
-	const compiledHTML = MJML.compileToMJML(parsedMJML)
+	const compiledHTML = MJML.compileToHTML(parsedMJML)
 
 	if(compiledHTML.errors.length < 1) {
 		let inlinedHTML = MJML.inlineCSS(compiledHTML.html)
@@ -149,19 +154,35 @@ router.post('/copy', jsonParser, joi.validate(joi.schema.emails.duplicate), (req
 router.post('/send', jsonParser, joi.validate(joi.schema.emails.send), (req, res) => {
 	couchdb.getEmailByID(req.joi.id)
 		.then(emailRes => {
-			// console.log(emailRes)
 			return emailRes.data
 		})
 		.then(emailData => {
-			console.log(emailData)
-			const { contents, template } = emailData
-			const compiledHTML = MJML.parseHandlebars(contents, template)
-			const compiledMJML = MJML.compileToMJML(compiledHTML)
+			const { template, category, title } = emailData
+			const inlinedHTML = MJML.compileAll(emailData, template)
+		
+			// console.log(inlinedHTML)
+			const toName = `${category}-${template}`
+			const mailData = {
+				to: 'mailroadtest@e.morningconsultintelligence.com',
+				from: `${category.toLowerCase()}@e.morningconsultintelligence.com`,
+				subject: title,
+				'o:tag': 'mailroad',
+				html: inlinedHTML 
+			}
+			let messages = mailgun.messages()
+			messages.send(mailData, (err, body) => {
+				if(err) {
+					throw err
+				}
+				console.log(body)
+				res.sendStatus(200)
+			})
 
-			res.send(compiledMJML)
+			
 		})
 		.catch(err => {
 			winston.error(err)
+			res.sendStatus(500)
 		})
 })
 
