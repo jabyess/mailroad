@@ -1,12 +1,25 @@
 # MailRoad
 
 ## builds emails better, hopefully.
+Mailroad helps you compose, write, and send emails through the ESP (email service provider) of your choice. It uses react, node, express, and couchdb
 
 ### Development
-* install couchdb version 2 or newer
+
+#### Dependencies
+* CouchDB >= v2.0
+* redis-server
+* nodeJS >= v8.0
+* an Amazon S3 bucket and API key
+* openssl for local certificate generation
+* A loggly account and API key (follow the nodejs setup docs on loggly's site)
+
+
+#### Installation
+* install dependencies
 * clone this repo
-* `npm install`
-* copy .env.sample into a newly created .env file, change values as necessary. Recommended: leave the database names alone for now.
+* `cd` to the cloned directory and run `npm install`
+* copy `.env.sample` into a new file `.env`. Add the appropriate API keys for AWS and winston/loggly configs.
+* Generate your local SSL cert using openssl (see below). Place the 
 * start couchdb-server
 * `npm run sync-views` to upload design docs to appropriate databases.
 * Once you set it all up, start everything.
@@ -18,8 +31,9 @@
 ### Self-Signing SSL Certs for Local Development
 
 ```bash
-cd <parent-dir>/mailroad/server/ssl
+cd ./server/ssl
 ```
+(create the `ssl` folder if necessary)
 
 then follow the instructions here:
 https://matoski.com/article/node-express-generate-ssl/
