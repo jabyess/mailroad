@@ -1,38 +1,36 @@
-const paths = require('./paths')
-const Dotenv = require('dotenv-webpack')
+const paths = require("./paths")
+const Dotenv = require("dotenv-webpack")
 
 const config = {
 	resolve: {
-		extensions: ['.js', '.jsx']
+		extensions: [".js", ".jsx"]
 	},
-	entry : {
-		main: [
-			paths.appMainJSX
-		]
+	entry: {
+		main: [paths.appMainJSX]
 	},
 	output: {
 		path: paths.build,
-		publicPath: '/public/',
-		filename: 'react-[name].js'
+		publicPath: "/public/",
+		filename: "react-[name].js"
 	},
 	devServer: {
 		port: 8888,
 		contentBase: paths.build,
-		publicPath: '/public/',
+		publicPath: "/public/",
 		proxy: {
-			'/': {
-				target: 'https://localhost:33224',
+			"/": {
+				target: "http://localhost:33224",
 				secure: false
 			}
 		}
 	},
-	devtool: 'cheap-eval-source-map',
+	devtool: "cheap-eval-source-map",
 	module: {
 		rules: [
 			{
-				test : /(\.scss|\.sass)/,
+				test: /(\.scss|\.sass)/,
 				include: paths.sass,
-				use: [ 'style-loader', 'css-loader', 'sass-loader' ],
+				use: ["style-loader", "css-loader", "sass-loader"]
 			},
 			{
 				test: /(\.jsx|\.js)/,
@@ -40,10 +38,10 @@ const config = {
 				exclude: [/node_modules/, /couchdb-views/],
 				use: [
 					{
-						loader: 'babel-loader',
+						loader: "babel-loader",
 						options: {
 							cacheDirectory: true,
-							presets: [['es2015', { 'modules': false } ], 'react' ],
+							presets: [["es2015", { modules: false }], "react"]
 						}
 					}
 				]
@@ -52,18 +50,18 @@ const config = {
 				test: /\.woff$/,
 				use: [
 					{
-						loader: 'url-loader',
+						loader: "url-loader",
 						options: {
 							limit: 50000
 						}
 					}
 				]
-			},
+			}
 		]
 	},
 	plugins: [
 		new Dotenv({
-			path: './.env',
+			path: "./.env",
 			safe: true
 		})
 	],

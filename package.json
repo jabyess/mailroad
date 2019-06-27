@@ -15,7 +15,7 @@
     "sync-views": "node server/couchdb-views/views.js sync",
     "build": "webpack --progress --debug --config ./config/webpack.config.prod.js && babel ./server/ -d ./dist",
     "develop": "nodemon --inspect server/lib/index.js",
-    "webpack": "webpack-dev-server --config ./config/webpack.config.dev.js --open --inline --progress --https",
+    "webpack": "webpack-dev-server --config ./config/webpack.config.dev.js --open --inline --progress",
     "restart": "./node_modules/.bin/pm2 startOrGracefulReload config/pm2.json --no-pmx --update-env && ./node_modules/.bin/pm2 flush && ./node_modules/.bin/pm2 dump",
     "start": "./node_modules/.bin/pm2 startOrGracefulReload config/pm2.json --no-pmx --update-env",
     "stop": "./node_modules/.bin/pm2 stop config/pm2.json"
@@ -94,7 +94,7 @@
     "compression-webpack-plugin": "^0.3.2",
     "css-loader": "^0.23.1",
     "dotenv-webpack": "^1.4.5",
-    "eslint": "^3.14.1",
+    "eslint": "^3.19.0",
     "eslint-plugin-react": "^6.9.0",
     "fbjs": "^0.8.12",
     "file-loader": "^0.10.1",
