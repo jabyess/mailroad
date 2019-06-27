@@ -10,16 +10,13 @@ Mailroad helps you compose, write, and send emails through the ESP (email servic
 * redis-server
 * nodeJS >= v8.0
 * an Amazon S3 bucket and API key
-* openssl for local certificate generation
-* A loggly account and API key (follow the nodejs setup docs on loggly's site)
 
 
 #### Installation
 * install dependencies
 * clone this repo
 * `cd` to the cloned directory and run `npm install`
-* copy `.env.sample` into a new file `.env`. Add the appropriate API keys for AWS and winston/loggly configs.
-* Generate your local SSL cert using openssl (see below). Place the 
+* copy `.env.sample` into a new file `.env`. Add the appropriate API keys for AWS.
 * start couchdb-server
 * `npm run sync-views` to upload design docs to appropriate databases.
 * Once you set it all up, start everything.
@@ -28,15 +25,6 @@ Mailroad helps you compose, write, and send emails through the ESP (email servic
 * `npm run webpack` to start webpack and watcher and open browser to `localhost:8888`
 
 
-### Self-Signing SSL Certs for Local Development
-
-```bash
-cd ./server/ssl
-```
-(create the `ssl` folder if necessary)
-
-then follow the instructions here:
-https://matoski.com/article/node-express-generate-ssl/
 
 ### Layout
 Code is divided into /client and /server folders. `client` contains react router code, jsx, sass, fonts, and some client side libs.
