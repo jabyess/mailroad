@@ -1,6 +1,6 @@
-import React from 'react'
-import LoginForm from './LoginForm'
-import NotificationContainer from '../NotificationContainer.jsx'
+import React from "react"
+import LoginForm from "./LoginForm"
+import NotificationContainer from "../NotificationContainer.jsx"
 
 class LoginContainer extends React.Component {
 	constructor() {
@@ -10,14 +10,14 @@ class LoginContainer extends React.Component {
 	}
 
 	fireNotification(type, text) {
-		const loginNotification = new CustomEvent('MRNotification', {
+		const loginNotification = new CustomEvent("MRNotification", {
 			detail: {
-				type, text
+				type,
+				text
 			}
 		})
 		window.dispatchEvent(loginNotification)
 	}
-
 
 	render() {
 		return (
@@ -31,6 +31,5 @@ class LoginContainer extends React.Component {
 		)
 	}
 }
-
 
 export default LoginContainer
