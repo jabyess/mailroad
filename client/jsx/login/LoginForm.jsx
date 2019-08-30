@@ -44,11 +44,19 @@ class LoginForm extends React.Component {
 
 	submitSignup(e) {
 		e.preventDefault()
+		console.log("firing signup")
 
-		axios.put("/api/auth/signup", {
-			username: this.state.username,
-			password: this.state.password
-		})
+		axios
+			.put("/api/auth/signup", {
+				username: this.state.username,
+				password: this.state.password
+			})
+			.then(user => {
+				console.log(user)
+			})
+			.catch(err => {
+				console.error(err)
+			})
 	}
 
 	submitLogin(e) {

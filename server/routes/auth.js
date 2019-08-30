@@ -7,39 +7,95 @@ const winston = require("winston")
 
 dotenv.config()
 
-const AUTH_URL = process.env.AUTH_URL
+const { AUTH_URL, COUCHDB_URL } = process.env
 const jsonParser = bodyParser.json()
 const passportjs = {}
 
-const fetchUser = (username, password) => {
-	return axios.get(AUTH_URL, {
-		auth: {
-			username: username,
-			password: password
+const createUser = (username, password) => {
+	console.log(`creating user ${username} with pass ${password}`)
+	return axios.put(
+		`${AUTH_URL}org.couchdb.user:${username}`,
+		{
+			name: username,
+			password,
+			roles: [],
+			type: "user"
+		},
+		{
+			headers: {
+				"Content-Type": "application/json",
+				Accept: "application/json"
+			}
 		}
-	})
+	)
+}
+
+const createSession = (username, password) => {
+	return axios.post(
+		`${COUCHDB_URL}_session/`,
+		// params must be sent in this format. idk why. couchdb amirite.
+		`name=${username}&password=${password}`,
+		{
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded"
+			}
+		}
+	)
+}
+
+const signup = (username, password, done) => {
+	return createUser(username, password)
+		.then(user => {
+			if (!user) {
+				return done(null, false, {
+					message: "Error creating user"
+				})
+			} else {
+				return done(null, user.data.user)
+			}
+		})
+		.catch(err => {
+			console.error(err)
+			done(null, false, err)
+		})
+}
+
+const parseCookie = cookie => {
+	const vals = cookie[0]
+	let split = vals.split(";")
+	let token = split[0].split("=")
+	return token[1]
 }
 
 const authenticate = (username, password, done) => {
-	return fetchUser(username, password)
+	return createSession(username, password)
 		.then(userObj => {
 			if (!userObj) {
 				return done(null, false, {
 					message: "Invalid username-password combination."
 				})
 			} else {
-				return done(null, userObj.data.user)
+				console.log(userObj.headers["set-cookie"])
+				if (userObj.headers && userObj.headers["set-cookie"].length > 0) {
+					let token = parseCookie(userObj.headers["set-cookie"])
+					return done(null, token)
+				}
 			}
 		})
-		.catch(err => done(null, false, err))
+		.catch(err => {
+			console.error(err)
+			return done(null, false, err)
+		})
 }
 
 passportjs.init = app => {
-	passport.use("local", new LocalStrategy(authenticate))
+	passport.use("local-login", new LocalStrategy(authenticate))
+	passport.use("local-signup", new LocalStrategy(signup))
 	app.use(passport.initialize())
 	app.use(passport.session())
 
 	passport.serializeUser((user, done) => {
+		console.log("serializing user", user)
 		if (!user || !user.id) {
 			return done(Error("Invalid user object for serialization"))
 		}
@@ -53,6 +109,7 @@ passportjs.init = app => {
 	})
 
 	passport.deserializeUser((user, done) => {
+		console.log("de-serializing user", user)
 		if (!user || !user.id) {
 			const err = "Invalid user for deserialization"
 			winston.error(err)
@@ -65,7 +122,16 @@ passportjs.init = app => {
 	app.post(
 		"/api/auth/login",
 		jsonParser,
-		passport.authenticate("local", {
+		passport.authenticate("local-login", {
+			session: true,
+			successRedirect: "/"
+		})
+	)
+
+	app.put(
+		"/api/auth/signup",
+		jsonParser,
+		passport.authenticate("local-signup", {
 			session: true,
 			successRedirect: "/"
 		})
