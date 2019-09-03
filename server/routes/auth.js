@@ -70,15 +70,15 @@ const parseCookie = cookie => {
 const authenticate = (username, password, done) => {
 	return createSession(username, password)
 		.then(userObj => {
-			if (!userObj) {
+			if (userObj.data && userObj.data.error) {
 				return done(null, false, {
-					message: "Invalid username-password combination."
+					// unauthorized, username or password etc
+					message: userObj.data.reason
 				})
 			} else {
-				console.log(userObj.headers["set-cookie"])
 				if (userObj.headers && userObj.headers["set-cookie"].length > 0) {
 					let token = parseCookie(userObj.headers["set-cookie"])
-					return done(null, token)
+					return done(null, { sessionID: token, username: userObj.data.name })
 				}
 			}
 		})
@@ -96,21 +96,20 @@ passportjs.init = app => {
 
 	passport.serializeUser((user, done) => {
 		console.log("serializing user", user)
-		if (!user || !user.id) {
+		if (!user || !user.sessionID) {
 			return done(Error("Invalid user object for serialization"))
 		}
 
 		// the object stored in redis (key = session_id, val = obj)
 		done(null, {
-			name: user.cb,
-			email: user.uid,
-			id: user.id
+			username: user.username,
+			sessionID: user.sessionID
 		})
 	})
 
 	passport.deserializeUser((user, done) => {
 		console.log("de-serializing user", user)
-		if (!user || !user.id) {
+		if (!user || !user.sessionID) {
 			const err = "Invalid user for deserialization"
 			winston.error(err)
 			return done(Error(err))
