@@ -4,6 +4,7 @@ const axios = require("axios")
 const passport = require("passport")
 const LocalStrategy = require("passport-local").Strategy
 const winston = require("winston")
+const parseCookie = require("../lib/utils").parseCookie
 
 dotenv.config()
 
@@ -58,13 +59,6 @@ const signup = (username, password, done) => {
 			console.error(err)
 			done(null, false, err)
 		})
-}
-
-const parseCookie = cookie => {
-	const vals = cookie[0]
-	let split = vals.split(";")
-	let token = split[0].split("=")
-	return token[1]
 }
 
 const authenticate = (username, password, done) => {

@@ -18,7 +18,8 @@
     "webpack": "webpack-dev-server --config ./config/webpack.config.dev.js --open --inline --progress",
     "restart": "./node_modules/.bin/pm2 startOrGracefulReload config/pm2.json --no-pmx --update-env && ./node_modules/.bin/pm2 flush && ./node_modules/.bin/pm2 dump",
     "start": "./node_modules/.bin/pm2 startOrGracefulReload config/pm2.json --no-pmx --update-env",
-    "stop": "./node_modules/.bin/pm2 stop config/pm2.json"
+    "stop": "./node_modules/.bin/pm2 stop config/pm2.json",
+    "seed": "node server/seed-files/seed.js"
   },
   "author": "jbyess@morningconsult.com",
   "license": "ISC",

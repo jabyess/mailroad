@@ -1,126 +1,18 @@
-/*
-Contains seed data for meta database. These are just Morning Consult categories.
-ComponentTitles are configurable for each category, neat right?
-*/
-
 [
 	{
-		"name": "Washington",
+		"name": "Marketing",
 		"componentTitles": [
-			{
-				"title" : "Washington Brief"
-			},
-			{
-				"title": "Chart Review"
-			},
-			{
-				"title" : "Events Calendar"
-			},
-			{
-				"title": "General"
-			}
+			{ "title": "Heading" },
+			{ "title": "Body" },
+			{ "title": "Footer" }
 		]
 	},
 	{
-		"name": "Finance",
+		"name": "Promotional",
 		"componentTitles": [
-			{
-				"title" : "Washington Brief"
-			},
-			{
-				"title": "Chart Review"
-			},
-			{
-				"title" : "Events Calendar"
-			},
-			{
-				"title": "General"
-			}
-		]
-	},
-	{
-		"name": "Tech",
-		"componentTitles": [
-			{
-				"title" : "Washington Brief"
-			},
-			{
-				"title": "Chart Review"
-			},
-			{
-				"title" : "Events Calendar"
-			},
-			{
-				"title": "General"
-			}
-		]
-	},	
-	{
-		"name": "Health",
-		"componentTitles": [
-			{
-				"title" : "Washington Brief"
-			},
-			{
-				"title": "Chart Review"
-			},
-			{
-				"title" : "Events Calendar"
-			},
-			{
-				"title": "General"
-			}
-		]
-	},
-	{
-		"name": "Tech",
-		"componentTitles": [
-			{
-				"title" : "Washington Brief"
-			},
-			{
-				"title": "Chart Review"
-			},
-			{
-				"title" : "Events Calendar"
-			},
-			{
-				"title": "General"
-			}
-		]
-	},
-	{
-		"name": "Brands",
-		"componentTitles": [
-			{
-				"title" : "Washington Brief"
-			},
-			{
-				"title": "Chart Review"
-			},
-			{
-				"title" : "Events Calendar"
-			},
-			{
-				"title": "General"
-			}
-		]
-	},
-	{
-		"name": "Energy",
-		"componentTitles": [
-			{
-				"title" : "Washington Brief"
-			},
-			{
-				"title": "Chart Review"
-			},
-			{
-				"title" : "Events Calendar"
-			},
-			{
-				"title": "General"
-			}
+			{ "title": "Heading" },
+			{ "title": "Body" },
+			{ "title": "Footer" }
 		]
 	}
 ]

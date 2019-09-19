@@ -22,7 +22,8 @@
 		"experimental-decorators" : 0,
 		"indent": [
 			"error",
-			"tab"
+			"tab",
+			{"ObjectExpression": false}
 		],
 		"linebreak-style": [
 			"error",
