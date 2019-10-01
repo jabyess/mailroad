@@ -6,7 +6,7 @@ const parseCookie = require("../lib/utils").parseCookie
 
 dotenv.config()
 
-const { COUCHDB_URL, ADMIN_USER, ADMIN_PASS } = process.env
+const { COUCHDB_URL, ADMIN_USER, ADMIN_PASS, META_DB } = process.env
 
 // authenticate as admin
 axios
@@ -48,8 +48,20 @@ axios
 					console.error("Error creating database:", db.name, err.response.data)
 				})
 		})
-	}).then(() => {
-
+		return token
+	})
+	.then(token => {
+		const metaURL = COUCHDB_URL + META_DB + "/categories"
+		axios
+			.put(metaURL, {
+				categories
+			})
+			.then(done => {
+				console.log(done.data)
+			})
+			.catch(err => {
+				console.error("error creating categories", err.response)
+			})
 	})
 	.catch(authErr => {
 		console.error(authErr)
