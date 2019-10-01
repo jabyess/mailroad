@@ -8,6 +8,7 @@ dotenv.config()
 
 const { COUCHDB_URL, ADMIN_USER, ADMIN_PASS } = process.env
 
+// authenticate as admin
 axios
 	.post(
 		`${COUCHDB_URL}_session/`,
@@ -24,16 +25,11 @@ axios
 		return token
 	})
 	.then(token => {
-		console.log(token)
+		// create databases in databases.json
 		databases.forEach(db => {
 			let url = COUCHDB_URL + db.name
-			axios.interceptors.request.use(function(config) {
-				// Do something before request is sent
-				console.log(config)
-				return config
-			})
 
-			axios
+			return axios
 				.put(
 					url,
 					{},
@@ -52,7 +48,9 @@ axios
 					console.error("Error creating database:", db.name, err.response.data)
 				})
 		})
-	})
+	}).then(() => {
 
-// create databases
-// categories.forEach(cat => {
+	})
+	.catch(authErr => {
+		console.error(authErr)
+	})

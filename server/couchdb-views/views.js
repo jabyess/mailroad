@@ -44,7 +44,7 @@ if(args.some(a => a === 'sync')) {
 					console.log('synced ', obj)
 				})
 				.catch(err => {
-					console.log('error syncing existing doc', err)
+					console.log('error syncing existing doc', err.response.data)
 				})
 			})
 			.catch(() => {
@@ -62,7 +62,7 @@ if(args.some(a => a === 'sync')) {
 					console.log(obj.id, 'did not exist, synced', obj)
 				})
 				.catch(err => {
-					console.log('error syncing nonexistent doc', err)
+					console.log('error syncing nonexistent doc', err.response.data)
 				})
 			})
 	}

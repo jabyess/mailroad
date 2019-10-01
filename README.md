@@ -11,13 +11,13 @@ Mailroad helps you compose, write, and send emails through the ESP (email servic
 * nodeJS >= v8.0
 * an Amazon S3 bucket and API key
 
-
 #### Installation
-* install dependencies
+* Ensure external dependencies are installed and running
 * clone this repo
 * `cd` to the cloned directory and run `npm install`
 * copy `.env.sample` into a new file `.env`. Add the appropriate API keys for AWS.
 * start couchdb-server
+* `npm run seed` to create databases and meta info
 * `npm run sync-views` to upload design docs to appropriate databases.
 * Once you set it all up, start everything.
 * `redis-server` to start redis
