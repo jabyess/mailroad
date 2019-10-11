@@ -3,6 +3,8 @@
 ## builds emails better, hopefully.
 Mailroad helps you compose, write, and send emails through the ESP (email service provider) of your choice. It uses react, node, express, and couchdb
 
+The frontend for mailroad has been [moved to its own repo](https://github.com/jabyess/mailroad-frontend/).
+
 ### Development
 
 #### Dependencies
@@ -22,9 +24,8 @@ Mailroad helps you compose, write, and send emails through the ESP (email servic
 * Once you set it all up, start everything.
 * `redis-server` to start redis
 * `npm run develop` to start nodemon & express
-* `npm run webpack` to start webpack and watcher and open browser to `localhost:8888`
 
-
+Don't forget to run the frontend as well!
 
 ### Layout
 Code is divided into /client and /server folders. `client` contains react router code, jsx, sass, fonts, and some client side libs.

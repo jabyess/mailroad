@@ -1,11 +1,11 @@
 const dotenv = require("dotenv")
 const express = require("express")
 const app = express()
+const paths = require('../../config/paths')
 const gzipStatic = require("connect-gzip-static")
 const expressSession = require("express-session")
 const RedisStore = require("connect-redis")(expressSession)
 const redisClient = require("./redis.js")
-const paths = require("../../config/paths")
 const passport = require("../routes/auth.js")
 
 dotenv.config()
@@ -25,7 +25,7 @@ app.all("*", (req, res, next) => {
 	next()
 })
 
-app.use("/public", gzipStatic(paths.build))
+app.use("/public", gzipStatic(paths.public))
 
 app.use(
 	expressSession({

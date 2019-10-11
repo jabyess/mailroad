@@ -5,7 +5,6 @@
 	},
 	"extends": ["eslint:recommended", "plugin:react/recommended"],
 	"parser": "babel-eslint",
-	"ignore": [ "dist/**" ],
 	"parserOptions": {
 		"ecmaVersion": 2016,
 		"ecmaFeatures": {
@@ -23,7 +22,7 @@
 		"indent": [
 			"error",
 			"tab",
-			{"ObjectExpression": false}
+			{"ObjectExpression": "off"}
 		],
 		"linebreak-style": [
 			"error",

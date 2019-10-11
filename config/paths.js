@@ -1,7 +1,3 @@
-'use strict'
-
-/* many of these ideas stolen from create-react-app */
-
 const path = require('path')
 const fs = require('fs')
 
@@ -12,14 +8,9 @@ const resolveApp = (relativePath) => {
 }
 
 module.exports = {
-	appRoot: resolveApp('client'),
-	appMainJSX: resolveApp('client/jsx/react-main.jsx'),
 	appIndexJS: resolveApp('server/lib/index.js'),
 	appIndexHTML: resolveApp('server/lib/index.html'),
 	build: resolveApp('dist'),
 	public: resolveApp('public'),
-	jsx: resolveApp('client/jsx'),
-	sass: resolveApp('client/sass'),
-	css: resolveApp('dist/base.css'),
 	mjml: resolveApp('mjml-templates')
 }
