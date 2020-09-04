@@ -35,7 +35,7 @@
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.1",
     "extract-text-webpack-plugin": "^2.0.0-rc.3",
-    "handlebars": "^4.0.5",
+    "handlebars": "^4.5.3",
     "ioredis": "^3.0.0",
     "joi": "^10.5.2",
     "juice": "^4.0.2",
