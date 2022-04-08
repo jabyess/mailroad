@@ -41,7 +41,7 @@
     "juice": "^4.0.2",
     "lodash.merge": "^4.6.0",
     "mjml": "^3.3.0",
-    "moment": "^2.17.1",
+    "moment": "^2.29.2",
     "multer": "^1.2.1",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
