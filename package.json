@@ -57,7 +57,7 @@
     "react-router": "^3.0.0",
     "redis": "^2.6.5",
     "redis-server": "^1.1.0",
-    "sharp": "^0.17.1",
+    "sharp": "^0.30.5",
     "shortid": "^2.2.6",
     "slate": "^0.19.20",
     "winston": "^2.3.1",
