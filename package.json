@@ -31,7 +31,7 @@
     "connect-redis": "^3.3.0",
     "couchdb-tools": "0.0.6",
     "dotenv": "^2.0.0",
-    "express": "^4.13.4",
+    "express": "^4.17.3",
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.1",
     "extract-text-webpack-plugin": "^2.0.0-rc.3",
